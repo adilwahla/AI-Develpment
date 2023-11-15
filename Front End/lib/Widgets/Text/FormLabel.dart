@@ -4,7 +4,7 @@ class FormLabelText extends StatelessWidget {
   final String labelText;
   final double fontSize;
   const FormLabelText(
-      {super.key, this.labelText = "label", this.fontSize = 16});
+      {super.key, this.labelText = "label", this.fontSize = 13});
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +13,7 @@ class FormLabelText extends StatelessWidget {
       style: TextStyle(
           fontFamily: 'Poppins',
           fontSize: fontSize,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.bold,
           color: Color(0xff000000)),
     );
   }

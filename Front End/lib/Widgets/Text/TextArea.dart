@@ -4,12 +4,13 @@ class MlutiLineTextArea extends StatefulWidget {
   final String iconName;
   final double width;
   final int lines;
-  const MlutiLineTextArea({
-    super.key,
-    required this.iconName,
-    this.width = 400,
-    this.lines = 8,
-  });
+  final String hintText;
+  const MlutiLineTextArea(
+      {super.key,
+      required this.iconName,
+      this.width = 400,
+      this.lines = 8,
+      this.hintText = ""});
 
   @override
   State<MlutiLineTextArea> createState() => _MlutiLineTextAreaState();
@@ -27,7 +28,7 @@ class _MlutiLineTextAreaState extends State<MlutiLineTextArea> {
         borderRadius: BorderRadius.circular(5),
         border: Border.all(
           color: Color(0xffE2E4FB), // Set the border color to E2E4FB
-          width: 2, // Customize the border width
+          width: 1, // Customize the border width
         ),
       ),
       width: widget.width,
@@ -35,9 +36,9 @@ class _MlutiLineTextAreaState extends State<MlutiLineTextArea> {
         children: [
           TextField(
             style: TextStyle(
-              fontSize: 16.0,
+              fontSize: 10.0,
               fontFamily: 'Poppins',
-              fontStyle: FontStyle.italic,
+              // fontStyle: FontStyle.italic,
               color: Color(0xff8598AD),
             ),
             controller: textarea,
@@ -45,18 +46,18 @@ class _MlutiLineTextAreaState extends State<MlutiLineTextArea> {
             maxLines: widget.lines,
             decoration: InputDecoration(
               labelStyle: TextStyle(
-                fontSize: 16.0,
+                fontSize: 12.0,
                 fontFamily: 'Poppins',
-                fontStyle: FontStyle.italic,
+                // fontStyle: FontStyle.italic,
                 color: Color(0xff8598AD),
               ),
               contentPadding: EdgeInsets.all(10),
-              // hintText: "Enter Remarks",
-              prefixText: "I want this text to be added",
+              hintText: widget.hintText,
+              // prefixText: "I want this text to be added",
               hintStyle: TextStyle(
-                fontSize: 16.0,
+                fontSize: 12.0,
                 fontFamily: 'Poppins',
-                fontStyle: FontStyle.italic,
+                // fontStyle: FontStyle.italic,
                 color: Color(0xff8598AD),
               ),
               border: InputBorder.none, // Remove the underline

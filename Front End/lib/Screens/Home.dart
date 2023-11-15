@@ -40,7 +40,7 @@ class Home extends StatelessWidget {
                         aspectRatio: 3 / 1,
                         child: Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.0),
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                             color: Color(0xFFFDFFFF),
                             elevation: 4.0,
@@ -125,7 +125,7 @@ class Home extends StatelessWidget {
                           aspectRatio: 3 / 1,
                           child: Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
+                              borderRadius: BorderRadius.circular(20.0),
                             ),
                             color: Color(0xFFFDFFFF),
                             elevation: 4.0,

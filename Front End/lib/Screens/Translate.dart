@@ -7,6 +7,7 @@ import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
 import 'package:my_app/Widgets/Text/TextArea.dart';
+import 'package:my_app/services/auth_services.dart';
 
 class TranslatePage extends StatelessWidget {
   const TranslatePage({super.key});
@@ -40,6 +41,17 @@ class TranslateFormBody extends StatefulWidget {
 }
 
 class _TranslateFormBodyState extends State<TranslateFormBody> {
+  final AuthService authService = AuthService();
+  TextEditingController textarea = TextEditingController();
+  String? object;
+  void translate1() {
+    authService.translate(
+      context: context,
+      input: textarea.text,
+      language: object.toString(),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -68,15 +80,119 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
               labelText: "Language",
               fontSize: 12,
             ),
-            DropdownWithArrow(),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              width: width * 1 / 3,
+              height: 33,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Color(0xffE2E4FB), // Set your desired border color
+                  width: 1.5, // Customize the border width
+                ),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: DropdownButton<String>(
+                dropdownColor: Colors.white,
+                value: object,
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+                items: <String>[
+                  'English',
+                  'Urdu',
+                  'French',
+                  'German',
+                  'Hindi',
+                ].map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                hint: Text(
+                  "Please choose a subject",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600),
+                ),
+                onChanged: (String? value) {
+                  setState(() {
+                    object = value;
+                    print("ttttt${object}");
+                  });
+                },
+              ),
+            ),
             FormLabelText(
               labelText: "Type here",
               fontSize: 12,
             ),
-            MlutiLineTextArea(
+            // MlutiLineTextArea(
+
+            //   width: width * 1 / 3,
+            //   iconName: 'Clipboard.png',
+            // ),
+            Container(
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                // color: Color(0xffE2E4FB),
+                color: Color(0xffFFFFFF),
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(
+                  color: Color(0xffE2E4FB), // Set the border color to E2E4FB
+                  width: 2, // Customize the border width
+                ),
+              ),
               width: width * 1 / 3,
-              iconName: 'Clipboard.png',
+              child: Column(
+                children: [
+                  TextField(
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontFamily: 'Poppins',
+                      fontStyle: FontStyle.italic,
+                      color: Color(0xff8598AD),
+                    ),
+                    controller: textarea,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 8,
+                    decoration: InputDecoration(
+                      labelStyle: TextStyle(
+                        fontSize: 16.0,
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.italic,
+                        color: Color(0xff8598AD),
+                      ),
+                      contentPadding: EdgeInsets.all(10),
+                      // hintText: "Enter Remarks",
+                      // prefixText: "I want this text to be added",
+                      hintStyle: TextStyle(
+                        fontSize: 16.0,
+                        fontFamily: 'Poppins',
+                        fontStyle: FontStyle.italic,
+                        color: Color(0xff8598AD),
+                      ),
+                      border: InputBorder.none, // Remove the underline
+                      // focusedBorder: OutlineInputBorder(
+                      //     borderSide: BorderSide(width: 1, color: Colors.redAccent),
+                      //     ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: IconButton(
+                      onPressed: () {
+                        print("");
+                      },
+                      icon: Image.asset(
+                        'assets/images/Clipboard.png',
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
+
             // SizedBox(
             //   height: 5,
             // ),
@@ -90,15 +206,18 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                 height: 8.0,
               ),
             ),
-            FormButton(
-              buttonText: "   Paste Document",
-              buttonColor: Color(0xffFF8203),
-              buttonIconName: 'translate.png',
-              buttonHeight: 30,
-              buttonWidth: width * 1 / 3,
-              // iconHeight: 27,
-              // iconWidth: 22,
-            ),
+
+            //  FormButton(
+            //     buttonText: "   Paste Document",
+            //     buttonColor: Color(0xffFF8203),
+            //     buttonIconName: 'translate.png',
+            //     buttonHeight: 30,
+            //     buttonWidth: width * 1 / 3,
+            //     // iconHeight: 27,
+            //     // iconWidth: 22,
+
+            //   ),
+            ElevatedButton(onPressed: translate1, child: Text("button "))
           ],
         ),
         Padding(

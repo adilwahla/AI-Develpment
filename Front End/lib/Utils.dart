@@ -87,12 +87,12 @@ BoxDecoration kHomeCardsdecoration = BoxDecoration(
 
 BoxDecoration kFormContainerDecoration = BoxDecoration(
   // color: Colors.amberAccent,
-  color: Color(0xFFFDFFFF),
-  //  color: Color(0xFFFDFFFF).withOpacity(0.3),
-  borderRadius: BorderRadius.circular(25),
+  // color: Color(0xFFFDFFFF),
+  color: Color(0xffE2E4FB).withOpacity(0.2),
+  borderRadius: BorderRadius.circular(20),
   border: Border.all(
     color: Color(0xffE2E4FB), // Set the border color to E2E4FB
-    width: 2, // Customize the border width
+    width: 1, // Customize the border width
   ), // Border width
   boxShadow: [
     BoxShadow(
@@ -123,7 +123,7 @@ TextStyle kMiniCardsStyle = TextStyle(
 
 class AppColors {
   static const Color backColor = Color(0xffF6F6F6);
-  static const Color mainBlueColor = Color(0xff005BE0);
+  static const Color mainBlueColor = Color(0xff4C5AFE);
   static const Color blueDarkColor = Color(0xff252B5C);
   static const Color textColor = Color(0xff53587A);
   static const Color greyColor = Color(0xffAAAAAA);
@@ -156,4 +156,8 @@ void httpErrorHandle({
     default:
       showSnackBar(context, response.body);
   }
+}
+
+class Constants {
+  static String uri = 'http://localhost:3000';
 }

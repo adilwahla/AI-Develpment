@@ -9,7 +9,7 @@ class FormContainer extends StatelessWidget {
       this.left = 40,
       this.right = 40,
       this.bottom = 30,
-      this.top = 30,
+      this.top = 10,
       this.widthFactor = 0.85,
       this.heightFactor = 3 / 4,
       required this.addFormElements});

@@ -7,17 +7,17 @@ class FormHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 45,
+      height: 30,
       width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: Color(0xff4C5AFE),
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.only(left: 15.0),
+        padding: const EdgeInsets.only(left: 20.0),
         child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
