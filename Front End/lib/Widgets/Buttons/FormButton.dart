@@ -19,8 +19,8 @@ class FormButton extends StatelessWidget {
     this.buttonWidth = 704,
     this.buttonHeight = 51,
     this.iconColor = Colors.white,
-    this.iconWidth = 24,
-    this.iconHeight = 24,
+    this.iconWidth = 15,
+    this.iconHeight = 15,
     this.buttonRadius = 20,
   });
 

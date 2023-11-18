@@ -13,7 +13,7 @@ class FormLabelText extends StatelessWidget {
       style: TextStyle(
           fontFamily: 'Poppins',
           fontSize: fontSize,
-          fontWeight: FontWeight.bold,
+          fontWeight: FontWeight.w800,
           color: Color(0xff000000)),
     );
   }

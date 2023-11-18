@@ -13,6 +13,8 @@ class Email extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
     return FormContainer(
       addFormElements: Column(
         children: [
@@ -20,7 +22,113 @@ class Email extends StatelessWidget {
             headerText: 'Generate Email',
           ),
           // EmailFormBody(),
-          BodyEmailForm()
+          BodyEmailForm(),
+          SizedBox(
+            height: 15,
+          ),
+          Divider(
+            color: Color(0xffE2E4FB),
+            thickness: 1.0, // Adjust the thickness as needed
+          ),
+          Padding(
+            padding: const EdgeInsets.only(
+                left: 20.0, right: 20, top: 10, bottom: 5),
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: FormLabelText(
+                labelText: "Generated Email",
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(left: 20.0, right: 20),
+            child: Container(
+              width: double.infinity,
+              height: height * 0.0491,
+              decoration: BoxDecoration(
+                  color: Color(0xff39D1B8),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    topRight: Radius.circular(20.0),
+                  )),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/published_with_changes.png',
+                    color: Colors.white, // Icon color
+                    width: 24, // Set the width as needed
+                    height: 24, // Set the height as needed
+                  ),
+                  Text(
+                    "  Ready",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'Fira Sans',
+                        fontSize: 15,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  // color: Color(0xffE2E4FB),
+                  color: Color(0xffFFFFFF),
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(10),
+                    bottomRight: Radius.circular(10),
+                  ),
+                  border: Border.all(
+                    color: Color(0xffE2E4FB), // Set the border color to E2E4FB
+                    width: 1, // Customize the border width
+                  ),
+                ),
+                child: new ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: double.infinity,
+                  ),
+                  child: TextField(
+                    enabled: false,
+                    maxLines: null,
+                    style: TextStyle(
+                      fontSize: 10.0,
+                      fontFamily: 'Poppins',
+                      // fontStyle: FontStyle.italic,
+                      color: Color(0xff8598AD),
+                    ),
+                    decoration: InputDecoration(
+                      suffixIcon: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              print("copy text");
+                            },
+                            icon: Image.asset('assets/images/copy.png'),
+                          ),
+                        ],
+                      ),
+                      labelStyle: TextStyle(
+                        fontSize: 12.0,
+                        fontFamily: 'Poppins',
+                        // fontStyle: FontStyle.italic,
+                        color: Color(0xff8598AD),
+                      ),
+                      contentPadding: EdgeInsets.all(16),
+
+                      border: InputBorder.none, // Remove the underline
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -35,42 +143,33 @@ class BodyEmailForm extends StatefulWidget {
 }
 
 class _BodyEmailFormState extends State<BodyEmailForm> {
-  static const List<String> list = <String>['One', 'Two', 'Three', 'Four'];
-  static const List<String> list2 = <String>['One', 'Two', 'Three', 'Four'];
-  static const List<String> list3 = <String>['One', 'Two', 'Three', 'Four'];
-  static const List<String> list4 = <String>['One', 'Two', 'Three', 'Four'];
-  static const List<String> list5 = <String>['One', 'Two', 'Three', 'Four'];
-
   String? object;
   String? selectType;
   String? length;
   TextEditingController emailTo = TextEditingController();
+  TextEditingController emailFrom = TextEditingController();
 
   // String dropdownValue = list.first;
-  String dropdownValue2 = list2.first;
-  String dropdownValue3 = list3.first;
-  String dropdownValue4 = list4.first;
-  String dropdownValue5 = list5.first;
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Padding(
-      padding: const EdgeInsets.only(left: 20.0),
+      padding: const EdgeInsets.only(left: 20.0, right: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 6.0),
+            padding: const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
             child: FormLabelText(
               labelText: "Object",
             ),
           ),
           Container(
-            padding: EdgeInsets.only(top: 6, left: 8),
-            width: width * 0.79,
-            height: 33,
+            // padding: EdgeInsets.only(top: 6, left: 8),
+            width: double.infinity,
+            height: height * 0.04722,
             decoration: BoxDecoration(
               color: Color(0xffFFFFFF),
               border: Border.all(
@@ -86,7 +185,14 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                 underline: Container(),
                 dropdownColor: Colors.white,
                 value: object,
-                style: TextStyle(color: Colors.black),
+                style: TextStyle(
+                  color: Color(0xff8598AD),
+                  fontSize: 12.0,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight
+                      .w200, // FontWeight.w200 represents the "extra-light" weight
+                  fontStyle: FontStyle.italic,
+                ),
                 items: <String>[
                   'English',
                   'History',
@@ -98,14 +204,24 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                 ].map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(value),
+                    ),
                   );
                 }).toList(),
-                hint: Text(
-                  "Please choose a subject",
-                  style: TextStyle(
-                    color: Color(0xff8598AD),
-                    fontSize: 10.0,
+                hint: Padding(
+                  padding: const EdgeInsets.only(left: 16.0),
+                  child: Text(
+                    "Enter Object",
+                    style: TextStyle(
+                      color: Color(0xff8598AD),
+                      fontSize: 12.0,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight
+                          .w200, // FontWeight.w200 represents the "extra-light" weight
+                      fontStyle: FontStyle.italic,
+                    ),
                   ),
                 ),
                 onChanged: (String? value) {
@@ -122,285 +238,421 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
             // crossAxisAlignment: CrossAxisAlignment.,
             mainAxisSize: MainAxisSize.max,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormLabelText(
-                    labelText: "Write an",
-                  ),
-                  // CustomDropdownButton(
-                  //     width: width * 1 / 6,
-                  //     itemList: list2,
-                  //     onChanged: (String? value) {
-                  //       setState(() {
-                  //         dropdownValue2 = value!;
-                  //       });
-                  //     },
-                  //     dropdownValue: dropdownValue2),
-                  Container(
-                    padding: EdgeInsets.only(top: 6, left: 8),
-                    width: width * 0.18,
-                    height: 33,
-                    decoration: BoxDecoration(
-                      color: Color(0xffFFFFFF),
-                      border: Border.all(
-                        color:
-                            Color(0xffE2E4FB), // Set your desired border color
-                        width: 1, // Customize the border width
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
+                      child: FormLabelText(
+                        labelText: "Write an",
                       ),
-                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: DropdownButton<String>(
-                        underline: Container(),
-                        isExpanded: true,
-                        dropdownColor: Colors.white,
-                        value: selectType,
-                        style: TextStyle(color: Colors.black),
-                        items: <String>[
-                          'Inside Email',
-                          'Close Partner Email',
-                          'Normal Partner Email',
-                          'Unknown Partner Email',
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        hint: Text(
-                          "Select Type",
+                    // CustomDropdownButton(
+                    //     width: width * 1 / 6,
+                    //     itemList: list2,
+                    //     onChanged: (String? value) {
+                    //       setState(() {
+                    //         dropdownValue2 = value!;
+                    //       });
+                    //     },
+                    //     dropdownValue: dropdownValue2),
+                    Container(
+                      width: double.infinity,
+                      height: height * 0.04722,
+                      decoration: BoxDecoration(
+                        color: Color(0xffFFFFFF),
+                        border: Border.all(
+                          color: Color(
+                              0xffE2E4FB), // Set your desired border color
+                          width: 1, // Customize the border width
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: DropdownButton<String>(
+                          underline: Container(),
+                          isExpanded: true,
+                          dropdownColor: Colors.white,
+                          value: selectType,
                           style: TextStyle(
                             color: Color(0xff8598AD),
-                            fontSize: 10.0,
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight
+                                .w200, // FontWeight.w200 represents the "extra-light" weight
+                            fontStyle: FontStyle.italic,
                           ),
-                        ),
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectType = value;
-                            print("ttttt${selectType}");
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 28),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormLabelText(
-                    labelText: "Email To",
-                  ),
-                  Container(
-                    width: width * 0.18,
-                    height: 33,
-                    decoration: BoxDecoration(
-                      color: Color(0xffFFFFFF),
-                      border: Border.all(
-                        color:
-                            Color(0xffE2E4FB), // Set your desired border color
-                        width: 1, // Customize the border width
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: TextField(
-                        textAlign: TextAlign.left,
-                        textAlignVertical: TextAlignVertical.center,
-                        controller: emailTo,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 16.0),
-                          border: InputBorder.none,
-                          hintText: "Enter Email",
-                          hintStyle: TextStyle(
-                            color: Color(0xff8598AD),
-                            fontSize: 10.0,
+                          items: <String>[
+                            'Inside Email',
+                            'Close Partner Email',
+                            'Normal Partner Email',
+                            'Unknown Partner Email',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 16.0),
+                                child: Text(value),
+                              ),
+                            );
+                          }).toList(),
+                          hint: Padding(
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: Text(
+                              "Select Type",
+                              style: TextStyle(
+                                color: Color(0xff8598AD),
+                                fontSize: 12.0,
+                                fontFamily: 'Poppins',
+                                fontWeight: FontWeight
+                                    .w200, // FontWeight.w200 represents the "extra-light" weight
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
                           ),
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectType = value;
+                              print("ttttt${selectType}");
+                            });
+                          },
                         ),
                       ),
                     ),
-                  ),
-
-                  // CustomDropdownButton(
-                  //     width: width * 1 / 6,
-                  //     itemList: list3,
-                  //     onChanged: (String? value) {
-                  //       setState(() {
-                  //         dropdownValue3 = value!;
-                  //       });
-                  //     },
-                  //     dropdownValue: dropdownValue3),
-                  // TextField(
-                  //   decoration: InputDecoration(
-                  //       hintText: 'Enter Email',
-                  //       // contentPadding: const EdgeInsets.all(15),
-                  //       border: OutlineInputBorder(
-                  //           borderRadius: BorderRadius.circular(30))),
-                  //   onChanged: (value) {
-                  //     // do something
-                  //   },
-                  // ),
-                  // Container(
-                  //   height: 30,
-                  //   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  //   decoration: BoxDecoration(
-                  //     border: Border.all(
-                  //       color: Color(0xffE2E4FB),
-                  //       width: 1.5,
-                  //     ),
-                  //     borderRadius: BorderRadius.circular(30),
-                  //   ),
-                ],
+                  ],
+                ),
               ),
               SizedBox(width: 28),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormLabelText(
-                    labelText: "From",
-                  ),
-                  Container(
-                    width: width * 0.18,
-                    height: 33,
-                    decoration: BoxDecoration(
-                      color: Color(0xffFFFFFF),
-                      border: Border.all(
-                        color:
-                            Color(0xffE2E4FB), // Set your desired border color
-                        width: 1, // Customize the border width
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
+                      child: FormLabelText(
+                        labelText: "Email To",
                       ),
-                      borderRadius: BorderRadius.circular(20),
                     ),
-                    child: TextField(
-                      textAlign: TextAlign.left,
-                      textAlignVertical: TextAlignVertical.center,
-                      controller: emailTo,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 16.0, horizontal: 5),
-                        border: InputBorder.none,
-                        hintText: "Enter Email",
-                        hintStyle: TextStyle(
-                          color: Color(0xff8598AD),
-                          fontSize: 10.0,
+                    Container(
+                      width: double.infinity,
+                      height: height * 0.04722,
+                      decoration: BoxDecoration(
+                        color: Color(0xffFFFFFF),
+                        border: Border.all(
+                          color: Color(
+                              0xffE2E4FB), // Set your desired border color
+                          width: 1, // Customize the border width
                         ),
+                        borderRadius: BorderRadius.circular(20),
                       ),
-                    ),
-                  ),
-
-                  // CustomDropdownButton(
-                  //     width: width * 1 / 6,
-                  //     itemList: list3,
-                  //     onChanged: (String? value) {
-                  //       setState(() {
-                  //         dropdownValue3 = value!;
-                  //       });
-                  //     },
-                  //     dropdownValue: dropdownValue3),
-                  // TextField(
-                  //   decoration: InputDecoration(
-                  //       hintText: 'Enter Email',
-                  //       // contentPadding: const EdgeInsets.all(15),
-                  //       border: OutlineInputBorder(
-                  //           borderRadius: BorderRadius.circular(30))),
-                  //   onChanged: (value) {
-                  //     // do something
-                  //   },
-                  // ),
-                  // Container(
-                  //   height: 30,
-                  //   padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  //   decoration: BoxDecoration(
-                  //     border: Border.all(
-                  //       color: Color(0xffE2E4FB),
-                  //       width: 1.5,
-                  //     ),
-                  //     borderRadius: BorderRadius.circular(30),
-                  //   ),
-                ],
-              ),
-              SizedBox(width: 28),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  FormLabelText(
-                    labelText: "In The Length of",
-                  ),
-                  // CustomDropdownButton(
-                  //     width: width * 1 / 6,
-                  //     itemList: list2,
-                  //     onChanged: (String? value) {
-                  //       setState(() {
-                  //         dropdownValue2 = value!;
-                  //       });
-                  //     },
-                  //     dropdownValue: dropdownValue2),
-                  Container(
-                    padding: EdgeInsets.only(top: 6, left: 8),
-                    width: width * 0.18,
-                    height: 33,
-                    decoration: BoxDecoration(
-                      color: Color(0xffFFFFFF),
-                      border: Border.all(
-                        color:
-                            Color(0xffE2E4FB), // Set your desired border color
-                        width: 1, // Customize the border width
-                      ),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: DropdownButton<String>(
-                        underline: Container(),
-                        isExpanded: true,
-                        dropdownColor: Colors.white,
-                        value: selectType,
-                        style: TextStyle(color: Colors.black),
-                        items: <String>[
-                          'Inside Email',
-                          'Close Partner Email',
-                          'Normal Partner Email',
-                          'Unknown Partner Email',
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        hint: Text(
-                          "Select word count",
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: TextField(
+                          // textAlign: TextAlign.left,
+                          textAlignVertical: TextAlignVertical.center,
+                          controller: emailTo,
                           style: TextStyle(
                             color: Color(0xff8598AD),
-                            fontSize: 10.0,
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight
+                                .w200, // FontWeight.w200 represents the "extra-light" weight
+                            fontStyle: FontStyle.italic,
+                          ),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 14.0, horizontal: 6),
+                            border: InputBorder.none,
+                            hintText: "Enter Email",
+                            hintStyle: TextStyle(
+                              color: Color(0xff8598AD),
+                              fontSize: 12.0,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight
+                                  .w200, // FontWeight.w200 represents the "extra-light" weight
+                              fontStyle: FontStyle.italic,
+                            ),
                           ),
                         ),
-                        onChanged: (String? value) {
-                          setState(() {
-                            selectType = value;
-                            print("ttttt${selectType}");
-                          });
-                        },
                       ),
                     ),
-                  ),
-                ],
+
+                    // CustomDropdownButton(
+                    //     width: width * 1 / 6,
+                    //     itemList: list3,
+                    //     onChanged: (String? value) {
+                    //       setState(() {
+                    //         dropdownValue3 = value!;
+                    //       });
+                    //     },
+                    //     dropdownValue: dropdownValue3),
+                    // TextField(
+                    //   decoration: InputDecoration(
+                    //       hintText: 'Enter Email',
+                    //       // contentPadding: const EdgeInsets.all(15),
+                    //       border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(30))),
+                    //   onChanged: (value) {
+                    //     // do something
+                    //   },
+                    // ),
+                    // Container(
+                    //   height: 30,
+                    //   padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(
+                    //       color: Color(0xffE2E4FB),
+                    //       width: 1.5,
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(30),
+                    //   ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 28),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
+                      child: FormLabelText(
+                        labelText: "From",
+                      ),
+                    ),
+                    Container(
+                      width: double.infinity,
+                      height: height * 0.04722,
+                      decoration: BoxDecoration(
+                        color: Color(0xffFFFFFF),
+                        border: Border.all(
+                          color: Color(
+                              0xffE2E4FB), // Set your desired border color
+                          width: 1, // Customize the border width
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: TextField(
+                          // textAlign: TextAlign.left,
+                          textAlignVertical: TextAlignVertical.center,
+                          controller: emailFrom,
+                          style: TextStyle(
+                            color: Color(0xff8598AD),
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight
+                                .w200, // FontWeight.w200 represents the "extra-light" weight
+                            fontStyle: FontStyle.italic,
+                          ),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 14.0, horizontal: 6),
+                            border: InputBorder.none,
+                            hintText: "Enter Email",
+                            hintStyle: TextStyle(
+                              color: Color(0xff8598AD),
+                              fontSize: 12.0,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight
+                                  .w200, // FontWeight.w200 represents the "extra-light" weight
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // CustomDropdownButton(
+                    //     width: width * 1 / 6,
+                    //     itemList: list3,
+                    //     onChanged: (String? value) {
+                    //       setState(() {
+                    //         dropdownValue3 = value!;
+                    //       });
+                    //     },
+                    //     dropdownValue: dropdownValue3),
+                    // TextField(
+                    //   decoration: InputDecoration(
+                    //       hintText: 'Enter Email',
+                    //       // contentPadding: const EdgeInsets.all(15),
+                    //       border: OutlineInputBorder(
+                    //           borderRadius: BorderRadius.circular(30))),
+                    //   onChanged: (value) {
+                    //     // do something
+                    //   },
+                    // ),
+                    // Container(
+                    //   height: 30,
+                    //   padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    //   decoration: BoxDecoration(
+                    //     border: Border.all(
+                    //       color: Color(0xffE2E4FB),
+                    //       width: 1.5,
+                    //     ),
+                    //     borderRadius: BorderRadius.circular(30),
+                    //   ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 28),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
+                      child: FormLabelText(
+                        labelText: "In The Length of",
+                      ),
+                    ),
+                    // CustomDropdownButton(
+                    //     width: width * 1 / 6,
+                    //     itemList: list2,
+                    //     onChanged: (String? value) {
+                    //       setState(() {
+                    //         dropdownValue2 = value!;
+                    //       });
+                    //     },
+                    //     dropdownValue: dropdownValue2),
+                    Container(
+                      padding: EdgeInsets.only(top: 6, left: 8),
+                      width: double.infinity,
+                      height: height * 0.04722,
+                      decoration: BoxDecoration(
+                        color: Color(0xffFFFFFF),
+                        border: Border.all(
+                          color: Color(
+                              0xffE2E4FB), // Set your desired border color
+                          width: 1, // Customize the border width
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: DropdownButton<String>(
+                          underline: Container(),
+                          isExpanded: true,
+                          dropdownColor: Colors.white,
+                          value: length,
+                          style: TextStyle(
+                            color: Color(0xff8598AD),
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight
+                                .w200, // FontWeight.w200 represents the "extra-light" weight
+                            fontStyle: FontStyle.italic,
+                          ),
+                          items: <String>[
+                            'short',
+                            'medium',
+                            'long',
+                            'extra long',
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(value),
+                              ),
+                            );
+                          }).toList(),
+                          hint: Text(
+                            "Select word count",
+                            style: TextStyle(
+                              color: Color(0xff8598AD),
+                              fontSize: 12.0,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight
+                                  .w200, // FontWeight.w200 represents the "extra-light" weight
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                          onChanged: (String? value) {
+                            setState(() {
+                              length = value;
+                              print("ttttt${length}");
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          FormLabelText(
-            labelText: "About",
-          ),
-          MlutiLineTextArea(
-            lines: 5,
-            width: width * 0.79,
-            iconName: "0",
-            hintText: "type here",
+          Row(
+            children: [
+              Expanded(
+                  child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
+                    child: FormLabelText(
+                      labelText: "About",
+                    ),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      // color: Color(0xffE2E4FB),
+                      color: Color(0xffFFFFFF),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color:
+                            Color(0xffE2E4FB), // Set the border color to E2E4FB
+                        width: 1, // Customize the border width
+                      ),
+                    ),
+                    child: new ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: height * 0.1389,
+                      ),
+                      child: TextField(
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontFamily: 'Poppins',
+                          // fontStyle: FontStyle.italic,
+                          color: Color(0xff8598AD),
+                        ),
+                        decoration: InputDecoration(
+                          labelStyle: TextStyle(
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            // fontStyle: FontStyle.italic,
+                            color: Color(0xff8598AD),
+                          ),
+                          contentPadding: EdgeInsets.all(16),
+                          hintText: "Type here",
+                          // prefixText: "I want this text to be added",
+                          hintStyle: TextStyle(
+                            color: Color(0xff8598AD),
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight
+                                .w200, // FontWeight.w200 represents the "extra-light" weight
+                            fontStyle: FontStyle.italic,
+                          ),
+                          border: InputBorder.none, // Remove the underline
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )),
+            ],
           ),
           SizedBox(
             height: 10,
@@ -408,17 +660,18 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(
-              padding: EdgeInsets.only(right: 15, top: 12),
+              padding: EdgeInsets.only(top: 12),
               child: Container(
-                width: 100,
-                height: 30,
+                padding: EdgeInsets.all(5),
+                width: width * 0.1125,
+                height: height * 0.04722,
                 decoration: BoxDecoration(
                     color: Color(0xffFF8203),
                     borderRadius: BorderRadius.all(
                       Radius.circular(20.0),
                     )),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Image.asset(
                       'assets/images/autorenew.png',
@@ -426,67 +679,23 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                       width: 24, // Set the width as needed
                       height: 24, // Set the height as needed
                     ),
-                    Text(
-                      "Generate",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'Fira Sans',
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal),
+                    SizedBox(
+                      width: 15,
+                    ),
+                    Center(
+                      child: Text(
+                        "Generate",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontFamily: 'Fira Sans',
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-          ),
-          Positioned(
-            left: 0,
-            child: Container(
-              width: width * 0.8,
-              height: 10,
-              child: Divider(
-                color: Color(0xffE2E4FB),
-                thickness: 1.0, // Adjust the thickness as needed
-                height: 8.0,
-              ),
-            ),
-          ),
-          FormLabelText(
-            labelText: "Generated Email",
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width * 0.79,
-            height: 30,
-            decoration: BoxDecoration(
-                color: Color(0xff39D1B8),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  topRight: Radius.circular(20.0),
-                )),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/published_with_changes.png',
-                  color: Colors.white, // Icon color
-                  width: 24, // Set the width as needed
-                  height: 24, // Set the height as needed
-                ),
-                Text(
-                  "  Ready",
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Fira Sans',
-                      fontSize: 15,
-                      fontWeight: FontWeight.normal),
-                ),
-              ],
-            ),
-          ),
-          MlutiLineTextArea(
-            iconName: 'copy.png',
-            width: MediaQuery.of(context).size.width * 0.79,
-            lines: 7,
           ),
         ],
       ),

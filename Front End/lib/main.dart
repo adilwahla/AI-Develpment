@@ -4,6 +4,7 @@ import 'package:my_app/Provider/Auth_Provider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Screens/RegistrationPage.dart';
+import 'package:my_app/Screens/SignUp-Screens/SignUp.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +35,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(body: isLoggedIn ? HomeDashboard() : LoginScreen()),
+      //   home: Scaffold(body: isLoggedIn ? HomeDashboard() : SignUp()),
     );
   }
 }

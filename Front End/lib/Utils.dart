@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 const kFormLableStyle = TextStyle(
@@ -115,11 +116,8 @@ Gradient kCardsLinearGradient = LinearGradient(
   ],
 );
 
-TextStyle kMiniCardsStyle = TextStyle(
-    color: Color(0xFFFFFFFF),
-    fontFamily: 'Inter',
-    fontWeight: FontWeight.w500,
-    fontSize: 18);
+TextStyle kMiniCardsStyle =
+    GoogleFonts.inter(color: Color(0xFFFFFFFF), fontSize: 12);
 
 class AppColors {
   static const Color backColor = Color(0xffF6F6F6);

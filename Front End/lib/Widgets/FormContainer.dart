@@ -6,8 +6,8 @@ class FormContainer extends StatelessWidget {
   final Widget addFormElements;
   const FormContainer(
       {super.key,
-      this.left = 40,
-      this.right = 40,
+      this.left = 30,
+      this.right = 30,
       this.bottom = 30,
       this.top = 10,
       this.widthFactor = 0.85,

@@ -7,9 +7,11 @@ class DownloadButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
+    double height = MediaQuery.of(context).size.height;
 
     return Container(
-      width: width * 1 / 7,
+      width: width * 0.175,
+      height: height * 0.047,
       child: ElevatedButton(
         onPressed: () {
           // Add your onPressed functionality here
@@ -33,8 +35,8 @@ class DownloadButtons extends StatelessWidget {
                 child: Image.asset(
                   'assets/images/download.png', // Path to your image asset
                   color: Color(0xffFF8203), // Set the icon color
-                  width: 24, // Set the icon width as needed
-                  height: 24, // Set the icon height as needed
+                  width: width * 0.035,
+                  height: height * 0.035,
                 ),
               ),
               // Icon(Icons.download,
@@ -42,8 +44,11 @@ class DownloadButtons extends StatelessWidget {
               //         Color(0xffFF8203),
               //         ), // Replace "icon1" with your icon
               // Replace "icon2" with another icon
+              SizedBox(
+                width: 5,
+              ),
               Text(
-                " Download as ",
+                " Download as",
                 style: TextStyle(
                     color: Color(0xff8B8FB5), // Set text color
                     fontSize: 12),
@@ -51,13 +56,12 @@ class DownloadButtons extends StatelessWidget {
               //  Icon(Icons.input_rounded, color: Color(0xff8B8FB5)),
               // Icon(Icons.input_rounded, color: Color(0xff8B8FB5)),
               Flexible(
-                child: Image.asset(
-                  'assets/images/$DownloadIconName.png',
-                  // color: Color(0xff8B8FB5),
-                  width: 24,
-                  height: 24,
-                ),
-              ),
+                  child: Image.asset(
+                'assets/images/$DownloadIconName.png',
+                // color: Color(0xff8B8FB5),
+                width: width * 0.035,
+                height: height * 0.035,
+              )),
             ],
           ),
           // children: [

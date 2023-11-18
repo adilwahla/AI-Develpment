@@ -44,6 +44,7 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
   final AuthService authService = AuthService();
   TextEditingController textarea = TextEditingController();
   String? object;
+  String? selectLanguage;
   void translate1() {
     authService.translate(
       context: context,
@@ -56,248 +57,361 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FormLabelText(
-              labelText: "Paste Document",
-              fontSize: 12,
-            ),
-            FormButton(
-              buttonText: "   Paste Document",
-              buttonColor: Color(0xff4C5AFE),
-              buttonIconName: 'paste.png',
-              buttonHeight: 30,
-              buttonWidth: width * 1 / 3,
-              // iconHeight: 27,
-              // iconWidth: 22,
-            ),
-            FormLabelText(
-              labelText: "Language",
-              fontSize: 12,
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              width: width * 1 / 3,
-              height: 33,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Color(0xffE2E4FB), // Set your desired border color
-                  width: 1.5, // Customize the border width
-                ),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: DropdownButton<String>(
-                dropdownColor: Colors.white,
-                value: object,
-                style:
-                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-                items: <String>[
-                  'English',
-                  'Urdu',
-                  'French',
-                  'German',
-                  'Hindi',
-                ].map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                hint: Text(
-                  "Please choose a subject",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600),
-                ),
-                onChanged: (String? value) {
-                  setState(() {
-                    object = value;
-                    print("ttttt${object}");
-                  });
-                },
-              ),
-            ),
-            FormLabelText(
-              labelText: "Type here",
-              fontSize: 12,
-            ),
-            // MlutiLineTextArea(
-
-            //   width: width * 1 / 3,
-            //   iconName: 'Clipboard.png',
-            // ),
-            Container(
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                // color: Color(0xffE2E4FB),
-                color: Color(0xffFFFFFF),
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(
-                  color: Color(0xffE2E4FB), // Set the border color to E2E4FB
-                  width: 2, // Customize the border width
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0, right: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0, bottom: 7),
+                child: FormLabelText(
+                  labelText: "Paste Document",
+                  fontSize: 12,
                 ),
               ),
-              width: width * 1 / 3,
-              child: Column(
-                children: [
-                  TextField(
+              FormButton(
+                buttonText: "   Paste Document",
+                buttonColor: Color(0xff4C5AFE),
+                buttonIconName: 'paste.png',
+                buttonHeight: height * 0.047,
+                buttonWidth: width * 0.366,
+                // iconHeight: 27,
+                // iconWidth: 22,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0, bottom: 7),
+                child: FormLabelText(
+                  labelText: "Language",
+                  fontSize: 12,
+                ),
+              ),
+              Container(
+                width: width * 0.366,
+                height: height * 0.047,
+                decoration: BoxDecoration(
+                  color: Color(0xffFFFFFF),
+                  border: Border.all(
+                    color: Color(0xffE2E4FB), // Set your desired border color
+                    width: 1, // Customize the border width
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: DropdownButton<String>(
+                    underline: Container(),
+                    isExpanded: true,
+                    dropdownColor: Colors.white,
+                    value: selectLanguage,
                     style: TextStyle(
-                      fontSize: 16.0,
-                      fontFamily: 'Poppins',
-                      fontStyle: FontStyle.italic,
                       color: Color(0xff8598AD),
+                      fontSize: 12.0,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight
+                          .w200, // FontWeight.w200 represents the "extra-light" weight
+                      fontStyle: FontStyle.italic,
                     ),
-                    controller: textarea,
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 8,
-                    decoration: InputDecoration(
-                      labelStyle: TextStyle(
-                        fontSize: 16.0,
-                        fontFamily: 'Poppins',
-                        fontStyle: FontStyle.italic,
-                        color: Color(0xff8598AD),
+                    items: <String>[
+                      'Short',
+                      'Medium',
+                      'Long',
+                    ].map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16.0),
+                          child: Text(value),
+                        ),
+                      );
+                    }).toList(),
+                    hint: Padding(
+                      padding: const EdgeInsets.only(left: 16.0),
+                      child: Text(
+                        "Select Length",
+                        style: TextStyle(
+                          color: Color(0xff8598AD),
+                          fontSize: 12.0,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight
+                              .w200, // FontWeight.w200 represents the "extra-light" weight
+                          fontStyle: FontStyle.italic,
+                        ),
                       ),
-                      contentPadding: EdgeInsets.all(10),
-                      // hintText: "Enter Remarks",
-                      // prefixText: "I want this text to be added",
-                      hintStyle: TextStyle(
-                        fontSize: 16.0,
-                        fontFamily: 'Poppins',
-                        fontStyle: FontStyle.italic,
-                        color: Color(0xff8598AD),
+                    ),
+                    onChanged: (String? value) {
+                      setState(() {
+                        selectLanguage = value;
+                        print("ttttt${selectLanguage}");
+                      });
+                    },
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0, bottom: 7),
+                child: FormLabelText(
+                  labelText: "Type here",
+                  fontSize: 12,
+                ),
+              ),
+              // MlutiLineTextArea(
+
+              //   width: width * 1 / 3,
+              //   iconName: 'Clipboard.png',
+              // ),
+              Container(
+                // alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  // color: Color(0xffE2E4FB),
+                  color: Color(0xffFFFFFF),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Color(0xffE2E4FB), // Set the border color to E2E4FB
+                    width: 1, // Customize the border width
+                  ),
+                ),
+                width: width * 0.366,
+                height: height * 0.39,
+                child: Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // color: Color(0xffE2E4FB),
+                      color: Color(0xffFFFFFF),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(10),
                       ),
-                      border: InputBorder.none, // Remove the underline
-                      // focusedBorder: OutlineInputBorder(
-                      //     borderSide: BorderSide(width: 1, color: Colors.redAccent),
-                      //     ),
+                      border: Border.all(
+                        color:
+                            Color(0xffE2E4FB), // Set the border color to E2E4FB
+                        width: 1, // Customize the border width
+                      ),
+                    ),
+                    child: new ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: double.infinity,
+                      ),
+                      child: TextField(
+                        enabled: true,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontFamily: 'Poppins',
+                          // fontStyle: FontStyle.italic,
+                          color: Color(0xff8598AD),
+                        ),
+                        decoration: InputDecoration(
+                          suffixIcon: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  print("copy text");
+                                },
+                                icon:
+                                    Image.asset('assets/images/Clipboard.png'),
+                              ),
+                            ],
+                          ),
+                          labelStyle: TextStyle(
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            // fontStyle: FontStyle.italic,
+                            color: Color(0xff8598AD),
+                          ),
+                          contentPadding: EdgeInsets.all(16),
+
+                          border: InputBorder.none, // Remove the underline
+                        ),
+                      ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: IconButton(
-                      onPressed: () {
-                        print("");
-                      },
-                      icon: Image.asset(
-                        'assets/images/Clipboard.png',
-                      ),
-                    ),
-                  )
-                ],
+                ),
               ),
-            ),
 
-            // SizedBox(
-            //   height: 5,
-            // ),
-            Container(
-              width: width * 1 / 3,
-              height: 20,
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Divider(
-                color: Color(0xffE2E4FB),
-                thickness: 2.0, // Adjust the thickness as needed
-                height: 8.0,
+              SizedBox(
+                height: 10,
               ),
-            ),
-
-            //  FormButton(
-            //     buttonText: "   Paste Document",
-            //     buttonColor: Color(0xffFF8203),
-            //     buttonIconName: 'translate.png',
-            //     buttonHeight: 30,
-            //     buttonWidth: width * 1 / 3,
-            //     // iconHeight: 27,
-            //     // iconWidth: 22,
-
-            //   ),
-            ElevatedButton(onPressed: translate1, child: Text("button "))
-          ],
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: 3,
-            height: MediaQuery.of(context).size.height * 1 / 2,
-            color: Color(0xffE2E4FB),
+              Container(
+                width: width * 0.366,
+                height: 2,
+                // padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Divider(
+                  color: Color(0xffE2E4FB),
+                  thickness: 2.0, // Adjust the thickness as needed
+                  // height: 8.0,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              FormButton(
+                buttonText: "   Translate",
+                buttonColor: Color(0xffFF8203),
+                buttonIconName: 'translate.png',
+                buttonHeight: height * 0.047,
+                buttonWidth: width * 0.366,
+                // iconHeight: 27,
+                // iconWidth: 22,
+              ),
+            ],
           ),
-        ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            FormLabelText(
-              labelText: "Translated Document",
-              fontSize: 12,
+          Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Container(
+              width: 2,
+              height: MediaQuery.of(context).size.height * 0.74,
+              color: Color(0xffE2E4FB),
             ),
-            Container(
-              width: MediaQuery.of(context).size.width / 3,
-              height: 30,
-              decoration: BoxDecoration(
-                  color: Color(0xff39D1B8),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/published_with_changes.png',
-                    color: Colors.white, // Icon color
-                    width: 24, // Set the width as needed
-                    height: 24, // Set the height as needed
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(bottom: 7),
+                child: FormLabelText(
+                  labelText: "Translated Document",
+                  fontSize: 12,
+                ),
+              ),
+              Container(
+                width: width * 0.366,
+                height: height * 0.047,
+                decoration: BoxDecoration(
+                    color: Color(0xff39D1B8),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0),
+                    )),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/published_with_changes.png',
+                      color: Colors.white, // Icon color
+                      width: 24, // Set the width as needed
+                      height: 24, // Set the height as needed
+                    ),
+                    Text(
+                      "  Ready",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Fira Sans',
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                // alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  // color: Color(0xffE2E4FB),
+                  color: Color(0xffFFFFFF),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: Color(0xffE2E4FB), // Set the border color to E2E4FB
+                    width: 1, // Customize the border width
                   ),
-                  Text(
-                    "  Ready",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Fira Sans',
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal),
+                ),
+                width: width * 0.366,
+                height: height * 0.52,
+                child: Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // color: Color(0xffE2E4FB),
+                      color: Color(0xffFFFFFF),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      ),
+                      border: Border.all(
+                        color:
+                            Color(0xffE2E4FB), // Set the border color to E2E4FB
+                        width: 1, // Customize the border width
+                      ),
+                    ),
+                    child: new ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: double.infinity,
+                      ),
+                      child: TextField(
+                        enabled: true,
+                        maxLines: null,
+                        style: TextStyle(
+                          fontSize: 10.0,
+                          fontFamily: 'Poppins',
+                          // fontStyle: FontStyle.italic,
+                          color: Color(0xff8598AD),
+                        ),
+                        decoration: InputDecoration(
+                          suffixIcon: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  print("copy text");
+                                },
+                                icon: Image.asset('assets/images/copy.png'),
+                              ),
+                            ],
+                          ),
+                          labelStyle: TextStyle(
+                            fontSize: 12.0,
+                            fontFamily: 'Poppins',
+                            // fontStyle: FontStyle.italic,
+                            color: Color(0xff8598AD),
+                          ),
+                          contentPadding: EdgeInsets.all(16),
+
+                          border: InputBorder.none, // Remove the underline
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                width: width * 0.366,
+                height: 2,
+                // padding: EdgeInsets.symmetric(horizontal: 10),
+                child: Divider(
+                  color: Color(0xffE2E4FB),
+                  thickness: 2.0, // Adjust the thickness as needed
+                  // height: 8.0,
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  DownloadButtons(
+                    DownloadIconName: 'pdf',
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  DownloadButtons(
+                    DownloadIconName: 'word',
                   ),
                 ],
               ),
-            ),
-            MlutiLineTextArea(
-              iconName: 'copy.png',
-              width: MediaQuery.of(context).size.width / 3,
-              lines: 10,
-            ),
-            Container(
-              width: width * 1 / 3,
-              height: 40,
-              padding: EdgeInsets.symmetric(horizontal: 5),
-              child: Divider(
-                color: Color(0xffE2E4FB),
-                thickness: 2.0, // Adjust the thickness as needed
-                height: 8.0,
-              ),
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                DownloadButtons(
-                  DownloadIconName: 'pdf',
-                ),
-                SizedBox(
-                  width: 60,
-                ),
-                DownloadButtons(
-                  DownloadIconName: 'word',
-                ),
-              ],
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
