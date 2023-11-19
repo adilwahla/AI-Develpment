@@ -24,30 +24,141 @@ class Home extends StatelessWidget {
 
     // Calculate the adaptive width of the card based on the height
 
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        height: double.infinity,
-        // color: Colors.amber,
-        margin: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            Expanded(
-              flex: 2,
-              child: Container(
-                  // color: Colors.deepPurple,
-                  child: Row(
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: ClipPath(
-                      child: Container(
-                        width: Width * 0.444,
-                        height: Height * 0.34,
-                        margin: EdgeInsets.all(16.0),
-                        child: AspectRatio(
-                          aspectRatio: 3 / 1,
-                          child: Card(
+    return Column(
+      children: [
+        Expanded(
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            // color: Colors.amber,
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                      // color: Colors.deepPurple,
+                      child: Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          width: Width * 0.444,
+                          height: Height * 0.34,
+                          margin: EdgeInsets.all(16.0),
+                          child: AspectRatio(
+                            aspectRatio: 3 / 1,
+                            child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                                color: Color(0xFFFDFFFF),
+                                elevation: 4.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Card(
+                                    clipBehavior: Clip.antiAlias,
+                                    child: Container(
+                                      height: Height * 0.276,
+                                      width: Width * 0.313,
+                                      decoration:
+                                          kHomeCardsdecoration.copyWith(
+                                        // color: Color(0xff6874FF),
+                                        gradient: kCardsLinearGradient,
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          // Left half with 2 flex
+                                          Expanded(
+                                            flex: 2,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(.0),
+                                              child: Center(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      "Welcome David!",
+                                                      style:
+                                                          GoogleFonts.inter(
+                                                        fontSize:
+                                                            scaledFontSize,
+                                                        color:
+                                                            Color(0xffFFFFFF),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Your AI Assistant ",
+                                                      style:
+                                                          line1Style, // Style for the first line
+                                                    ),
+                                                    Text(
+                                                      "Simplifying Life,  \nOne Task at a Time.",
+                                                      style:
+                                                          line1Style.copyWith(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // SizedBox(
+                                          //     width:
+                                          //         8), // Add spacing between the two halves
+                                          // Right half with flex 1
+                                          Expanded(
+                                            flex: 1,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  right: 40.0, top: 50),
+                                              child: Transform.scale(
+                                                scaleX: 2,
+                                                scaleY: 2,
+                                                child: AspectRatio(
+                                                  aspectRatio: 1 / 2,
+                                                  child: Transform.rotate(
+                                                    angle: 0,
+                                                    child: Container(
+                                                      child: Image.asset(
+                                                          'assets/images/circle.png',
+                                                          fit:
+                                                              BoxFit.contain),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )),
+                          ),
+                        ),
+                      ),
+
+                      Expanded(
+                        flex: 3,
+                        child: Container(
+                            // color: Colors.white,
+                            // height: 300,
+                            width: Width * 0.444,
+                            height: Height * 0.34,
+                            margin: EdgeInsets.all(16.0),
+                            child: Card(
                               clipBehavior: Clip.antiAlias,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25.0),
@@ -55,197 +166,94 @@ class Home extends StatelessWidget {
                               color: Color(0xFFFDFFFF),
                               elevation: 4.0,
                               child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Card(
                                   clipBehavior: Clip.antiAlias,
                                   child: Container(
-                                    height: Height * 0.276,
-                                    width: Width * 0.313,
+                                    width: Width * 0.42,
+                                    height: Height * 0.274,
                                     decoration: kHomeCardsdecoration.copyWith(
                                       // color: Color(0xff6874FF),
                                       gradient: kCardsLinearGradient,
                                     ),
-                                    child: Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    child: Stack(
                                       children: [
-                                        // Left half with 2 flex
-                                        Expanded(
-                                          flex: 2,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(.0),
-                                            child: Center(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    "Welcome David!",
-                                                    style: GoogleFonts.inter(
-                                                      fontSize: scaledFontSize,
-                                                      color: Color(0xffFFFFFF),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    "Your AI Assistant ",
-                                                    style:
-                                                        line1Style, // Style for the first line
-                                                  ),
-                                                  Text(
-                                                    "Simplifying Life,  \nOne Task at a Time.",
-                                                    style: line1Style.copyWith(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        // SizedBox(
-                                        //     width:
-                                        //         8), // Add spacing between the two halves
-                                        // Right half with flex 1
-                                        Expanded(
-                                          flex: 1,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 40.0, top: 50),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              bottom: 0, left: 40.0, top: 120),
+                                          child: Align(
+                                            alignment: Alignment.bottomRight,
                                             child: Transform.scale(
-                                              scaleX: 2,
-                                              scaleY: 2,
-                                              child: AspectRatio(
-                                                aspectRatio: 1 / 2,
-                                                child: Transform.rotate(
-                                                  angle: 0,
-                                                  child: Container(
-                                                    child: Image.asset(
-                                                        'assets/images/circle.png',
-                                                        fit: BoxFit.contain),
-                                                  ),
+                                              scaleX: 1.2,
+                                              scaleY: 1.2,
+                                              child: Transform.rotate(
+                                                angle: 0,
+                                                child: Container(
+                                                  child: Image.asset(
+                                                      'assets/images/circle.png',
+                                                      fit: BoxFit.contain),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          // crossAxisAlignment:
+                                          //     // CrossAxisAlignment.stretch,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                MiniCard(
+                                                  cardText: 'Text Generated',
+                                                ),
+                                                MiniCard(
+                                                  cardText: 'Report Generated',
+                                                ),
+                                              ],
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                MiniCard(
+                                                  cardText: 'Content Generated',
+                                                ),
+                                                MiniCard(
+                                                  cardText: 'Hours Saved ',
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
-                              )),
-                        ),
+                              ),
+                            )),
                       ),
+                      // Spacer(),
+                    ],
+                  )),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Container(
+                    //
+                    child: Center(
+                      child: Image.asset('assets/images/logo1.png'),
                     ),
                   ),
-
-                  Expanded(
-                    flex: 3,
-                    child: Container(
-                        // color: Colors.white,
-                        // height: 300,
-                        width: Width * 0.444,
-                        height: Height * 0.34,
-                        margin: EdgeInsets.all(16.0),
-                        child: Card(
-                          clipBehavior: Clip.antiAlias,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25.0),
-                          ),
-                          color: Color(0xFFFDFFFF),
-                          elevation: 4.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Card(
-                              clipBehavior: Clip.antiAlias,
-                              child: Container(
-                                width: Width * 0.42,
-                                height: Height * 0.274,
-                                decoration: kHomeCardsdecoration.copyWith(
-                                  // color: Color(0xff6874FF),
-                                  gradient: kCardsLinearGradient,
-                                ),
-                                child: Stack(
-                                  children: [
-                                    Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            bottom: 0, left: 40.0, top: 120),
-                                        child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Transform.scale(
-                                            scaleX: 1.2,
-                                            scaleY: 1.2,
-                                            child: Transform.rotate(
-                                              angle: 0,
-                                              child: Container(
-                                                child: Image.asset(
-                                                    'assets/images/circle.png',
-                                                    fit: BoxFit.contain),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      // crossAxisAlignment:
-                                      //     // CrossAxisAlignment.stretch,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            MiniCard(
-                                              cardText: 'Text Generated',
-                                            ),
-                                            MiniCard(
-                                              cardText: 'Report Generated',
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            MiniCard(
-                                              cardText: 'Content Generated',
-                                            ),
-                                            MiniCard(
-                                              cardText: 'Hours Saved ',
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        )),
-                  ),
-                  // Spacer(),
-                ],
-              )),
-            ),
-            Expanded(
-              flex: 2,
-              child: Container(
-                //
-                child: Center(
-                  child: Image.asset('assets/images/logo1.png'),
                 ),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+      ],
     );
   }
 }

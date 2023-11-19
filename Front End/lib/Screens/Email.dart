@@ -88,41 +88,43 @@ class Email extends StatelessWidget {
                     width: 1, // Customize the border width
                   ),
                 ),
-                child: new ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: double.infinity,
-                  ),
-                  child: TextField(
-                    enabled: false,
-                    maxLines: null,
-                    style: TextStyle(
-                      fontSize: 10.0,
-                      fontFamily: 'Poppins',
-                      // fontStyle: FontStyle.italic,
-                      color: Color(0xff8598AD),
+                child: Container(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      maxHeight: double.infinity,
                     ),
-                    decoration: InputDecoration(
-                      suffixIcon: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              print("copy text");
-                            },
-                            icon: Image.asset('assets/images/copy.png'),
-                          ),
-                        ],
-                      ),
-                      labelStyle: TextStyle(
-                        fontSize: 12.0,
+                    child: TextField(
+                      enabled: false,
+                      maxLines: null,
+                      style: TextStyle(
+                        fontSize: 10.0,
                         fontFamily: 'Poppins',
                         // fontStyle: FontStyle.italic,
                         color: Color(0xff8598AD),
                       ),
-                      contentPadding: EdgeInsets.all(16),
+                      decoration: InputDecoration(
+                        suffixIcon: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                print("copy text");
+                              },
+                              icon: Image.asset('assets/images/copy.png'),
+                            ),
+                          ],
+                        ),
+                        labelStyle: TextStyle(
+                          fontSize: 12.0,
+                          fontFamily: 'Poppins',
+                          // fontStyle: FontStyle.italic,
+                          color: Color(0xff8598AD),
+                        ),
+                        contentPadding: EdgeInsets.all(16),
 
-                      border: InputBorder.none, // Remove the underline
+                        border: InputBorder.none, // Remove the underline
+                      ),
                     ),
                   ),
                 ),
@@ -615,37 +617,39 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                         width: 1, // Customize the border width
                       ),
                     ),
-                    child: new ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: height * 0.1389,
-                      ),
-                      child: TextField(
-                        maxLines: null,
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          fontFamily: 'Poppins',
-                          // fontStyle: FontStyle.italic,
-                          color: Color(0xff8598AD),
+                    child: Container(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: height * 0.1389,
                         ),
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(
-                            fontSize: 12.0,
+                        child: TextField(
+                          maxLines: null,
+                          style: TextStyle(
+                            fontSize: 10.0,
                             fontFamily: 'Poppins',
                             // fontStyle: FontStyle.italic,
                             color: Color(0xff8598AD),
                           ),
-                          contentPadding: EdgeInsets.all(16),
-                          hintText: "Type here",
-                          // prefixText: "I want this text to be added",
-                          hintStyle: TextStyle(
-                            color: Color(0xff8598AD),
-                            fontSize: 12.0,
-                            fontFamily: 'Poppins',
-                            fontWeight: FontWeight
-                                .w200, // FontWeight.w200 represents the "extra-light" weight
-                            fontStyle: FontStyle.italic,
+                          decoration: InputDecoration(
+                            labelStyle: TextStyle(
+                              fontSize: 12.0,
+                              fontFamily: 'Poppins',
+                              // fontStyle: FontStyle.italic,
+                              color: Color(0xff8598AD),
+                            ),
+                            contentPadding: EdgeInsets.all(16),
+                            hintText: "Type here",
+                            // prefixText: "I want this text to be added",
+                            hintStyle: TextStyle(
+                              color: Color(0xff8598AD),
+                              fontSize: 12.0,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight
+                                  .w200, // FontWeight.w200 represents the "extra-light" weight
+                              fontStyle: FontStyle.italic,
+                            ),
+                            border: InputBorder.none, // Remove the underline
                           ),
-                          border: InputBorder.none, // Remove the underline
                         ),
                       ),
                     ),

@@ -255,7 +255,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                       // height: 40,
                                       child: Padding(
                                     padding: const EdgeInsets.only(
-                                        top: 20.0, left: 20),
+                                        top: 14.0, left: 20),
                                     child: Text(
                                       screenName,
                                       style: GoogleFonts.inter(

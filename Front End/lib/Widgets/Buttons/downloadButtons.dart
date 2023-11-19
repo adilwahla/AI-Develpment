@@ -26,47 +26,41 @@ class DownloadButtons extends StatelessWidget {
             width: 1.0, // Adjust the border width as needed
           ),
         ),
-        child: Expanded(
-          // Adjust as needed
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Flexible(
-                child: Image.asset(
-                  'assets/images/download.png', // Path to your image asset
-                  color: Color(0xffFF8203), // Set the icon color
-                  width: width * 0.035,
-                  height: height * 0.035,
-                ),
-              ),
-              // Icon(Icons.download,
-              //     color:
-              //         Color(0xffFF8203),
-              //         ), // Replace "icon1" with your icon
-              // Replace "icon2" with another icon
-              SizedBox(
-                width: 5,
-              ),
-              Text(
-                " Download as",
-                style: TextStyle(
-                    color: Color(0xff8B8FB5), // Set text color
-                    fontSize: 12),
-              ),
-              //  Icon(Icons.input_rounded, color: Color(0xff8B8FB5)),
-              // Icon(Icons.input_rounded, color: Color(0xff8B8FB5)),
-              Flexible(
-                  child: Image.asset(
-                'assets/images/$DownloadIconName.png',
-                // color: Color(0xff8B8FB5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Flexible(
+              child: Image.asset(
+                'assets/images/download.png', // Path to your image asset
+                color: Color(0xffFF8203), // Set the icon color
                 width: width * 0.035,
                 height: height * 0.035,
-              )),
-            ],
-          ),
-          // children: [
-
-          // ],
+              ),
+            ),
+            // Icon(Icons.download,
+            //     color:
+            //         Color(0xffFF8203),
+            //         ), // Replace "icon1" with your icon
+            // Replace "icon2" with another icon
+            SizedBox(
+              width: 5,
+            ),
+            Text(
+              " Download as",
+              style: TextStyle(
+                  color: Color(0xff8B8FB5), // Set text color
+                  fontSize: 12),
+            ),
+            //  Icon(Icons.input_rounded, color: Color(0xff8B8FB5)),
+            // Icon(Icons.input_rounded, color: Color(0xff8B8FB5)),
+            Flexible(
+                child: Image.asset(
+              'assets/images/$DownloadIconName.png',
+              // color: Color(0xff8B8FB5),
+              width: width * 0.035,
+              height: height * 0.035,
+            )),
+          ],
         ),
       ),
     );

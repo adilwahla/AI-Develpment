@@ -268,9 +268,10 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
               color: Color(0xffE2E4FB),
             ),
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+          Flex(
+            // mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
+            direction: Axis.vertical, // or Axis.horizontal based on your layout
             children: [
               Padding(
                 padding: const EdgeInsets.only(bottom: 7),
