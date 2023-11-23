@@ -4,6 +4,7 @@ import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Screens/Email.dart';
 import 'package:my_app/Screens/Home.dart';
+import 'package:my_app/Screens/ProfileScreen/Profile.dart';
 import 'package:my_app/Screens/Report.dart';
 import 'package:my_app/Screens/SocialMediaPage.dart';
 import 'package:my_app/Screens/Translate.dart';
@@ -17,6 +18,7 @@ class HomeDashboard extends StatefulWidget {
 List<bool> selected = [true, false, false, false, false];
 
 class _HomeDashboardState extends State<HomeDashboard> {
+  final AuthService authService = AuthService();
   int selectedIndex = 0;
   bool isAuthenticated = false;
   // List<IconData> icon = [
@@ -40,7 +42,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
   ];
   String screenName = 'Home';
   void select(int n) {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
       if (i != 0) {
         screenName = "";
       } else {
@@ -299,11 +301,52 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                       ),
                                     ),
                                   ),
-                                  _nameAndProfilePicture(
-                                      context, "assets/images/avatar.jpg"
-                                      //  "https://image.freepik.com/free-photo/dreamy-girl-biting-sunglasses-looking-away-with-dreamy-face-purple-background_197531-7085.jpg",
-                                      //  "https://media.istockphoto.com/id/1399788030/photo/portrait-of-young-confident-indian-woman-pose-on-background.jpg"
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      // Add the dropdown button to trigger the menu
+                                      PopupMenuButton<String>(
+                                        onSelected: (value) {
+                                          if (value == 'logout') {
+                                            authService.signOut(context);
+                                          } else if (value == 'profile') {
+                                            // Handle navigating to the profile page
+                                            // showProfile = true;
+                                            setState(() {
+                                              selectedIndex = 5;
+                                            });
+                                          }
+                                        },
+                                        itemBuilder: (BuildContext context) => [
+                                          PopupMenuItem(
+                                            value: 'logout',
+                                            child: Text('Logout'),
+                                          ),
+                                          PopupMenuItem(
+                                            value: 'profile',
+                                            child: Text('Profile Page'),
+                                          ),
+                                        ],
+                                        child: Container(
+                                          // color: Colors.amber,
+                                          height: 50,
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 8.0),
+                                            child: CircleAvatar(
+                                              backgroundColor: Colors.white,
+                                              radius: 23,
+                                              child: CircleAvatar(
+                                                backgroundImage: NetworkImage(
+                                                    'assets/images/avatar.jpg'),
+                                                radius: 20,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ),
+                                    ],
+                                  ),
                                   SizedBox(
                                     width: 40,
                                   )
@@ -343,6 +386,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
         return ReportPage();
       case 4:
         return SocialMediaPage();
+      case 5:
+        return Profile();
 
       default:
         screenName = 'Home';
@@ -351,32 +396,44 @@ class _HomeDashboardState extends State<HomeDashboard> {
   }
 }
 
-Widget _nameAndProfilePicture(BuildContext context, String imageUrl) {
+Widget _nameAndProfilePicture(
+  BuildContext context,
+
+  // bool showProfile
+) {
   final AuthService authService = AuthService();
+  // showProfile = false;
   return Row(
     mainAxisAlignment: MainAxisAlignment.end,
     children: [
-      // const Padding(
-      //   padding: EdgeInsets.only(left: 6.0),
-      //   child: Icon(
-      //     CupertinoIcons.chevron_down,
-      //     size: 14,
-      //   ),
-      // ),
-      Visibility(
+      // Add the dropdown button to trigger the menu
+      PopupMenuButton<String>(
+        onSelected: (value) {
+          if (value == 'logout') {
+            authService.signOut(context);
+          } else if (value == 'profile') {
+            // Handle navigating to the profile page
+            // showProfile = true;
+          }
+        },
+        itemBuilder: (BuildContext context) => [
+          PopupMenuItem(
+            value: 'logout',
+            child: Text('Logout'),
+          ),
+          PopupMenuItem(
+            value: 'profile',
+            child: Text('Profile Page'),
+          ),
+        ],
         child: Padding(
           padding: const EdgeInsets.only(left: 8.0),
-          child: InkWell(
-            onTap: () {
-              authService.signOut(context);
-            },
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            radius: 23,
             child: CircleAvatar(
-              backgroundColor: Colors.white,
-              radius: 23,
-              child: CircleAvatar(
-                backgroundImage: NetworkImage(imageUrl),
-                radius: 20,
-              ),
+              backgroundImage: NetworkImage('assets/images/avatar.jpg'),
+              radius: 20,
             ),
           ),
         ),
@@ -514,36 +571,46 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
               //   ),
               // ),
               Container(
-                // color: Colors.amber,
-                height: 45.0,
-                width: width * 0.185,
-                // width: 170.0,
-                margin: EdgeInsets.only(left: 60.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      widget.imagePath, // Use the imagePath from your NavItem
-                      color: widget.color,
-                      width: 15.0, // Adjust the width as needed
-                      height: 15.0, // Adjust the height as needed
+                child: CustomPaint(
+                  size: Size(
+                      width * 0.185,
+                      (width * 0.185)
+                          .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+                  painter: RPSCustomPainter(),
+                  child: Container(
+                    // color: Colors.amber,
+                    height: 45.0,
+                    width: width * 0.185,
+                    // width: 170.0,
+                    margin: EdgeInsets.only(left: 60.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          widget
+                              .imagePath, // Use the imagePath from your NavItem
+                          color: widget.color,
+                          width: 15.0, // Adjust the width as needed
+                          height: 15.0, // Adjust the height as needed
+                        ),
+                        // Icon(
+                        //   widget.icon,
+                        //   color: _color.value,
+                        //   size: 18.0,
+                        // ),
+                        SizedBox(
+                            width: 7), // Add some spacing between icon and name
+                        Text(
+                          widget.name, // Display the icon name
+                          style: TextStyle(
+                            color: widget.color,
+                            fontSize: 15.0, // Adjust font size as needed
+                          ),
+                        ),
+                      ],
                     ),
-                    // Icon(
-                    //   widget.icon,
-                    //   color: _color.value,
-                    //   size: 18.0,
-                    // ),
-                    SizedBox(
-                        width: 7), // Add some spacing between icon and name
-                    Text(
-                      widget.name, // Display the icon name
-                      style: TextStyle(
-                        color: widget.color,
-                        fontSize: 15.0, // Adjust font size as needed
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ],
@@ -554,130 +621,106 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
   }
 }
 
-class CurvePainter extends CustomPainter {
-  final double value1; // 200
-  final double animValue1; // static value1 = 50.0
-  final double animValue2; //static value1 = 75.0
-  final double animValue3; //static value1 = 75.0
-
-  CurvePainter({
-    required this.value1,
-    required this.animValue1,
-    required this.animValue2,
-    required this.animValue3,
-  });
-
+class RPSCustomPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    Path path = Path();
-    Paint paint = Paint();
+    // Layer 1
 
-    path.moveTo(170, value1);
-    path.quadraticBezierTo(170, value1 + 9, animValue3, value1 + 9);
-    path.lineTo(animValue1, value1 + 10);
-    path.quadraticBezierTo(animValue2, value1 + 13, animValue2, value1 + 30);
-    path.lineTo(170, value1 + 30);
-    path.close();
+    Paint paint_fill_0 = Paint()
+      ..color = const Color.fromARGB(255, 255, 255, 255)
+      ..style = PaintingStyle.fill
+      ..strokeWidth = size.width * 0.00
+      ..strokeCap = StrokeCap.butt
+      ..strokeJoin = StrokeJoin.miter;
 
-    path.moveTo(170, value1 + 50);
-    path.quadraticBezierTo(170, value1 + 40, animValue3, value1 + 40);
-    path.lineTo(animValue1, value1 + 40);
-    path.quadraticBezierTo(animValue2, value1 + 40, animValue2, value1 + 30);
-    path.lineTo(170, value1 + 30);
-    path.close();
+    Path path_0 = Path();
+    path_0.moveTo(size.width * 1.0033333, size.height * 0.2824074);
+    path_0.cubicTo(
+        size.width * 1.0050000,
+        size.height * 0.3293981,
+        size.width * 0.4450000,
+        size.height * 0.3224537,
+        size.width * 0.4500000,
+        size.height * 0.3481481);
+    path_0.cubicTo(
+        size.width * 0.4441667,
+        size.height * 0.3793981,
+        size.width * 1.0066667,
+        size.height * 0.3597222,
+        size.width * 0.9966667,
+        size.height * 0.4055556);
+    path_0.cubicTo(
+        size.width * 0.9983333,
+        size.height * 0.4212963,
+        size.width * 1.0016667,
+        size.height * 0.2560185,
+        size.width * 1.0033333,
+        size.height * 0.2824074);
+    path_0.close();
 
-    paint.color = Color(0xffEBF2FC);
-    paint.strokeWidth = 170.0; // Adjust the stroke width to 151.0
-    canvas.drawPath(path, paint);
+    canvas.drawPath(path_0, paint_fill_0);
+
+    // Layer 1
+
+    Paint paint_stroke_0 = Paint()
+      ..color = const Color.fromARGB(253, 33, 150, 243)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = size.width * 0.00
+      ..strokeCap = StrokeCap.butt
+      ..strokeJoin = StrokeJoin.miter;
+
+    canvas.drawPath(path_0, paint_stroke_0);
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return oldDelegate != this;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
+
+
+///////////////////////////////////////////////////////////
+// class CurvePainter extends CustomPainter {
+//   final double value1; // 200
+//   final double animValue1; // static value1 = 50.0
+//   final double animValue2; //static value1 = 75.0
+//   final double animValue3; //static value1 = 75.0
+
+//   CurvePainter({
+//     required this.value1,
+//     required this.animValue1,
+//     required this.animValue2,
+//     required this.animValue3,
+//   });
+
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     Path path = Path();
+//     Paint paint = Paint();
+
+//     path.moveTo(170, value1);
+//     path.quadraticBezierTo(170, value1 + 9, animValue3, value1 + 9);
+//     path.lineTo(animValue1, value1 + 10);
+//     path.quadraticBezierTo(animValue2, value1 + 13, animValue2, value1 + 30);
+//     path.lineTo(170, value1 + 30);
+//     path.close();
+
+//     path.moveTo(170, value1 + 50);
+//     path.quadraticBezierTo(170, value1 + 40, animValue3, value1 + 40);
+//     path.lineTo(animValue1, value1 + 40);
+//     path.quadraticBezierTo(animValue2, value1 + 40, animValue2, value1 + 30);
+//     path.lineTo(170, value1 + 30);
+//     path.close();
+
+//     paint.color = Color(0xffEBF2FC);
+//     paint.strokeWidth = 170.0; // Adjust the stroke width to 151.0
+//     canvas.drawPath(path, paint);
+//   }
+
+//   @override
+//   bool shouldRepaint(CustomPainter oldDelegate) {
+//     return oldDelegate != this;
+//   }
+// }
 
 // new one
-class TopAppBar extends StatelessWidget {
-  const TopAppBar({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(18.0),
-      child: Row(
-        children: [
-          Text("Allah is Greatest"),
-          Visibility(
-            child: const Padding(
-              padding: EdgeInsets.only(right: 30.0),
-              child: Text(
-                "Overview",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 26,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 15),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                color: Colors.white,
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  fillColor: Colors.white,
-                  hintText: "Search something...",
-                  icon: Icon(CupertinoIcons.search),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: _nameAndProfilePicture(
-              context,
-              "Emily Smith",
-              "https://image.freepik.com/free-photo/dreamy-girl-biting-sunglasses-looking-away-with-dreamy-face-purple-background_197531-7085.jpg",
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _nameAndProfilePicture(
-      BuildContext context, String username, String imageUrl) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Text(
-          username,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        const Padding(
-          padding: EdgeInsets.only(left: 6.0),
-          child: Icon(
-            CupertinoIcons.chevron_down,
-            size: 14,
-          ),
-        ),
-        Visibility(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: CircleAvatar(
-              backgroundImage: NetworkImage(imageUrl),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}

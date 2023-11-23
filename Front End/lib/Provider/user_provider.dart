@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:my_app/models/user.dart';
 
 class UserProvider extends ChangeNotifier {
-  User _user = User(id: "", name: "", email: "", token: "", password: "");
+  User _user =
+      User(id: null, name: null, email: null, token: null, password: null);
 
   User get user => _user;
 

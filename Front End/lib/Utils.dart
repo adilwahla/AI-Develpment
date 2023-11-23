@@ -89,7 +89,8 @@ BoxDecoration kHomeCardsdecoration = BoxDecoration(
 BoxDecoration kFormContainerDecoration = BoxDecoration(
   // color: Colors.amberAccent,
   // color: Color(0xFFFDFFFF),
-  color: Color(0xffE2E4FB).withOpacity(0.2),
+  //color: Color(0xffE2E4FB).withOpacity(0.2), //  ebf2fc
+  color: Color(0xffebf2fc).withOpacity(0.4), //  ebf2fc
   borderRadius: BorderRadius.circular(20),
   border: Border.all(
     color: Color(0xffE2E4FB), // Set the border color to E2E4FB
@@ -158,4 +159,19 @@ void httpErrorHandle({
 
 class Constants {
   static String uri = 'http://localhost:3000';
+}
+
+class HttpUtils {
+  static void httpErrorHandle({
+    required http.Response response,
+    required Function onSuccess,
+    required Function(String) onError,
+  }) {
+    // Handle HTTP errors here
+    if (response.statusCode == 200) {
+      onSuccess();
+    } else {
+      onError(response.body);
+    }
+  }
 }

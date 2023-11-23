@@ -409,13 +409,13 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       DownloadButtons(
-                        DownloadIconName: 'pdf',
+                        downloadIconName: 'pdf',
                       ),
                       SizedBox(
                         width: 5,
                       ),
                       DownloadButtons(
-                        DownloadIconName: 'word',
+                        downloadIconName: 'word',
                       ),
                     ],
                   ),

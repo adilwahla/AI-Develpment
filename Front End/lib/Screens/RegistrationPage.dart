@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/Auth_Provider.dart';
+import 'package:my_app/Provider/SnackBarProvider.dart';
+import 'package:my_app/Provider/user_provider.dart';
+import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Utils.dart';
 import 'package:my_app/Widgets/Responsive/Responsive_widget.dart';
 import 'package:my_app/config.dart';
@@ -23,24 +26,42 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
-  bool _isNotValidate = false;
-  bool register = false;
+ 
   final AuthService authService = AuthService();
   bool _isChecked = false;
-  void signinUser() {
-    authService.signInUser(
-      context: context,
+
+  void signinUser(
+    BuildContext context,
+    TextEditingController emailController,
+    TextEditingController passwordController,
+  ) {
+    authService
+        .signInUser(
       email: emailController.text,
       password: passwordController.text,
-    );
-  }
+    )
+        .then((res) {
+      HttpUtils.httpErrorHandle(
+        response: res,
+        onSuccess: () async {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          context.read<UserProvider>().setUser(res.body);
+          await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
 
-  void signupUser() {
-    authService.signUpUser(
-        context: context,
-        email: emailController.text,
-        password: passwordController.text,
-        name: nameController.text);
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+              builder: (context) => HomeDashboard(),
+            ),
+            (route) => false,
+          );
+        },
+        onError: (error) {
+          context.read<SnackBarProvider>().showSnackBar(context, error);
+        },
+      );
+    }).catchError((error) {
+      context.read<SnackBarProvider>().showSnackBar(context, error.toString());
+    });
   }
 
   final textFieldFocusNode = FocusNode();
@@ -118,62 +139,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fontSize: 14,
                                 color: Color(0xff626476),
                               ),
-                            ),
-                          ),
-                          Visibility(
-                            //// username
-                            visible: register == true,
-                            child: Container(
-                              width: width * 0.25,
-                              height: height * 0.0519,
-                              child: TextFormField(
-                                controller: nameController,
-                                style: TextStyle(
-                                  fontFamily: 'Inter',
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(
-                                      0xff060C43), // Set the text color for entered text
-                                  fontSize: 14.0, // Set the font size
-                                  height:
-                                      1.2, // Line height as a multiplier (20% increase from the default)
-                                  letterSpacing:
-                                      0.02, // Letter spacing as a percentage (2%)
-                                ),
-                                decoration: const InputDecoration(
-                                  hintText: "Enter Name",
-                                  labelText: "Name",
-                                  labelStyle: TextStyle(
-                                    color: Color(0xff626476),
-                                    fontSize: 12.0,
-                                    height: 1.33, // Line height
-                                    letterSpacing:
-                                        0.02, // Letter spacing as a percentage
-                                    fontFamily:
-                                        'Inter', // Assuming 'Inter' is the font family
-                                    fontWeight: FontWeight
-                                        .normal, // Regular font weight
-                                  ),
-                                  hintStyle:
-                                      TextStyle(color: Color(0xffBBBEE0)),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                        color: Color(0xffBBBEE0)),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderSide: const BorderSide(
-                                      color: Color(0xffBBBEE0),
-                                      width: 1,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          Visibility(
-                            //// username
-                            visible: register == true,
-                            child: SizedBox(
-                              height: 14,
                             ),
                           ),
                           Container(
@@ -331,14 +296,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // SizedBox(width: 100),
                                 TextButton(
                                   onPressed: () {
-                                    setState(() {
-                                      register = !register;
-                                    });
+                                    // setState(() {
+                                    //   register = !register;
+                                    // });
                                   },
                                   child: Text(
-                                    register == true
-                                        ? "Signup"
-                                        : 'Forgot Password',
+                                    'Forgot Password',
                                     style: GoogleFonts.inter(
                                       decoration: TextDecoration.underline,
 
@@ -371,12 +334,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Center(
                                 child: InkWell(
                                   onTap: () {
-                                    register == true
-                                        ? signupUser()
-                                        : signinUser();
+                                    signinUser(context, emailController,
+                                        passwordController);
                                   },
                                   child: Text(
-                                    register == true ? "Signup" : 'Signin?',
+                                    'Signin?',
                                     style: GoogleFonts.plusJakartaSans(
                                         fontSize: 16,
                                         color: Colors.white,
