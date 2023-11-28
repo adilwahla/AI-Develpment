@@ -2,13 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
 import 'package:my_app/Provider/user_provider.dart';
-import 'package:my_app/Screens/Home.dart';
-import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Screens/RegistrationPage.dart';
 import 'package:my_app/Utils.dart';
-import 'package:my_app/models/user.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,12 +1,11 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:my_app/Utils.dart';
-import 'package:my_app/Widgets/Buttons/CustomDropdownButton.dart';
-import 'package:my_app/Widgets/Buttons/DropDownButton.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
-import 'package:my_app/Widgets/Text/TextArea.dart';
 
 class Email extends StatelessWidget {
   const Email({super.key});

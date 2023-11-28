@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:my_app/Utils.dart';
 
@@ -7,7 +6,7 @@ class homeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
+    return Column(
       children: [
         Stack(
           children: [
@@ -332,10 +331,11 @@ class homeWidget extends StatelessWidget {
               ],
             ),
             Container(
-                margin: EdgeInsets.only(top: 400),
-                child: Center(child: Image.asset('assets/images/logo1.png'),
-                ),
-                ),
+              margin: EdgeInsets.only(top: 400),
+              child: Center(
+                child: Image.asset('assets/images/logo1.png'),
+              ),
+            ),
           ],
         ),
       ],

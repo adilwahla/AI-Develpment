@@ -1,6 +1,7 @@
+// ignore_for_file: unused_field, unused_local_variable
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Screens/Email.dart';
 import 'package:my_app/Screens/Home.dart';
@@ -21,18 +22,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
   final AuthService authService = AuthService();
   int selectedIndex = 0;
   bool isAuthenticated = false;
-  // List<IconData> icon = [
-  //   Feather.wind,
-  //   Feather.folder,
-  //   Feather.monitor,
-  //   Feather.lock,
-  //   Feather.mail,
-  //   NavItem(icon: Feather.home, name: 'Home'),
-  // NavItem(icon: Feather.mail, name: 'Email '),
-  // NavItem(icon: Feather.monitor, name: 'Translate'),
-  // NavItem(icon: Feather.lock, name: 'Report'),
-  // NavItem(icon: Feather.share, name: 'Social Media'),
-  // ];
+
   List<NavItem> navItems = [
     NavItem(imagePath: 'assets/images/home.png', name: 'Home'),
     NavItem(imagePath: 'assets/images/email.png', name: 'Email Generation'),
@@ -57,19 +47,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
         selectedIndex = n;
       });
     }
-    // Use Navigator to navigate to the appropriate screen
-    //   if (n == 0) {
-    //     Navigator.of(context)
-    //         .push(MaterialPageRoute(builder: (context) => Home()));
-    //   } else if (n == 1) {
-    //     Navigator.of(context)
-    //         .push(MaterialPageRoute(builder: (context) => Email()));
-    //   }
-    // void onLoginSuccess() {
-    //   setState(() {
-    //     isAuthenticated = true;
-    //   });
-    // }
+
+    // ignore: unused_element
     void onLoginSuccess() {
       setState(() {
         isAuthenticated = true;
@@ -396,6 +375,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
   }
 }
 
+// ignore: unused_element
 Widget _nameAndProfilePicture(
   BuildContext context,
 
