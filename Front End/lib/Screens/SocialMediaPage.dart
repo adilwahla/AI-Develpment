@@ -38,16 +38,12 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
   TextEditingController textController1 = TextEditingController();
   TextEditingController textController2 = TextEditingController();
   TextEditingController textController3 = TextEditingController();
-  // TextEditingController textController = TextEditingController();
 
   String? timeframe;
   String? frequency;
   String? type;
   String? themes;
-  // String dropdownValue2 = list2.first;
-  // String dropdownValue3 = list3.first;
-  // String dropdownValue4 = list4.first;
-  // String dropdownValue5 = list5.first;
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -234,7 +230,7 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                         // SizedBox(
                         //     height: 5.0), // Add vertical space between rows
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // SizedBox(width: 8.0),

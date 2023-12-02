@@ -20,7 +20,7 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => UserProvider()),
     ChangeNotifierProvider(create: (_) => Auth_provider()),
-     ChangeNotifierProvider(create: (_) => SnackBarProvider()),
+    ChangeNotifierProvider(create: (_) => SnackBarProvider()),
   ], child: MyApp()));
 }
 
@@ -35,8 +35,9 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(),
       home: Scaffold(body: isLoggedIn ? HomeDashboard() : LoginScreen()),
-      //   home: Scaffold(body: isLoggedIn ? HomeDashboard() : SignUp()),
     );
   }
 }

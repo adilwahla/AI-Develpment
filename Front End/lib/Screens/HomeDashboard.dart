@@ -9,6 +9,7 @@ import 'package:my_app/Screens/ProfileScreen/Profile.dart';
 import 'package:my_app/Screens/Report.dart';
 import 'package:my_app/Screens/SocialMediaPage.dart';
 import 'package:my_app/Screens/Translate.dart';
+import 'package:my_app/Widgets/Footer.dart';
 import 'package:my_app/services/auth_services.dart';
 
 class HomeDashboard extends StatefulWidget {
@@ -122,78 +123,12 @@ class _HomeDashboardState extends State<HomeDashboard> {
                           .toList(),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 2.0, horizontal: 5),
-                      child: Container(
-                        width: width * 0.142,
-                        height: height * 0.12,
-                        decoration: BoxDecoration(
-                          color: Color(0xff3D4AE0).withOpacity(0.5),
-                          borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/fone.png', // path to your asset image
-                                    width: 20.0,
-                                    height: 20.0,
-                                  ),
-                                  Expanded(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        text: ' PHONE \n +36301533386 ',
-                                      ),
-                                      style: GoogleFonts.montserrat(
-                                        // fontFamily: 'Montserrat',
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        height:
-                                            1.7, // Line height is set as a multiplier of font size
-                                        letterSpacing: 0.02,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/mail2.png', // path to your asset image
-                                    width: 20.0,
-                                    height: 20.0,
-                                  ),
-                                  Expanded(
-                                    child: Text.rich(
-                                      TextSpan(
-                                        text:
-                                            ' EMAIL  \n customerservice@aidev ',
-                                      ),
-                                      style: GoogleFonts.montserrat(
-                                        // fontFamily: 'Montserrat',
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        height:
-                                            1, // Line height is set as a multiplier of font size
-                                        letterSpacing: 0.04,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+
+                  // ********************| Footer |*********************//
+
+                  Footer(width: width, height: height),
+
+                  // ********************| Footer |*********************//
                 ],
               ),
             ),

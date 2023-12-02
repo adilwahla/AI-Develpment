@@ -47,27 +47,6 @@ TextStyle line1Style = TextStyle(
   ],
 );
 
-final double circleRadius = 70;
-
-final circle = Container(
-  height: circleRadius * 2,
-  width: circleRadius * 2,
-  decoration: ShapeDecoration(
-    shape: const CircleBorder(),
-    color: Color(0xFFFFFFFF).withOpacity(.3),
-  ),
-);
-final double circleRadius2 = 30;
-
-final circle2 = Container(
-  height: circleRadius2 * 2,
-  width: circleRadius2 * 2,
-  decoration: ShapeDecoration(
-    shape: const CircleBorder(),
-    color: Color(0xFFFFFFFF).withOpacity(.3),
-  ),
-);
-
 BoxDecoration kHomeCardsdecoration = BoxDecoration(
   borderRadius: BorderRadius.circular(30.0), // Adjust the radius as needed
   color: Color(0xFFFDFFFF),
@@ -128,6 +107,39 @@ class AppColors {
   static const Color greyColor = Color(0xffAAAAAA);
   static const Color whiteColor = Color(0xffFFFFFF);
 }
+
+const kEmailInputStyle = TextStyle(
+  color: Color(0xff8598AD),
+  fontSize: 13.0,
+  fontFamily: 'Poppins',
+  fontWeight:
+      FontWeight.w200, // FontWeight.w200 represents the "extra-light" weight
+  fontStyle: FontStyle.italic,
+);
+InputDecoration kEmailInputDecoration = InputDecoration(
+  filled: true,
+  fillColor: Colors.white,
+  hintStyle: TextStyle(
+    color: Color(0xff8598AD),
+    fontSize: 12.0,
+    fontFamily: 'Poppins',
+    fontWeight:
+        FontWeight.w200, // FontWeight.w200 represents the "extra-light" weight
+    fontStyle: FontStyle.italic,
+  ),
+  contentPadding: const EdgeInsets.all(15),
+  enabledBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(20),
+    borderSide: BorderSide(
+      width: 1,
+      color: Color(0xffE2E4FB), //E2E4FB
+    ),
+  ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.circular(20),
+    borderSide: BorderSide(color: Color(0xff4C5AFE)),
+  ),
+);
 
 void showSnackBar(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(

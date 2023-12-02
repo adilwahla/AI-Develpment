@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Utils.dart';
 
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
@@ -42,7 +44,8 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
   final AuthService authService = AuthService();
   TextEditingController textarea = TextEditingController();
   String? object;
-  String? selectLanguage;
+  // String? selectLanguage;
+  TextEditingController selectLanguage = TextEditingController();
   void translate1() {
     authService.translate(
       context: context,
@@ -87,68 +90,68 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                   fontSize: 12,
                 ),
               ),
+
               Container(
+                // width: width * 0.18,
                 width: width * 0.366,
                 height: height * 0.047,
                 decoration: BoxDecoration(
                   color: Color(0xffFFFFFF),
-                  border: Border.all(
-                    color: Color(0xffE2E4FB), // Set your desired border color
-                    width: 1, // Customize the border width
-                  ),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: DropdownButton<String>(
-                    underline: Container(),
-                    isExpanded: true,
-                    dropdownColor: Colors.white,
-                    value: selectLanguage,
-                    style: TextStyle(
-                      color: Color(0xff8598AD),
-                      fontSize: 12.0,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight
-                          .w200, // FontWeight.w200 represents the "extra-light" weight
-                      fontStyle: FontStyle.italic,
-                    ),
-                    items: <String>[
-                      'Short',
-                      'Medium',
-                      'Long',
-                    ].map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Text(value),
-                        ),
-                      );
-                    }).toList(),
-                    hint: Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Text(
-                        "Select Length",
-                        style: TextStyle(
-                          color: Color(0xff8598AD),
-                          fontSize: 12.0,
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight
-                              .w200, // FontWeight.w200 represents the "extra-light" weight
-                          fontStyle: FontStyle.italic,
+                child: TextField(
+                  controller: selectLanguage,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 16.0,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight
+                        .w200, // FontWeight.w200 represents the "extra-light" weight
+                    fontStyle: FontStyle.italic,
+                  ),
+                  decoration: InputDecoration(
+                      hintStyle: TextStyle(
+                        color: Color(0xff8598AD),
+                        fontSize: 12.0,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight
+                            .w200, // FontWeight.w200 represents the "extra-light" weight
+                        fontStyle: FontStyle.italic,
+                      ),
+                      hintText: 'Enter Language',
+                      contentPadding: const EdgeInsets.all(15),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(
+                          width: 1,
+                          color: Color(0xffE2E4FB), //E2E4FB
                         ),
                       ),
-                    ),
-                    onChanged: (String? value) {
-                      setState(() {
-                        selectLanguage = value;
-                        print("ttttt${selectLanguage}");
-                      });
-                    },
-                  ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                        borderSide: BorderSide(color: Color(0xff4C5AFE)),
+                      )),
+                  onChanged: (value) {
+                    // do something
+                  },
                 ),
               ),
+              // Container(
+              //   width: width * 0.366,
+              //   height: height * 0.047,
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              //     child: TextField(
+              //       controller: selectLanguage,
+              //       style: kEmailInputStyle,
+              //       decoration: kEmailInputDecoration.copyWith(
+              //           hintText: "Enter Language"),
+              //       onChanged: (value) {
+              //         // do something
+              //       },
+              //     ),
+              //   ),
+              // ),
               Padding(
                 padding: const EdgeInsets.only(top: 12.0, bottom: 7),
                 child: FormLabelText(
@@ -196,10 +199,12 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                         enabled: true,
                         maxLines: null,
                         style: TextStyle(
-                          fontSize: 10.0,
+                          color: Colors.black,
+                          fontSize: 16.0,
                           fontFamily: 'Poppins',
-                          // fontStyle: FontStyle.italic,
-                          color: Color(0xff8598AD),
+                          fontWeight: FontWeight
+                              .w200, // FontWeight.w200 represents the "extra-light" weight
+                          fontStyle: FontStyle.italic,
                         ),
                         decoration: InputDecoration(
                           suffixIcon: Column(
@@ -290,17 +295,16 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      'assets/images/published_with_changes.png',
-                      color: Colors.white, // Icon color
-                      width: 24, // Set the width as needed
-                      height: 24, // Set the height as needed
-                    ),
+                    // Image.asset(
+                    //   'assets/images/published_with_changes.png',
+                    //   color: Colors.white, // Icon color
+                    //   width: 24, // Set the width as needed
+                    //   height: 24, // Set the height as needed
+                    // ),
                     Text(
-                      "  Ready",
-                      style: TextStyle(
+                      "Waiting",
+                      style: GoogleFonts.firaSans(
                           color: Colors.white,
-                          fontFamily: 'Fira Sans',
                           fontSize: 15,
                           fontWeight: FontWeight.normal),
                     ),

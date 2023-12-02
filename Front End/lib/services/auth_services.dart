@@ -110,3 +110,7 @@ class AuthService {
     }
   }
 }
+
+class Environment {
+  static const String apiURL = String.fromEnvironment("BASE_URL");
+}

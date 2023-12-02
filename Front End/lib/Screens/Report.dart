@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Utils.dart';
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
@@ -32,14 +34,9 @@ class ReportFormBody extends StatefulWidget {
 }
 
 class _ReportFormBodyState extends State<ReportFormBody> {
-  static const List<String> length = <String>['One', 'Two', 'Three', 'Four'];
-  static const List<String> language = <String>['One', 'Two', 'Three', 'Four'];
-  String dropdownLength = length.first;
-  String dropdownLanguage = language.first;
-
   TextEditingController textarea = TextEditingController();
   String? object;
-  String? selectLanguage;
+  TextEditingController EnterLanguage = TextEditingController();
   String? selectLength;
 
   @override
@@ -105,7 +102,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                   underline: Container(),
                                   isExpanded: true,
                                   dropdownColor: Colors.white,
-                                  value: selectLanguage,
+                                  value: selectLength,
                                   style: TextStyle(
                                     color: Color(0xff8598AD),
                                     fontSize: 12.0,
@@ -145,8 +142,8 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                   ),
                                   onChanged: (String? value) {
                                     setState(() {
-                                      selectLanguage = value;
-                                      print("ttttt${selectLanguage}");
+                                      selectLength = value;
+                                      print("ttttt${selectLength}");
                                     });
                                   },
                                 ),
@@ -172,64 +169,44 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                               height: height * 0.047,
                               decoration: BoxDecoration(
                                 color: Color(0xffFFFFFF),
-                                border: Border.all(
-                                  color: Color(
-                                      0xffE2E4FB), // Set your desired border color
-                                  width: 1, // Customize the border width
-                                ),
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(25),
                               ),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: DropdownButton<String>(
-                                  underline: Container(),
-                                  isExpanded: true,
-                                  dropdownColor: Colors.white,
-                                  value: selectLength,
-                                  style: TextStyle(
-                                    color: Color(0xff8598AD),
-                                    fontSize: 12.0,
-                                    fontFamily: 'Poppins',
-                                    fontWeight: FontWeight
-                                        .w200, // FontWeight.w200 represents the "extra-light" weight
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                  items: <String>[
-                                    'English',
-                                    'German',
-                                    'French',
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 16.0),
-                                        child: Text(value),
-                                      ),
-                                    );
-                                  }).toList(),
-                                  hint: Padding(
-                                    padding: const EdgeInsets.only(left: 16.0),
-                                    child: Text(
-                                      "Select Language",
-                                      style: TextStyle(
-                                        color: Color(0xff8598AD),
-                                        fontSize: 12.0,
-                                        fontFamily: 'Poppins',
-                                        fontWeight: FontWeight
-                                            .w200, // FontWeight.w200 represents the "extra-light" weight
-                                        fontStyle: FontStyle.italic,
+                              child: TextField(
+                                controller: EnterLanguage,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16.0,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight
+                                      .w200, // FontWeight.w200 represents the "extra-light" weight
+                                  fontStyle: FontStyle.italic,
+                                ),
+                                decoration: InputDecoration(
+                                    hintStyle: TextStyle(
+                                      color: Color(0xff8598AD),
+                                      fontSize: 12.0,
+                                      fontFamily: 'Poppins',
+                                      fontWeight: FontWeight
+                                          .w200, // FontWeight.w200 represents the "extra-light" weight
+                                      fontStyle: FontStyle.italic,
+                                    ),
+                                    hintText: 'Enter Language',
+                                    contentPadding: const EdgeInsets.all(15),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      borderSide: BorderSide(
+                                        width: 1,
+                                        color: Color(0xffE2E4FB), //E2E4FB
                                       ),
                                     ),
-                                  ),
-                                  onChanged: (String? value) {
-                                    setState(() {
-                                      selectLength = value;
-                                      print("ttttt${selectLength}");
-                                    });
-                                  },
-                                ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(25),
+                                      borderSide:
+                                          BorderSide(color: Color(0xff4C5AFE)),
+                                    )),
+                                onChanged: (value) {
+                                  // do something
+                                },
                               ),
                             ),
                           ],
@@ -300,17 +277,17 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/images/published_with_changes.png',
-                          color: Colors.white, // Icon color
-                          width: 15, // Set the width as needed
-                          height: 15, // Set the height as needed
-                        ),
+                        // Image.asset(
+                        //   'assets/images/published_with_changes.png',
+                        //   color: Colors.white, // Icon color
+                        //   width: 15, // Set the width as needed
+                        //   height: 15, // Set the height as needed
+                        // ),
                         Text(
-                          "  Ready",
-                          style: TextStyle(
+                          "Waiting",
+                          style: GoogleFonts.firaSans(
                               color: Colors.white,
-                              fontFamily: 'Fira Sans',
+                              // fontFamily: 'Fira Sans',
                               fontSize: 15,
                               fontWeight: FontWeight.normal),
                         ),

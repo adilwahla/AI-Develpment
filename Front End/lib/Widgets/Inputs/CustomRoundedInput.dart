@@ -16,37 +16,45 @@ class CustomTextInput extends StatelessWidget {
     return Container(
       height: height * 0.047,
       width: width * 0.190,
-      padding: EdgeInsets.symmetric(horizontal: 16.0),
       decoration: BoxDecoration(
         color: Color(0xffFFFFFF),
-        border: Border.all(
-          color: Color(0xffE2E4FB),
-          width: 1,
-        ),
         borderRadius: BorderRadius.circular(25),
       ),
       child: TextField(
+        controller: controller,
         style: TextStyle(
-          color: Color(0xff8598AD),
-          fontSize: 12.0,
+          color: Colors.black,
+          fontSize: 16.0,
           fontFamily: 'Poppins',
           fontWeight: FontWeight
               .w200, // FontWeight.w200 represents the "extra-light" weight
           fontStyle: FontStyle.italic,
         ),
-        controller: controller,
         decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Color(0xff8598AD),
-            fontSize: 12.0,
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight
-                .w200, // FontWeight.w200 represents the "extra-light" weight
-            fontStyle: FontStyle.italic,
-          ),
-        ),
+            hintStyle: TextStyle(
+              color: Color(0xff8598AD),
+              fontSize: 12.0,
+              fontFamily: 'Poppins',
+              fontWeight: FontWeight
+                  .w200, // FontWeight.w200 represents the "extra-light" weight
+              fontStyle: FontStyle.italic,
+            ),
+            hintText: hintText,
+            contentPadding: const EdgeInsets.all(15),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25),
+              borderSide: BorderSide(
+                width: 1,
+                color: Color(0xffE2E4FB), //E2E4FB
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25),
+              borderSide: BorderSide(color: Color(0xff4C5AFE)),
+            )),
+        onChanged: (value) {
+          // do something
+        },
       ),
     );
   }
