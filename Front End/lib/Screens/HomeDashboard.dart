@@ -6,11 +6,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Screens/Email.dart';
 import 'package:my_app/Screens/Home.dart';
 import 'package:my_app/Screens/ProfileScreen/Profile.dart';
+import 'package:my_app/Screens/RegistrationPage.dart';
 import 'package:my_app/Screens/Report.dart';
 import 'package:my_app/Screens/SocialMediaPage.dart';
 import 'package:my_app/Screens/Translate.dart';
 import 'package:my_app/Widgets/Footer.dart';
 import 'package:my_app/services/auth_services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeDashboard extends StatefulWidget {
   @override
@@ -55,6 +57,18 @@ class _HomeDashboardState extends State<HomeDashboard> {
         isAuthenticated = true;
       });
     }
+  }
+
+  void signOut(BuildContext context) async {
+    final navigator = Navigator.of(context);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString('x-auth-token', '');
+    navigator.pushAndRemoveUntil(
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+      (route) => false,
+    );
   }
 
   @override
@@ -222,7 +236,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                       PopupMenuButton<String>(
                                         onSelected: (value) {
                                           if (value == 'logout') {
-                                            authService.signOut(context);
+                                            // authService.signOut(context);
+                                            signOut(context);
                                           } else if (value == 'profile') {
                                             // Handle navigating to the profile page
                                             // showProfile = true;
@@ -308,53 +323,6 @@ class _HomeDashboardState extends State<HomeDashboard> {
         return Home(); // Return an empty container by default
     }
   }
-}
-
-// ignore: unused_element
-Widget _nameAndProfilePicture(
-  BuildContext context,
-
-  // bool showProfile
-) {
-  final AuthService authService = AuthService();
-  // showProfile = false;
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.end,
-    children: [
-      // Add the dropdown button to trigger the menu
-      PopupMenuButton<String>(
-        onSelected: (value) {
-          if (value == 'logout') {
-            authService.signOut(context);
-          } else if (value == 'profile') {
-            // Handle navigating to the profile page
-            // showProfile = true;
-          }
-        },
-        itemBuilder: (BuildContext context) => [
-          PopupMenuItem(
-            value: 'logout',
-            child: Text('Logout'),
-          ),
-          PopupMenuItem(
-            value: 'profile',
-            child: Text('Profile Page'),
-          ),
-        ],
-        child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            radius: 23,
-            child: CircleAvatar(
-              backgroundImage: NetworkImage('assets/images/avatar.jpg'),
-              radius: 20,
-            ),
-          ),
-        ),
-      ),
-    ],
-  );
 }
 
 class NavItem {
@@ -486,45 +454,37 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
               //   ),
               // ),
               Container(
-                child: CustomPaint(
-                  size: Size(
-                      width * 0.185,
-                      (width * 0.185)
-                          .toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
-                  painter: RPSCustomPainter(),
-                  child: Container(
-                    // color: Colors.amber,
-                    height: 45.0,
-                    width: width * 0.185,
-                    // width: 170.0,
-                    margin: EdgeInsets.only(left: 60.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          widget
-                              .imagePath, // Use the imagePath from your NavItem
+                child: Container(
+                  // color: Colors.amber,
+                  height: 45.0,
+                  width: width * 0.185,
+                  // width: 170.0,
+                  margin: EdgeInsets.only(left: 60.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        widget.imagePath, // Use the imagePath from your NavItem
+                        color: widget.color,
+                        width: 15.0, // Adjust the width as needed
+                        height: 15.0, // Adjust the height as needed
+                      ),
+                      // Icon(
+                      //   widget.icon,
+                      //   color: _color.value,
+                      //   size: 18.0,
+                      // ),
+                      SizedBox(
+                          width: 7), // Add some spacing between icon and name
+                      Text(
+                        widget.name, // Display the icon name
+                        style: TextStyle(
                           color: widget.color,
-                          width: 15.0, // Adjust the width as needed
-                          height: 15.0, // Adjust the height as needed
+                          fontSize: 15.0, // Adjust font size as needed
                         ),
-                        // Icon(
-                        //   widget.icon,
-                        //   color: _color.value,
-                        //   size: 18.0,
-                        // ),
-                        SizedBox(
-                            width: 7), // Add some spacing between icon and name
-                        Text(
-                          widget.name, // Display the icon name
-                          style: TextStyle(
-                            color: widget.color,
-                            fontSize: 15.0, // Adjust font size as needed
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),

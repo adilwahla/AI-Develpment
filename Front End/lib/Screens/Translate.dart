@@ -14,11 +14,6 @@ class TranslatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //colors
-    //4C5AFE  //FFFFFF
-    // button border colors E2E4FB
-    //8B8FB5  //FF8203
-
     return FormContainer(
       addFormElements: Column(
         children: [
@@ -43,15 +38,39 @@ class TranslateFormBody extends StatefulWidget {
 class _TranslateFormBodyState extends State<TranslateFormBody> {
   final AuthService authService = AuthService();
   TextEditingController textarea = TextEditingController();
-  String? object;
+  String? language;
   // String? selectLanguage;
-  TextEditingController selectLanguage = TextEditingController();
-  void translate1() {
+
+  TextEditingController _typedTextController = TextEditingController();
+  TextEditingController _translatedTextController = TextEditingController();
+  TextEditingController _selectLanguageController = TextEditingController();
+  bool isTranslationSuccessful = false;
+  void _initiateTranslation() {
     authService.translate(
-      context: context,
-      input: textarea.text,
-      language: object.toString(),
+      input: _typedTextController.text,
+      language: _selectLanguageController.text,
+      onTranslation: _handleTranslationSuccess,
+      onError: _handleTranslationError,
     );
+  }
+
+  void _handleTranslationSuccess(String result) {
+    // Handle success, e.g.,
+    // Update the state with the translated text
+    setState(() {
+      isTranslationSuccessful = true;
+      _translatedTextController.text = result;
+    });
+  }
+
+  void _handleTranslationError(String error) {
+    setState(() {
+      isTranslationSuccessful = false;
+    });
+    // Handle error, e.g., show a snackbar with the error message
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Translation error: $error'),
+    ));
   }
 
   @override
@@ -100,7 +119,7 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: TextField(
-                  controller: selectLanguage,
+                  controller: _selectLanguageController,
                   style: TextStyle(
                     color: Colors.black,
                     fontSize: 16.0,
@@ -131,27 +150,15 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                         borderRadius: BorderRadius.circular(25),
                         borderSide: BorderSide(color: Color(0xff4C5AFE)),
                       )),
-                  onChanged: (value) {
-                    // do something
-                  },
+                  // onChanged: (value) {
+                  //   // do something
+                  //   setState(() {
+                  //     language = value;
+                  //   });
+                  // },
                 ),
               ),
-              // Container(
-              //   width: width * 0.366,
-              //   height: height * 0.047,
-              //   child: Padding(
-              //     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              //     child: TextField(
-              //       controller: selectLanguage,
-              //       style: kEmailInputStyle,
-              //       decoration: kEmailInputDecoration.copyWith(
-              //           hintText: "Enter Language"),
-              //       onChanged: (value) {
-              //         // do something
-              //       },
-              //     ),
-              //   ),
-              // ),
+
               Padding(
                 padding: const EdgeInsets.only(top: 12.0, bottom: 7),
                 child: FormLabelText(
@@ -196,6 +203,7 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                         minHeight: double.infinity,
                       ),
                       child: TextField(
+                        controller: _typedTextController,
                         enabled: true,
                         maxLines: null,
                         style: TextStyle(
@@ -252,14 +260,20 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
               SizedBox(
                 height: 10,
               ),
-              FormButton(
-                buttonText: "   Translate",
-                buttonColor: Color(0xffFF8203),
-                buttonIconName: 'translate.png',
-                buttonHeight: height * 0.047,
-                buttonWidth: width * 0.366,
-                // iconHeight: 27,
-                // iconWidth: 22,
+              InkWell(
+                onTap: () {
+                  _initiateTranslation();
+                  print('tranlste button got pressed');
+                },
+                child: FormButton(
+                  buttonText: "   Translate",
+                  buttonColor: Color(0xffFF8203),
+                  buttonIconName: 'translate.png',
+                  buttonHeight: height * 0.047,
+                  buttonWidth: width * 0.366,
+                  // iconHeight: 27,
+                  // iconWidth: 22,
+                ),
               ),
             ],
           ),
@@ -292,24 +306,35 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                       topLeft: Radius.circular(10.0),
                       topRight: Radius.circular(10.0),
                     )),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Image.asset(
-                    //   'assets/images/published_with_changes.png',
-                    //   color: Colors.white, // Icon color
-                    //   width: 24, // Set the width as needed
-                    //   height: 24, // Set the height as needed
-                    // ),
-                    Text(
-                      "Waiting",
-                      style: GoogleFonts.firaSans(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
+                child: isTranslationSuccessful
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/published_with_changes.png',
+                            color: Colors.white, // Icon color
+                            width: 24, // Set the width as needed
+                            height: 24, // Set the height as needed
+                          ),
+                          Text(
+                            "Ready",
+                            style: GoogleFonts.firaSans(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.normal),
+                          ),
+                        ],
+                      )
+                    : Center(
+                        child: Text(
+                          "Waiting",
+                          style: GoogleFonts.firaSans(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.normal,
+                          ),
+                        ),
+                      ),
               ),
               Container(
                 // alignment: Alignment.center,
@@ -344,10 +369,11 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                         minHeight: double.infinity,
                       ),
                       child: TextField(
-                        enabled: true,
+                        controller: _translatedTextController,
+                        enabled: false, // Disable editing
                         maxLines: null,
                         style: TextStyle(
-                          fontSize: 10.0,
+                          fontSize: 16.0,
                           fontFamily: 'Poppins',
                           // fontStyle: FontStyle.italic,
                           color: Color(0xff8598AD),

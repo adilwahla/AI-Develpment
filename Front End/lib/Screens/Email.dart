@@ -1,12 +1,23 @@
 // ignore_for_file: unused_local_variable
-
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/Utils.dart';
+
 import 'package:my_app/Widgets/FormContainer.dart';
 
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/models/email.dart';
+import 'package:provider/provider.dart';
+
+TextEditingController GeneratedEmail = TextEditingController();
+String? object;
+String? selectType;
+String? emailTo;
+String? emailFrom;
+String? length;
+String? content; //emailContent
+bool isEmailGenerated = false;
 
 class Email extends StatelessWidget {
   const Email({super.key});
@@ -15,6 +26,7 @@ class Email extends StatelessWidget {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     return FormContainer(
       addFormElements: Column(
         children: [
@@ -51,25 +63,36 @@ class Email extends StatelessWidget {
                     topLeft: Radius.circular(20.0),
                     topRight: Radius.circular(20.0),
                   )),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/images/published_with_changes.png',
-                    color: Colors.white, // Icon color
-                    width: 24, // Set the width as needed
-                    height: 24, // Set the height as needed
-                  ),
-                  Text(
-                    "  Ready",
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: 'Fira Sans',
-                        fontSize: 15,
-                        fontWeight: FontWeight.normal),
-                  ),
-                ],
-              ),
+              child: isEmailGenerated
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/published_with_changes.png',
+                          color: Colors.white, // Icon color
+                          width: 24, // Set the width as needed
+                          height: 24, // Set the height as needed
+                        ),
+                        Text(
+                          "Ready",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Fira Sans',
+                              fontSize: 15,
+                              fontWeight: FontWeight.normal),
+                        ),
+                      ],
+                    )
+                  : Center(
+                      child: Text(
+                        "Waiting",
+                        style: GoogleFonts.firaSans(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.normal,
+                        ),
+                      ),
+                    ),
             ),
           ),
           Expanded(
@@ -94,10 +117,11 @@ class Email extends StatelessWidget {
                       maxHeight: double.infinity,
                     ),
                     child: TextField(
+                      controller: GeneratedEmail,
                       enabled: false,
                       maxLines: null,
                       style: TextStyle(
-                        fontSize: 10.0,
+                        fontSize: 16.0,
                         fontFamily: 'Poppins',
                         // fontStyle: FontStyle.italic,
                         color: Color(0xff8598AD),
@@ -144,15 +168,70 @@ class BodyEmailForm extends StatefulWidget {
   State<BodyEmailForm> createState() => _BodyEmailFormState();
 }
 
-class _BodyEmailFormState extends State<BodyEmailForm> {
-  // String? object;
-  String? selectType;
-  String? length;
-  TextEditingController emailTo = TextEditingController();
-  TextEditingController emailFrom = TextEditingController();
-  TextEditingController object = TextEditingController();
+class _BodyEmailFormState extends State<BodyEmailForm>
+    with SingleTickerProviderStateMixin {
+  bool rotateImage = false;
+  late final AnimationController _controller =
+      AnimationController(vsync: this, duration: Duration(seconds: 2))
+        ..repeat();
+  void createEmail() async {
+    rotateImage = true;
 
-  // String dropdownValue = list.first;
+    try {
+      // Create an object with the extracted data
+      var emailData = {
+        'object': object,
+        'typeOfEmail': selectType,
+        'emailTo': emailTo,
+        'emailFrom': emailFrom,
+        'length': length,
+        'emailContent': content,
+        // Add other fields as needed
+      };
+
+      // Convert the map to an Email object
+      var email = EmailModel.fromJson(emailData);
+      String generateEmailTemplate(
+          String object, String typeOfEmail, String emailTo, String content) {
+        return '''
+    Email Object: $object
+    Type: $typeOfEmail
+    To: $emailTo
+
+    Hello,
+
+    $content 
+    Thank you for using our service. We appreciate your business.
+
+    Best regards,
+    Your Company
+  ''';
+      }
+
+      var emailTemplate = generateEmailTemplate(
+          email.object, email.typeOfEmail, email.emailTo, email.emailContent);
+      // Now, you can use the email object in a typed manner
+      GeneratedEmail.text = emailTemplate;
+
+      setState(() {
+        isEmailGenerated = true;
+        rotateImage = false;
+      });
+
+      print(
+          'Email Object: ${email.object}, Type: ${email.typeOfEmail}, To: ${email.emailTo}');
+
+      // Continue with your POST request and handling logic...
+    } catch (error) {
+      // Handle other errors
+      setState(() {
+        isEmailGenerated = false;
+        rotateImage = false;
+      });
+      print('Error creating email: $error');
+      rotateImage = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -178,7 +257,7 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
               borderRadius: BorderRadius.circular(25),
             ),
             child: TextField(
-              controller: object,
+              // controller: object,
               style: TextStyle(
                 // color: Color(0xff8598AD),
                 color: Colors.black,
@@ -210,29 +289,14 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                     borderRadius: BorderRadius.circular(25),
                     borderSide: BorderSide(color: Color(0xff4C5AFE)),
                   )),
-              onChanged: (value) {
-                // do something
+              onChanged: (String? value) {
+                setState(() {
+                  object = value;
+                  print("object=${object}");
+                });
               },
             ),
           ),
-
-          // Container(
-          //   // padding: EdgeInsets.only(top: 6, left: 8),
-          //   width: double.infinity,
-          //   height: height * 0.04722,
-
-          //   child: TextField(
-
-          //     textAlignVertical: TextAlignVertical.center,
-          //     controller: object,
-          //     style: kEmailInputStyle,
-          //     decoration:
-          //         kEmailInputDecoration.copyWith(hintText: "Enter Object"),
-          //     onChanged: (value) {
-          //       // do something
-          //     },
-          //   ),
-          // ),
           Row(
             //  crossAxisAlignment: CrossAxisAlignment.center,
             // crossAxisAlignment: CrossAxisAlignment.,
@@ -307,7 +371,7 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                           onChanged: (String? value) {
                             setState(() {
                               selectType = value;
-                              print("ttttt${selectType}");
+                              print("selecttype=${selectType}");
                             });
                           },
                         ),
@@ -338,7 +402,7 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: TextField(
-                        controller: emailTo,
+                        // controller: emailTo,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 16.0,
@@ -369,8 +433,11 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                               borderRadius: BorderRadius.circular(25),
                               borderSide: BorderSide(color: Color(0xff4C5AFE)),
                             )),
-                        onChanged: (value) {
-                          // do something
+                        onChanged: (String? value) {
+                          setState(() {
+                            emailTo = value;
+                            print("emailto=${emailTo}");
+                          });
                         },
                       ),
                     ),
@@ -399,7 +466,7 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                       child: TextField(
-                        controller: emailFrom,
+                        // controller: emailFrom,
                         style: GoogleFonts.poppins(
                           color: Colors.black,
                           fontSize: 16.0,
@@ -429,8 +496,11 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                               borderRadius: BorderRadius.circular(25),
                               borderSide: BorderSide(color: Color(0xff4C5AFE)),
                             )),
-                        onChanged: (value) {
-                          // do something
+                        onChanged: (String? value) {
+                          setState(() {
+                            emailFrom = value;
+                            print("emailfrom=${emailFrom}");
+                          });
                         },
                       ),
                     ),
@@ -508,7 +578,7 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                           onChanged: (String? value) {
                             setState(() {
                               length = value;
-                              print("ttttt${length}");
+                              print("length=${length}");
                             });
                           },
                         ),
@@ -578,6 +648,13 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
                             ),
                             border: InputBorder.none, // Remove the underline
                           ),
+                          onChanged: (String? value) {
+                            setState(() {
+                              content = value;
+                              print("content=${content}");
+                            });
+                          },
+                          //content
                         ),
                       ),
                     ),
@@ -593,38 +670,63 @@ class _BodyEmailFormState extends State<BodyEmailForm> {
             alignment: Alignment.bottomRight,
             child: Padding(
               padding: EdgeInsets.only(top: 12),
-              child: Container(
-                padding: EdgeInsets.all(5),
-                width: width * 0.1125,
-                height: height * 0.04722,
-                decoration: BoxDecoration(
-                    color: Color(0xffFF8203),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(20.0),
-                    )),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Image.asset(
-                      'assets/images/autorenew.png',
-                      color: Colors.white, // Icon color
-                      width: 24, // Set the width as needed
-                      height: 24, // Set the height as needed
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Center(
-                      child: Text(
-                        "Generate",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontFamily: 'Fira Sans',
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500),
+              child: InkWell(
+                onTap: () {
+                  createEmail();
+                },
+                child: Container(
+                  padding: EdgeInsets.all(5),
+                  width: width * 0.1125,
+                  height: height * 0.04722,
+                  decoration: BoxDecoration(
+                      color: Color(0xffFF8203),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20.0),
+                      )),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      AnimatedBuilder(
+                        animation: _controller,
+                        builder: (_, child) {
+                          if (rotateImage) {
+                            // If email is not generated, continue rotation
+                            return Transform.rotate(
+                              angle: _controller.value * 2 * math.pi,
+                              child: child,
+                            );
+                          } else {
+                            // If email is generated, stop rotation
+                            return Image.asset(
+                              'assets/images/autorenew.png',
+                              color: Colors.white, // Icon color
+                              width: 24, // Set the width as needed
+                              height: 24, // Set the height as needed
+                            );
+                          }
+                        },
+                        child: Image.asset(
+                          'assets/images/autorenew.png',
+                          color: Colors.white, // Icon color
+                          width: 24, // Set the width as needed
+                          height: 24, // Set the height as needed
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        width: 15,
+                      ),
+                      Center(
+                        child: Text(
+                          "Generate",
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontFamily: 'Fira Sans',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

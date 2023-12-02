@@ -34,28 +34,23 @@ class FormButton extends StatelessWidget {
         // Make it circular
         color: buttonColor, // Button background color
       ),
-      child: InkWell(
-        onTap: () {
-          // Handle button tap here
-        },
-        child: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Image.asset(
-                'assets/images/' + buttonIconName,
-                color: iconColor, // Icon color
-                width: iconWidth, // Set the width as needed
-                height: iconHeight, // Set the height as needed
+      child: Center(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Image.asset(
+              'assets/images/' + buttonIconName,
+              color: iconColor, // Icon color
+              width: iconWidth, // Set the width as needed
+              height: iconHeight, // Set the height as needed
+            ),
+            Text(
+              buttonText, // Replace with your desired text
+              style: TextStyle(
+                color: Colors.white, // Text color
               ),
-              Text(
-                buttonText, // Replace with your desired text
-                style: TextStyle(
-                  color: Colors.white, // Text color
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

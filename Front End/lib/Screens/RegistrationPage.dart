@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/Auth_Provider.dart';
 import 'package:my_app/Provider/SnackBarProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
@@ -22,43 +23,35 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  TextEditingController nameController = TextEditingController();
+  //TextEditingController nameController = TextEditingController();
 
   final AuthService authService = AuthService();
   bool _isChecked = false;
 
-  void signinUser(
-    BuildContext context,
-    TextEditingController emailController,
-    TextEditingController passwordController,
-  ) {
-    authService
-        .signInUser(
-      email: emailController.text,
-      password: passwordController.text,
-    )
-        .then((res) {
-      HttpUtils.httpErrorHandle(
-        response: res,
-        onSuccess: () async {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
-          context.read<UserProvider>().setUser(res.body);
-          await prefs.setString('x-auth-token', jsonDecode(res.body)['token']);
+// Named function for login
+  Future<void> handleLogin() async {
+    bool loginSuccess = await context.read<Auth_provider>().loginUser(
+          emailController.text,
+          passwordController.text,
+        );
 
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(
-              builder: (context) => HomeDashboard(),
-            ),
-            (route) => false,
-          );
-        },
-        onError: (error) {
-          context.read<SnackBarProvider>().showSnackBar(context, error);
-        },
+    if (loginSuccess) {
+      // Navigate to HomeDashboard
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => HomeDashboard(),
+        ),
+        (route) => false,
       );
-    }).catchError((error) {
-      context.read<SnackBarProvider>().showSnackBar(context, error.toString());
-    });
+    } else {
+      // Show Snack Bar with error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Authentication failed'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
   }
 
   final textFieldFocusNode = FocusNode();
@@ -143,6 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             height: height * 0.0519,
                             child: TextFormField(
                               controller: emailController,
+                              // onChanged: (String value) {
+                              //   setState(() {
+                              //     email = value;
+                              //     print("email=${email}");
+                              //   });
+                              // },
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w700,
@@ -189,6 +188,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: height * 0.0519,
                               child: TextFormField(
                                 controller: passwordController,
+                                // onChanged: (String value) {
+                                //   setState(() {
+                                //     password = value;
+                                //     print("password=${password}");
+                                //   });
+                                // },
                                 obscuringCharacter: '●',
                                 obscureText: _obscured,
                                 // textAlign: TextAlign.left,
@@ -330,9 +335,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Center(
                                 child: InkWell(
-                                  onTap: () {
-                                    signinUser(context, emailController,
-                                        passwordController);
+                                  onTap: () async {
+                                    // signinUser(emailController.text,
+                                    //     passwordController.text);
+                                    // Call the signInUser function from AuthProvider
+                                    await handleLogin();
                                   },
                                   child: Text(
                                     'Signin?',
