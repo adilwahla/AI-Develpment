@@ -9,6 +9,11 @@ const { translateText } = require('../models/translate'); // Adjust the path as 
 const { generateReport } = require('../models/report'); // Adjust the path as needed
 const { SocialMedia }=require('../models/socialMedia');
 const { Profile }=require('../models/profile');
+
+
+const OpenAI = require("openai");
+
+const openai = new OpenAI({apiKey:'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'});
 // Sign Up
 authRouter.post("/api/signup", async (req, res) => {
 
@@ -93,28 +98,74 @@ authRouter.post("/api/signin", async (req, res) => {
     res.json({ ...user._doc, token: req.token });
   });
 
-
-// API Endpoint to Create Email
+////////////////
 authRouter.post('/api/email', async (req, res) => {
-    try {
-      const emailData = req.body;
-      const savedEmail = await createEmail(emailData);
-      res.status(201).json({
-        message: 'Email created successfully',
-        emailId: savedEmail._id,
-        createdAt: savedEmail.createdAt,
-      });
-    } catch (error) {
-      console.error('Error creating email:', error);
-      res.status(500).json({ error: 'Internal server error' });
+  try {
+    const emailData = req.body;
+    console.log(req.body);
+   
+    
+    console.log('Received email data:', JSON.stringify(emailData, null, 2));
+    const generatedEmail = await generateEmailContentWithRetry(emailData);
+    console.log('Generated email content:', generatedEmail);
+    
+    res.status(200).json({
+      message: 'Email created successfully',
+      generatedEmail: generatedEmail, 
+    });
+
+  } catch (error) {
+    console.error('Error creating email:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+async function generateEmailContentWithRetry(emailData, retryCount = 3) {
+  try {
+    const generatedEmail = await generateEmailContent(emailData);
+    return generatedEmail;
+  } catch (error) {
+    if (error.response && error.response.status === 429 && retryCount > 0) {
+      const delay = Math.pow(2, 3 - retryCount) * 1000; // 2^maxRetries * 1000 milliseconds
+      console.log(`Retrying after ${delay} milliseconds...`);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return generateEmailContentWithRetry(emailData, retryCount - 1);
+    } else {
+      throw error;
     }
-  });
+  }
+}
+
+async function generateEmailContent(emailData) {
+  const content = `Write an email with the following details:
+    Object: ${emailData.object}
+    Type of Email: ${emailData.typeOfEmail}
+    Email To: ${emailData.emailTo}
+    Email From: ${emailData.emailFrom}
+    Length: ${emailData.length}
+    Email Content: ${emailData.emailContent}`;
+// const content='You are a helpful assistant';
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {"role": "user", "content": content},
+      ],
+      model: "gpt-3.5-turbo",
+    });
+
+    console.log(completion.choices[0].message.content);
+    return completion.choices[0].message.content;
+  } catch (error) {
+    throw error;
+  }
+}
 
 // API Endpoint to Translate Text
 authRouter.post('/api/translate', async (req, res) => {
     try {
-      const { inputText, targetLanguage } = req.body;
-      const translatedText = await translateText(inputText, targetLanguage);
+      console.log(req.body);
+      const { documentText,inputText, targetLanguage } = req.body;
+      const translatedText = await translateTextFromChatGPT(documentText,inputText, targetLanguage);
       res.status(200).json({
         message: 'Translated Text Generated',
         translatedText,
@@ -124,7 +175,22 @@ authRouter.post('/api/translate', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-
+  async function translateTextFromChatGPT(documentText,inputText, targetLanguage) {
+    const content = `Translate the following text:  :${documentText} ${inputText} to targetLanguage ${targetLanguage}` ;
+    try {
+      const completion = await openai.chat.completions.create({
+        messages: [
+          {"role": "user", "content": content},
+        ],
+        model: "gpt-3.5-turbo",
+      });
+  
+      console.log(completion.choices[0].message.content);
+      return completion.choices[0].message.content;
+    } catch (error) {
+      throw error;
+    }
+  }
 // API Endpoint to Generate Report
 authRouter.post('/api/report', async (req, res) => {
     try {

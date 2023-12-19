@@ -1,17 +1,13 @@
 // ignore_for_file: unused_local_variable
 
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/Auth_Provider.dart';
-import 'package:my_app/Provider/SnackBarProvider.dart';
-import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Utils.dart';
 import 'package:my_app/services/auth_services.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

@@ -1,32 +1,60 @@
 // ignore_for_file: unused_local_variable
-import 'dart:math' as math;
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/EmailProcessProvider.dart';
 
 import 'package:my_app/Widgets/FormContainer.dart';
 
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
-import 'package:my_app/models/email.dart';
+import 'package:http/http.dart' as http;
+import 'package:my_app/services/auth_services.dart';
+import 'package:my_app/services/emailService.dart';
 import 'package:provider/provider.dart';
 
 TextEditingController GeneratedEmail = TextEditingController();
+String generatedEmailContent = "";
 String? object;
 String? selectType;
 String? emailTo;
 String? emailFrom;
 String? length;
 String? content; //emailContent
-bool isEmailGenerated = false;
+bool isEmailGenerated = true;
 
-class Email extends StatelessWidget {
+class Email extends StatefulWidget {
   const Email({super.key});
+
+  @override
+  State<Email> createState() => _EmailState();
+}
+
+class _EmailState extends State<Email> {
+  void _updateGeneratedEmail(String result) {
+    // Handle the result in the parent widget
+    print('Updating generated email in parent widget: $result');
+    // Perform any other actions as needed
+
+    setState(() {
+      // ignore: unnecessary_null_comparison
+      if (GeneratedEmail != null) {
+        GeneratedEmail.text = result;
+      }
+      isEmailGenerated = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-
+    Color iconColor = Colors.black;
+    final emailProvider = Provider.of<EmailProvider>(context, listen: false);
+    print('Widget is being rebuilt');
+    print("isProcessing in Email=${emailProvider.isProcessing}");
     return FormContainer(
       addFormElements: Column(
         children: [
@@ -34,7 +62,7 @@ class Email extends StatelessWidget {
             headerText: 'Generate Email',
           ),
           // EmailFormBody(),
-          BodyEmailForm(),
+          BodyEmailForm(onSuccessCallback: _updateGeneratedEmail),
           SizedBox(
             height: 15,
           ),
@@ -118,10 +146,10 @@ class Email extends StatelessWidget {
                     ),
                     child: TextField(
                       controller: GeneratedEmail,
-                      enabled: false,
+                      enabled: true,
                       maxLines: null,
                       style: TextStyle(
-                        fontSize: 16.0,
+                        fontSize: 11.0,
                         fontFamily: 'Poppins',
                         // fontStyle: FontStyle.italic,
                         color: Color(0xff8598AD),
@@ -132,10 +160,28 @@ class Email extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             IconButton(
+                              focusColor: Colors.amber,
                               onPressed: () {
-                                print("copy text");
+                                Clipboard.setData(
+                                    ClipboardData(text: GeneratedEmail.text));
+                                print("Text copied to clipboard");
+                                setState(() {
+                                  iconColor = Colors.blue;
+                                });
+                                //  to reset the color after a short delay
+                                Future.delayed(Duration(seconds: 1), () {
+                                  setState(() {
+                                    iconColor = Colors.black;
+                                  });
+                                });
+                                // Fluttertoast.showToast(
+                                //   msg: 'Text copied',
+                                //   toastLength: Toast.LENGTH_SHORT,
+                                //   gravity: ToastGravity.BOTTOM,
+                                // );
                               },
                               icon: Image.asset('assets/images/copy.png'),
+                              color: iconColor,
                             ),
                           ],
                         ),
@@ -161,80 +207,113 @@ class Email extends StatelessWidget {
   }
 }
 
+// EmailService emailService = EmailService();
+
 class BodyEmailForm extends StatefulWidget {
-  const BodyEmailForm({super.key});
+  final void Function(String) onSuccessCallback;
+
+  const BodyEmailForm({Key? key, required this.onSuccessCallback})
+      : super(key: key);
 
   @override
   State<BodyEmailForm> createState() => _BodyEmailFormState();
 }
 
 class _BodyEmailFormState extends State<BodyEmailForm>
-    with SingleTickerProviderStateMixin {
-  bool rotateImage = false;
-  late final AnimationController _controller =
-      AnimationController(vsync: this, duration: Duration(seconds: 2))
-        ..repeat();
-  void createEmail() async {
-    rotateImage = true;
+// with SingleTickerProviderStateMixin
+{
+  // bool rotateImage = false;
+  // late final AnimationController _controller =
+  //     AnimationController(vsync: this, duration: Duration(seconds: 2))
+  //       ..repeat();
+  // void createEmail() async {
+  //   rotateImage = true;
 
-    try {
-      // Create an object with the extracted data
-      var emailData = {
-        'object': object,
-        'typeOfEmail': selectType,
-        'emailTo': emailTo,
-        'emailFrom': emailFrom,
-        'length': length,
-        'emailContent': content,
-        // Add other fields as needed
-      };
+  //   try {
+  //     // Create an object with the extracted data
+  //     var emailData = {
+  //       'object': object,
+  //       'typeOfEmail': selectType,
+  //       'emailTo': emailTo,
+  //       'emailFrom': emailFrom,
+  //       'length': length,
+  //       'emailContent': content,
+  //       // Add other fields as needed
+  //     };
 
-      // Convert the map to an Email object
-      var email = EmailModel.fromJson(emailData);
-      String generateEmailTemplate(
-          String object, String typeOfEmail, String emailTo, String content) {
-        return '''
-    Email Object: $object
-    Type: $typeOfEmail
-    To: $emailTo
+  //     // Convert the map to an Email object
+  //     var email = EmailModel.fromJson(emailData);
+  //     String generateEmailTemplate(
+  //         String object, String typeOfEmail, String emailTo, String content) {
+  //       return '''
+  //   Email Object: $object
+  //   Type: $typeOfEmail
+  //   To: $emailTo
 
-    Hello,
+  //   Hello,
 
-    $content 
-    Thank you for using our service. We appreciate your business.
+  //   $content
+  //   Thank you for using our service. We appreciate your business.
 
-    Best regards,
-    Your Company
-  ''';
-      }
+  //   Best regards,
+  //   Your Company
+  // ''';
+  //     }
 
-      var emailTemplate = generateEmailTemplate(
-          email.object, email.typeOfEmail, email.emailTo, email.emailContent);
-      // Now, you can use the email object in a typed manner
-      GeneratedEmail.text = emailTemplate;
+  //     var emailTemplate = generateEmailTemplate(
+  //         email.object, email.typeOfEmail, email.emailTo, email.emailContent);
+  //     // Now, you can use the email object in a typed manner
+  //     GeneratedEmail.text = emailTemplate;
 
-      setState(() {
-        isEmailGenerated = true;
-        rotateImage = false;
-      });
+  //     setState(() {
+  //       isEmailGenerated = true;
+  //       rotateImage = false;
+  //     });
 
-      print(
-          'Email Object: ${email.object}, Type: ${email.typeOfEmail}, To: ${email.emailTo}');
+  //     print(
+  //         'Email Object: ${email.object}, Type: ${email.typeOfEmail}, To: ${email.emailTo}');
 
-      // Continue with your POST request and handling logic...
-    } catch (error) {
-      // Handle other errors
-      setState(() {
-        isEmailGenerated = false;
-        rotateImage = false;
-      });
-      print('Error creating email: $error');
-      rotateImage = false;
-    }
+  //     // Continue with your POST request and handling logic...
+  //   } catch (error) {
+  //     // Handle other errors
+  //     setState(() {
+  //       isEmailGenerated = false;
+  //       rotateImage = false;
+  //     });
+  //     print('Error creating email: $error');
+  //     rotateImage = false;
+  //   }
+  // }
+
+  // void _generateEmail() {
+  //   emailService.generateEmail(
+  //     object,
+  //     selectType,
+  //     emailTo,
+  //     emailFrom,
+  //     length,
+  //     content,
+  //     _handleOnSuccess,
+  //     _handleOnFailure,
+  //   );
+  // }
+
+  void _handleOnSuccess(String result) {
+    // Handle the generated email content on success
+    print('Generated Email Content _handleOnSuccess(): $result');
+    // Invoke the parent's callback with the result
+    widget.onSuccessCallback(result);
+  }
+
+  void _handleOnFailure() {
+    // Handle failure
+    print('Failed to generate email');
   }
 
   @override
   Widget build(BuildContext context) {
+    final emailProvider = Provider.of<EmailProvider>(context, listen: false);
+    print("isProcessing in BodyEmailForm=${emailProvider.isProcessing}");
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Padding(
@@ -333,8 +412,9 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                           dropdownColor: Colors.white,
                           value: selectType,
                           style: TextStyle(
-                            color: Color(0xff8598AD),
-                            fontSize: 12.0,
+                            color: Colors.black,
+
+                            fontSize: 14.0,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight
                                 .w200, // FontWeight.w200 represents the "extra-light" weight
@@ -540,8 +620,8 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                           dropdownColor: Colors.white,
                           value: length,
                           style: TextStyle(
-                            color: Color(0xff8598AD),
-                            fontSize: 12.0,
+                            color: Colors.black,
+                            fontSize: 14.0,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight
                                 .w200, // FontWeight.w200 represents the "extra-light" weight
@@ -671,8 +751,29 @@ class _BodyEmailFormState extends State<BodyEmailForm>
             child: Padding(
               padding: EdgeInsets.only(top: 12),
               child: InkWell(
-                onTap: () {
-                  createEmail();
+                onTap: () async {
+                  // createEmail();
+                  // _generateEmail();
+                  try {
+                    emailProvider.startProcessing();
+                    print("during api call= ${emailProvider.isProcessing}");
+                    await emailProvider.emailService.generateEmail(
+                        object,
+                        selectType,
+                        emailTo,
+                        emailFrom,
+                        length,
+                        content,
+                        _handleOnSuccess,
+                        _handleOnFailure);
+                    print("after api call= ${emailProvider.isProcessing}");
+                    setState(() {
+                      isEmailGenerated = true;
+                    });
+                  } finally {
+                    emailProvider.stopProcessing();
+                    print(" finally= ${emailProvider.isProcessing}");
+                  }
                 },
                 child: Container(
                   padding: EdgeInsets.all(5),
@@ -686,32 +787,32 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      AnimatedBuilder(
-                        animation: _controller,
-                        builder: (_, child) {
-                          if (rotateImage) {
-                            // If email is not generated, continue rotation
-                            return Transform.rotate(
-                              angle: _controller.value * 2 * math.pi,
-                              child: child,
-                            );
-                          } else {
-                            // If email is generated, stop rotation
-                            return Image.asset(
-                              'assets/images/autorenew.png',
-                              color: Colors.white, // Icon color
-                              width: 24, // Set the width as needed
-                              height: 24, // Set the height as needed
-                            );
-                          }
-                        },
-                        child: Image.asset(
-                          'assets/images/autorenew.png',
-                          color: Colors.white, // Icon color
-                          width: 24, // Set the width as needed
-                          height: 24, // Set the height as needed
-                        ),
+                      // AnimatedBuilder(
+                      // animation: _controller,
+                      // builder: (_, child) {
+                      //   if (rotateImage) {
+                      //     // If email is not generated, continue rotation
+                      //     return Transform.rotate(
+                      //       angle: _controller.value * 2 * math.pi,
+                      //       child: child,
+                      //     );
+                      //   } else {
+                      //     // If email is generated, stop rotation
+                      //     return Image.asset(
+                      //       'assets/images/autorenew.png',
+                      //       color: Colors.white, // Icon color
+                      //       width: 24, // Set the width as needed
+                      //       height: 24, // Set the height as needed
+                      //     );
+                      //   }
+                      // },
+                      Image.asset(
+                        'assets/images/autorenew.png',
+                        color: Colors.white, // Icon color
+                        width: 24, // Set the width as needed
+                        height: 24, // Set the height as needed
                       ),
+                      // ),
                       SizedBox(
                         width: 15,
                       ),

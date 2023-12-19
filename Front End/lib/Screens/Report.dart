@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/Utils.dart';
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';

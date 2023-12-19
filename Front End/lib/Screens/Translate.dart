@@ -1,13 +1,21 @@
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/Utils.dart';
 
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/config_dev.dart';
+
 import 'package:my_app/services/auth_services.dart';
+import 'package:pdf_text/pdf_text.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class TranslatePage extends StatelessWidget {
   const TranslatePage({super.key});
@@ -40,13 +48,21 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
   TextEditingController textarea = TextEditingController();
   String? language;
   // String? selectLanguage;
+  late String inputText;
 
+  TextEditingController _documentTextController = TextEditingController();
   TextEditingController _typedTextController = TextEditingController();
   TextEditingController _translatedTextController = TextEditingController();
   TextEditingController _selectLanguageController = TextEditingController();
+
   bool isTranslationSuccessful = false;
   void _initiateTranslation() {
+    setState(() {
+      _documentTextController.text = inputText;
+    });
+    print('this is document input $inputText');
     authService.translate(
+      documentText: inputText,
       input: _typedTextController.text,
       language: _selectLanguageController.text,
       onTranslation: _handleTranslationSuccess,
@@ -73,6 +89,28 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
     ));
   }
 
+  Future<String> _readFile(PlatformFile file) async {
+    try {
+      Uint8List bytes = file.bytes!; // Use bytes property on the web
+      String content = utf8.decode(bytes);
+      return content;
+    } catch (e) {
+      print('Error reading file: $e');
+      return '';
+    }
+  }
+
+  Future<String> extractTextFromWord(PlatformFile file) async {
+    try {
+      final StringBuffer buffer = StringBuffer();
+
+      return buffer.toString();
+    } catch (e) {
+      print('Error extracting text from Word document: $e');
+      return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -93,14 +131,52 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                   fontSize: 12,
                 ),
               ),
-              FormButton(
-                buttonText: "   Paste Document",
-                buttonColor: Color(0xff4C5AFE),
-                buttonIconName: 'paste.png',
-                buttonHeight: height * 0.047,
-                buttonWidth: width * 0.366,
-                // iconHeight: 27,
-                // iconWidth: 22,
+              InkWell(
+                onTap: () async {
+                  FilePickerResult? result = await FilePicker.platform
+                      .pickFiles(type: FileType.any, allowMultiple: false);
+
+                  if (result != null && result.files.isNotEmpty) {
+                    // Extract text from the selected file
+                    PlatformFile file = result.files.first;
+                    // Access file information
+                    List<int>? fileBytes = result.files.first.bytes;
+                    // Log the file info
+
+                    print('file name=${file.name}');
+                    print('file size=${file.size}');
+                    print('file extension=${file.extension}');
+                    // print('file path=${file.path}');
+                    if (file.extension == 'pdf') {
+                      final PdfDocument document =
+                          PdfDocument(inputBytes: fileBytes);
+
+                      //Create PDF text extractor to extract text
+                      PdfTextExtractor extractor = PdfTextExtractor(document);
+
+                      // ${String.fromCharCodes(fileBytes!)}
+                      inputText = extractor.extractText();
+                      print('here goes pdf @text ${inputText} ');
+                    } else if (file.extension == 'docx') {
+                    } else if (file.extension == 'txt') {
+                      Uint8List uint8List = result.files.first.bytes!;
+                      // Convert bytes to string
+                      inputText = utf8.decode(uint8List);
+                      print('this is Text file: $inputText');
+                    } else {
+                      print("unsupported file format ${file.extension}");
+                    }
+                  }
+                },
+                child: FormButton(
+                  buttonText: "   Paste Document",
+                  buttonColor: Color(0xff4C5AFE),
+                  buttonIconName: 'paste.png',
+                  buttonHeight: height * 0.047,
+                  buttonWidth: width * 0.366,
+                  // iconHeight: 27,
+                  // iconWidth: 22,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 12.0, bottom: 7),
@@ -370,7 +446,7 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                       ),
                       child: TextField(
                         controller: _translatedTextController,
-                        enabled: false, // Disable editing
+                        enabled: true, // Disable editing
                         maxLines: null,
                         style: TextStyle(
                           fontSize: 16.0,
@@ -386,6 +462,8 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                               IconButton(
                                 onPressed: () {
                                   print("copy text");
+                                  Clipboard.setData(ClipboardData(
+                                      text: _translatedTextController.text));
                                 },
                                 icon: Image.asset('assets/images/copy.png'),
                               ),

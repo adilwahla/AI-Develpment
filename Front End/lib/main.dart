@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/Provider/Auth_Provider.dart';
+import 'package:my_app/Provider/EmailProcessProvider.dart';
 
 import 'package:my_app/Provider/SnackBarProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Screens/RegistrationPage.dart';
+import 'package:my_app/services/emailService.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,6 +24,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => UserProvider()),
     ChangeNotifierProvider(create: (_) => Auth_provider()),
     ChangeNotifierProvider(create: (_) => SnackBarProvider()),
+    ChangeNotifierProvider(create: (_) => EmailProvider()),
   ], child: MyApp()));
 }
 

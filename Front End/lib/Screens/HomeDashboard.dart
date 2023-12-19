@@ -3,6 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/EmailProcessProvider.dart';
 import 'package:my_app/Screens/Email.dart';
 import 'package:my_app/Screens/Home.dart';
 import 'package:my_app/Screens/ProfileScreen/Profile.dart';
@@ -12,6 +13,7 @@ import 'package:my_app/Screens/SocialMediaPage.dart';
 import 'package:my_app/Screens/Translate.dart';
 import 'package:my_app/Widgets/Footer.dart';
 import 'package:my_app/services/auth_services.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeDashboard extends StatefulWidget {
@@ -19,7 +21,7 @@ class HomeDashboard extends StatefulWidget {
   _HomeDashboardState createState() => _HomeDashboardState();
 }
 
-List<bool> selected = [true, false, false, false, false];
+List<bool> selected = [true, false, false, false, false, false];
 
 class _HomeDashboardState extends State<HomeDashboard> {
   final AuthService authService = AuthService();
@@ -198,91 +200,88 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             ],
                           ),
                         ),
-                        Expanded(
-                          flex: 1,
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Container(
-                                    //  width: width * 0.165,
-                                    width: width * 0.165,
-                                    height: height * 0.05,
-                                    // padding: const EdgeInsets.symmetric(horizontal: 15),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(20),
-                                      color: Color(0xFFFFFFFF),
-                                    ),
-                                    child: const TextField(
-                                      decoration: InputDecoration(
-                                        //FFFFFF
-                                        fillColor: Colors.white,
-                                        hintText: "Search ",
-                                        icon: Padding(
-                                          padding: EdgeInsets.only(
-                                              left:
-                                                  10), // Adjust the left margin as needed
-                                          child: Icon(CupertinoIcons.search),
-                                        ),
-                                        border: InputBorder.none,
+                        Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Container(
+                                  //  width: width * 0.165,
+                                  width: width * 0.165,
+                                  height: height * 0.05,
+                                  // padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color(0xFFFFFFFF),
+                                  ),
+                                  child: const TextField(
+                                    decoration: InputDecoration(
+                                      //FFFFFF
+                                      fillColor: Colors.white,
+                                      hintText: "Search ",
+                                      icon: Padding(
+                                        padding: EdgeInsets.only(
+                                            left:
+                                                10), // Adjust the left margin as needed
+                                        child: Icon(CupertinoIcons.search),
                                       ),
+                                      border: InputBorder.none,
                                     ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      // Add the dropdown button to trigger the menu
-                                      PopupMenuButton<String>(
-                                        onSelected: (value) {
-                                          if (value == 'logout') {
-                                            // authService.signOut(context);
-                                            signOut(context);
-                                          } else if (value == 'profile') {
-                                            // Handle navigating to the profile page
-                                            // showProfile = true;
-                                            setState(() {
-                                              selectedIndex = 5;
-                                            });
-                                          }
-                                        },
-                                        itemBuilder: (BuildContext context) => [
-                                          PopupMenuItem(
-                                            value: 'logout',
-                                            child: Text('Logout'),
-                                          ),
-                                          PopupMenuItem(
-                                            value: 'profile',
-                                            child: Text('Profile Page'),
-                                          ),
-                                        ],
-                                        child: Container(
-                                          // color: Colors.amber,
-                                          height: 50,
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    // Add the dropdown button to trigger the menu
+                                    PopupMenuButton<String>(
+                                      onSelected: (value) {
+                                        if (value == 'logout') {
+                                          // authService.signOut(context);
+                                          signOut(context);
+                                        } else if (value == 'profile') {
+                                          // Handle navigating to the profile page
+                                          // showProfile = true;
+                                          setState(() {
+                                            selectedIndex = 5;
+                                          });
+                                        }
+                                      },
+                                      itemBuilder: (BuildContext context) => [
+                                        PopupMenuItem(
+                                          value: 'logout',
+                                          child: Text('Logout'),
+                                        ),
+                                        PopupMenuItem(
+                                          value: 'profile',
+                                          child: Text('Profile Page'),
+                                        ),
+                                      ],
+                                      child: Container(
+                                        // color: Colors.amber,
+                                        height: 50,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 8.0),
+                                          child: CircleAvatar(
+                                            backgroundColor: Colors.white,
+                                            radius: 23,
                                             child: CircleAvatar(
-                                              backgroundColor: Colors.white,
-                                              radius: 23,
-                                              child: CircleAvatar(
-                                                backgroundImage: NetworkImage(
-                                                    'assets/images/avatar.jpg'),
-                                                radius: 20,
-                                              ),
+                                              backgroundImage: NetworkImage(
+                                                  'assets/images/avatar.jpg'),
+                                              radius: 20,
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: 40,
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 40,
+                                )
+                              ],
+                            ),
+                          ],
                         ),
                         // SizedBox(width: 5),
                       ],

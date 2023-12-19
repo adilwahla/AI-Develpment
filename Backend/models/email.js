@@ -8,16 +8,20 @@ const emailSchema = new mongoose.Schema({
   },
   typeOfEmail: {
     type: String,
-    enum: ['Inside Email', 'Close Partner Email', 'Normal Partner Email', 'Unknown Partner Email'],
+    // enum: ['Inside Email', 'Close Partner Email', 'Normal Partner Email', 'Unknown Partner Email'],
     required: true,
   },
-  partnerName: {
+  emailTo: {
+    type: String,
+    required: true,
+  },
+  emailFrom: {
     type: String,
     required: true,
   },
   length: {
     type: String,
-    enum: ['Short', 'Medium', 'Long'],
+    // enum: ['Short', 'Medium', 'Long'],
     required: true,
   },
   emailContent: {
@@ -34,17 +38,17 @@ const emailSchema = new mongoose.Schema({
 const Email = mongoose.model('Email', emailSchema);
 
 // Function to create a new email
-async function createEmail(emailData) {
-  try {
-    const newEmail = new Email(emailData);
-    const savedEmail = await newEmail.save();
-    return savedEmail;
-  } catch (error) {
-    throw error;
-  }
-}
+// async function createEmail(emailData) {
+//   try {
+//     const newEmail = new Email(emailData);
+//     const savedEmail = await newEmail.save();
+//     return savedEmail;
+//   } catch (error) {
+//     throw error;
+//   }
+// }
 
 module.exports = {
   Email,
-  createEmail,
+  // createEmail,
 };

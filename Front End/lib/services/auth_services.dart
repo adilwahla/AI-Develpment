@@ -29,7 +29,8 @@ class AuthService {
   }
 
   void translate({
-    required String input,
+    required String? documentText,
+    required String? input,
     required String language,
     required TranslationCallback onTranslation,
     required TranslationCallback onError,
@@ -38,6 +39,7 @@ class AuthService {
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/translate'),
         body: jsonEncode({
+          'documentText': documentText,
           'inputText': input,
           'targetLanguage': language,
         }),

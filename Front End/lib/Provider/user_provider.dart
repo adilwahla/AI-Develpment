@@ -2,10 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:my_app/Utils.dart';
 import 'package:my_app/config_dev.dart';
 import 'package:my_app/models/user.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserProvider extends ChangeNotifier {
@@ -45,6 +43,7 @@ class UserProvider extends ChangeNotifier {
       var response = jsonDecode(tokenRes.body);
 
       if (response == true) {
+        // ignore: unused_local_variable
         http.Response userRes = await http.get(
           Uri.parse('${AppConfig.baseUrl}/'),
           headers: <String, String>{
