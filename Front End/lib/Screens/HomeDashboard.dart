@@ -116,7 +116,8 @@ class _HomeDashboardState extends State<HomeDashboard> {
                     ),
                   ),
                   Positioned(
-                    top: 110,
+                    top: height * 0.10, //105
+                    // top: 110,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: navItems
@@ -359,9 +360,20 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
   late AnimationController _controller1;
   late AnimationController _controller2;
 
-  late Animation<double> _anim1;
-  late Animation<double> _anim2;
-  late Animation<double> _anim3;
+  late Animation<double> m_x1;
+  late Animation<double> m_y1;
+  late Animation<double> q1_x1;
+  late Animation<double> q1_y1;
+  late Animation<double> q1_x2;
+  late Animation<double> q1_y2;
+  late Animation<double> q2_x1;
+  late Animation<double> q2_y1;
+  late Animation<double> q2_x2;
+  late Animation<double> q2_y2;
+  late Animation<double> c1_x1, c1_y1, c1_x2, c1_y2, c1_x3, c1_y3;
+  late Animation<double> c2_x1, c2_y1, c2_x2, c2_y2, c2_x3, c2_y3;
+  late Animation<double> c3_x1, c3_y1, c3_x2, c3_y2, c3_x3, c3_y3;
+
   late Animation<Color?> _color;
 
   bool hovered = false;
@@ -378,9 +390,38 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
       duration: Duration(milliseconds: 275),
     );
 
-    _anim1 = Tween(begin: 170.0, end: 75.0).animate(_controller1);
-    _anim2 = Tween(begin: 170.0, end: 25.0).animate(_controller2);
-    _anim3 = Tween(begin: 170.0, end: 50.0).animate(_controller2);
+    m_x1 = Tween(begin: 310.8, end: 310.56).animate(_controller2);
+    m_y1 = Tween(begin: 310.8, end: 0.97).animate(_controller2);
+    q1_x1 = Tween(begin: 310.8, end: 307.39).animate(_controller2);
+    q1_y1 = Tween(begin: 310.8, end: 26.30).animate(_controller2);
+    q1_x2 = Tween(begin: 310.8, end: 275.39).animate(_controller2);
+    q1_y2 = Tween(begin: 310.8, end: 26.42).animate(_controller2);
+
+    q2_x1 = Tween(begin: 310.8, end: 306.9).animate(_controller2);
+    q2_y1 = Tween(begin: 310.8, end: 76.5).animate(_controller2);
+    q2_x2 = Tween(begin: 310.8, end: 310.5).animate(_controller2);
+    q2_y2 = Tween(begin: 310.8, end: 100.0).animate(_controller2);
+
+    c1_x1 = Tween(begin: 310.8, end: 230.4).animate(_controller2);
+    c1_y1 = Tween(begin: 310.8, end: 26.4).animate(_controller2);
+    c1_x2 = Tween(begin: 310.8, end: 135.9).animate(_controller2);
+    c1_y2 = Tween(begin: 310.8, end: 27.0).animate(_controller2);
+    c1_x3 = Tween(begin: 310.8, end: 89.9).animate(_controller2);
+    c1_y3 = Tween(begin: 310.8, end: 27.31).animate(_controller2);
+
+    c2_x1 = Tween(begin: 310.8, end: 48.8).animate(_controller2);
+    c2_y1 = Tween(begin: 310.8, end: 27.1).animate(_controller2);
+    c2_x2 = Tween(begin: 310.8, end: 48.7).animate(_controller2);
+    c2_y2 = Tween(begin: 310.8, end: 77.94).animate(_controller2);
+    c2_x3 = Tween(begin: 310.8, end: 88.23).animate(_controller2);
+    c2_y3 = Tween(begin: 310.8, end: 77.28).animate(_controller2);
+
+    c3_x1 = Tween(begin: 310.8, end: 134.5).animate(_controller2);
+    c3_y1 = Tween(begin: 310.8, end: 77.5).animate(_controller2);
+    c3_x2 = Tween(begin: 310.8, end: 232.6).animate(_controller2);
+    c3_y2 = Tween(begin: 310.8, end: 78.95).animate(_controller2);
+    c3_x3 = Tween(begin: 310.8, end: 275.39).animate(_controller2);
+    c3_y3 = Tween(begin: 310.8, end: 79.17).animate(_controller2);
 
     // Assign the animation with the cast
     _color = ColorTween(end: Color(0xff332a7c), begin: Color(0xffEBF2FC))
@@ -452,38 +493,86 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
               //     ),
               //   ),
               // ),
-              Container(
-                child: Container(
-                  // color: Colors.amber,
-                  height: 45.0,
-                  width: width * 0.185,
-                  // width: 170.0,
-                  margin: EdgeInsets.only(left: 60.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        widget.imagePath, // Use the imagePath from your NavItem
-                        color: widget.color,
-                        width: 15.0, // Adjust the width as needed
-                        height: 15.0, // Adjust the height as needed
-                      ),
-                      // Icon(
-                      //   widget.icon,
-                      //   color: _color.value,
-                      //   size: 18.0,
-                      // ),
-                      SizedBox(
-                          width: 7), // Add some spacing between icon and name
-                      Text(
-                        widget.name, // Display the icon name
-                        style: TextStyle(
+
+              Positioned(
+                child: CustomPaint(
+                  // painter: CurvePainter(      value1: 0,
+                  //       animValue1: _anim3.value,
+                  //       animValue2: _anim2.value,
+                  //       animValue3: _anim1.value,),
+                  // size: Size(
+                  //     width,
+                  //     (width * 0.5630630630630631)
+                  //         .toDouble()), //You can Replace
+                  painter: NewCustomPainter(
+                    m_x1: m_x1.value,
+                    m_y1: m_y1.value,
+                    q1_x1: q1_x1.value,
+                    q1_y1: q1_y1.value,
+                    q1_x2: q1_x2.value,
+                    q1_y2: q1_y2.value,
+                    q2_x1: q2_x1.value,
+                    q2_y1: q2_y1.value,
+                    q2_x2: q2_x2.value,
+                    q2_y2: q2_y2.value,
+                    c1_x1: c1_x1.value,
+                    c1_y1: c1_y1.value,
+                    c1_x2: c1_x2.value,
+                    c1_y2: c1_y2.value,
+                    c1_x3: c1_x3.value,
+                    c1_y3: c1_y3.value,
+                    c2_x1: c2_x1.value,
+                    c2_y1: c2_y1.value,
+                    c2_x2: c2_x2.value,
+                    c2_y2: c2_y2.value,
+                    c2_x3: c2_x3.value,
+                    c2_y3: c2_y3.value,
+                    c3_x1: c3_x1.value,
+                    c3_y1: c3_y1.value,
+                    c3_x2: c3_x2.value,
+                    c3_y2: c3_y2.value,
+                    c3_x3: c3_x3.value,
+                    c3_y3: c3_y3.value,
+                    // value1: 26,
+                    // animValue1: _anim2.value,
+                    // animValue2: _anim3.value,
+                    // animValue3: _anim1.value,
+                  ),
+                  child: Container(
+                    // color: _color.value,
+                    height: 100,
+                    // height: height * 0.0648,
+                    width: width * 0.185,
+                    // width: 170.0,
+                    margin: EdgeInsets.only(left: 60.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          widget
+                              .imagePath, // Use the imagePath from your NavItem
+                          // color: widget.color,
                           color: widget.color,
-                          fontSize: 15.0, // Adjust font size as needed
+                          width: 15.0, // Adjust the width as needed
+                          height: 15.0, // Adjust the height as needed
                         ),
-                      ),
-                    ],
+                        // Icon(
+                        //   widget.icon,
+                        //   color: _color.value,
+                        //   size: 18.0,
+                        // ),
+                        SizedBox(
+                            width: 7), // Add some spacing between icon and name
+                        Text(
+                          widget.name, // Display the icon name
+                          style: TextStyle(
+                            color: widget.color,
+                            fontSize: 15.0, // Adjust font size as needed
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -495,51 +584,137 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
   }
 }
 
-class RPSCustomPainter extends CustomPainter {
+///////////////////////////////////////////////////////////
+class CurvePainter extends CustomPainter {
+  final double value1; // 26
+  final double animValue1; // static value1 = 50.0 //77
+  final double animValue2; //static value1 = 75.0   //300
+  // final double animValue3; //static value1 = 75.0
+
+  CurvePainter({
+    required this.value1,
+    required this.animValue1,
+    required this.animValue2,
+    // required this.animValue3,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Path path = Path();
+    Paint paint = Paint();
+    path.moveTo(animValue2 + 54.8, value1);
+    path.quadraticBezierTo(
+        animValue2 + 51.8, value1, animValue2 + 14.5, value1);
+    path.cubicTo(263.05144, value1, 155.1, value1 + .09, 103.10, value1 + 1.3);
+    path.cubicTo(56.2, value1 + 1, 56.5, animValue1, 100.6, animValue1 + .28);
+    path.cubicTo(154.49, animValue1 + .5, 261.68, animValue1 + .95,
+        animValue2 + 14.56, animValue1 + 1.17);
+    path.quadraticBezierTo(
+        animValue2 + 50.67, animValue1 - .52, animValue2 + 54.84, 100.0);
+
+    paint.color = Color(0xffEBF2FC);
+    paint.strokeWidth = 170.0; // Adjust the stroke width to 151.0
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return oldDelegate != this;
+  }
+}
+
+// new one
+
+// child: CustomPaint(
+//   size: Size(WIDTH,(WIDTH*0.5630630630630631).toDouble()), //You can Replace [WIDTH] with your desired width for Custom Paint and height will be calculated automatically
+//   painter: RPSCustomPainter(),
+// ),
+
+class NewCustomPainter extends CustomPainter {
+  final double m_x1; // 200
+  final double m_y1; // static value1 = 50.0
+  final double q1_x1;
+  final double q1_y1;
+  final double q1_x2;
+  final double q1_y2;
+
+  final double q2_x1;
+  final double q2_y1;
+  final double q2_x2;
+  final double q2_y2;
+
+  final double c1_x1;
+  final double c1_y1;
+  final double c1_x2;
+  final double c1_y2;
+  final double c1_x3;
+  final double c1_y3;
+  final double c2_x1, c2_y1, c2_x2, c2_y2, c2_x3, c2_y3;
+  final double c3_x1, c3_y1, c3_x2, c3_y2, c3_x3, c3_y3;
+
+  NewCustomPainter({
+    required this.m_x1,
+    required this.m_y1,
+    required this.q1_x1,
+    required this.q1_y1,
+    required this.q1_x2,
+    required this.q1_y2,
+    required this.q2_x1,
+    required this.q2_y1,
+    required this.q2_x2,
+    required this.q2_y2,
+    required this.c1_x1,
+    required this.c1_y1,
+    required this.c1_x2,
+    required this.c1_y2,
+    required this.c1_x3,
+    required this.c1_y3,
+    required this.c2_x1,
+    required this.c2_y1,
+    required this.c2_x2,
+    required this.c2_y2,
+    required this.c2_x3,
+    required this.c2_y3,
+    required this.c3_x1,
+    required this.c3_y1,
+    required this.c3_x2,
+    required this.c3_y2,
+    required this.c3_x3,
+    required this.c3_y3,
+  });
+
   @override
   void paint(Canvas canvas, Size size) {
     // Layer 1
 
+    // double width = 355.2;
+    //  double height = 100.0;
+
+    // Layer 1
+
     Paint paint_fill_0 = Paint()
-      ..color = const Color.fromARGB(255, 255, 255, 255)
+      ..color = const Color(0xffEBF2FC)
       ..style = PaintingStyle.fill
-      ..strokeWidth = size.width * 0.00
+      ..strokeWidth = 0.0 // This value remains the same
       ..strokeCap = StrokeCap.butt
       ..strokeJoin = StrokeJoin.miter;
 
     Path path_0 = Path();
-    path_0.moveTo(size.width * 1.0033333, size.height * 0.2824074);
-    path_0.cubicTo(
-        size.width * 1.0050000,
-        size.height * 0.3293981,
-        size.width * 0.4450000,
-        size.height * 0.3224537,
-        size.width * 0.4500000,
-        size.height * 0.3481481);
-    path_0.cubicTo(
-        size.width * 0.4441667,
-        size.height * 0.3793981,
-        size.width * 1.0066667,
-        size.height * 0.3597222,
-        size.width * 0.9966667,
-        size.height * 0.4055556);
-    path_0.cubicTo(
-        size.width * 0.9983333,
-        size.height * 0.4212963,
-        size.width * 1.0016667,
-        size.height * 0.2560185,
-        size.width * 1.0033333,
-        size.height * 0.2824074);
-    path_0.close();
+    path_0.moveTo(m_x1, m_y1);
+    path_0.quadraticBezierTo(q1_x1, q1_y1, q1_x2, q1_y2);
+    path_0.cubicTo(c1_x1, c1_y1, c1_x2, c1_y2, c1_x3, c1_y3);
+    path_0.cubicTo(c2_x1, c2_y1, c2_x2, c2_y2, c2_x3, c2_y3);
+    path_0.cubicTo(c3_x1, c3_y1, c3_x2, c3_y2, c3_x3, c3_y3);
+    path_0.quadraticBezierTo(q2_x1, q2_y1, q2_x2, q2_y2);
 
     canvas.drawPath(path_0, paint_fill_0);
 
     // Layer 1
 
     Paint paint_stroke_0 = Paint()
-      ..color = const Color.fromARGB(253, 33, 150, 243)
+      ..color = const Color.fromARGB(255, 33, 150, 243)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = size.width * 0.00
+      ..strokeWidth = 0.0 // This value remains the same
       ..strokeCap = StrokeCap.butt
       ..strokeJoin = StrokeJoin.miter;
 
@@ -553,14 +728,19 @@ class RPSCustomPainter extends CustomPainter {
 }
 
 
-///////////////////////////////////////////////////////////
-// class CurvePainter extends CustomPainter {
+
+
+
+
+
+
+// class NewCustomPainter extends CustomPainter {
 //   final double value1; // 200
 //   final double animValue1; // static value1 = 50.0
 //   final double animValue2; //static value1 = 75.0
 //   final double animValue3; //static value1 = 75.0
 
-//   CurvePainter({
+//   NewCustomPainter({
 //     required this.value1,
 //     required this.animValue1,
 //     required this.animValue2,
@@ -569,32 +749,59 @@ class RPSCustomPainter extends CustomPainter {
 
 //   @override
 //   void paint(Canvas canvas, Size size) {
-//     Path path = Path();
-//     Paint paint = Paint();
+//     // Layer 1
 
-//     path.moveTo(170, value1);
-//     path.quadraticBezierTo(170, value1 + 9, animValue3, value1 + 9);
-//     path.lineTo(animValue1, value1 + 10);
-//     path.quadraticBezierTo(animValue2, value1 + 13, animValue2, value1 + 30);
-//     path.lineTo(170, value1 + 30);
-//     path.close();
+//     Paint paint_fill_0 = Paint()
+//       ..color = const Color.fromARGB(255, 255, 255, 255)
+//       ..style = PaintingStyle.fill
+//       ..strokeWidth = size.width * 0.00
+//       ..strokeCap = StrokeCap.butt
+//       ..strokeJoin = StrokeJoin.miter;
 
-//     path.moveTo(170, value1 + 50);
-//     path.quadraticBezierTo(170, value1 + 40, animValue3, value1 + 40);
-//     path.lineTo(animValue1, value1 + 40);
-//     path.quadraticBezierTo(animValue2, value1 + 40, animValue2, value1 + 30);
-//     path.lineTo(170, value1 + 30);
-//     path.close();
+//     Path path_0 = Path();
+//     path_0.moveTo(size.width * 0.9992399, size.height * 0.0097000); //x,y
+//     path_0.quadraticBezierTo(size.width * 0.9875563, size.height * 0.2630000,
+//         size.width * 0.8875282, size.height * 0.2642000); //x1,y1 ,x2,y2
+//     path_0.cubicTo(
+//         size.width * 0.7374155, //x1
+//         size.height * 0.2665000, //y1
+//         size.width * 0.4372185, //x2
+//         size.height * 0.2709000, //y2
+//         size.width * 0.2871059, //x3
+//         size.height * 0.2731000); //y3
+//     path_0.cubicTo(
+//         size.width * 0.1567005, //x1
+//         size.height * 0.2710000, //y1
+//         size.width * 0.1592342, //x2
+//         size.height * 0.7694000, //y2
+//         size.width * 0.2843187, //x3
+//         size.height * 0.7728000); //y3
+//     path_0.cubicTo(
+//         size.width * 0.4351070, //x1
+//         size.height * 0.7750000, //y1
+//         size.width * 0.7367117, //x2
+//         size.height * 0.7795000, //y2
+//         size.width * 0.8875282, //x3
+//         size.height * 0.7817000); //y3
+//     path_0.quadraticBezierTo(size.width * 0.9840935, size.height * 0.7652000,
+//         size.width * 0.9992399, size.height); //x1,y1 ,x2,y2
 
-//     paint.color = Color(0xffEBF2FC);
-//     paint.strokeWidth = 170.0; // Adjust the stroke width to 151.0
-//     canvas.drawPath(path, paint);
+//     canvas.drawPath(path_0, paint_fill_0);
+
+//     // Layer 1
+
+//     Paint paint_stroke_0 = Paint()
+//       ..color = const Color.fromARGB(255, 33, 150, 243)
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = size.width * 0.00
+//       ..strokeCap = StrokeCap.butt
+//       ..strokeJoin = StrokeJoin.miter;
+
+//     canvas.drawPath(path_0, paint_stroke_0);
 //   }
 
 //   @override
-//   bool shouldRepaint(CustomPainter oldDelegate) {
-//     return oldDelegate != this;
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     return true;
 //   }
 // }
-
-// new one

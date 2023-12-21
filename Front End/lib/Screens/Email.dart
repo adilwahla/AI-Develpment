@@ -2,7 +2,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:fluttertoast/fluttertoast.dart';
+import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/EmailProcessProvider.dart';
 
@@ -23,7 +24,7 @@ String? emailTo;
 String? emailFrom;
 String? length;
 String? content; //emailContent
-bool isEmailGenerated = true;
+bool isEmailGenerated = false;
 
 class Email extends StatefulWidget {
   const Email({super.key});
@@ -160,25 +161,21 @@ class _EmailState extends State<Email> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             IconButton(
-                              focusColor: Colors.amber,
+                              // focusColor: Colors.amber,
                               onPressed: () {
                                 Clipboard.setData(
                                     ClipboardData(text: GeneratedEmail.text));
                                 print("Text copied to clipboard");
-                                setState(() {
-                                  iconColor = Colors.blue;
-                                });
+                                // setState(() {
+                                //   iconColor = Colors.blue;
+                                // });
                                 //  to reset the color after a short delay
-                                Future.delayed(Duration(seconds: 1), () {
-                                  setState(() {
-                                    iconColor = Colors.black;
-                                  });
-                                });
-                                // Fluttertoast.showToast(
-                                //   msg: 'Text copied',
-                                //   toastLength: Toast.LENGTH_SHORT,
-                                //   gravity: ToastGravity.BOTTOM,
-                                // );
+
+                                Fluttertoast.showToast(
+                                  msg: 'Text copied',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                );
                               },
                               icon: Image.asset('assets/images/copy.png'),
                               color: iconColor,
@@ -222,7 +219,7 @@ class BodyEmailForm extends StatefulWidget {
 class _BodyEmailFormState extends State<BodyEmailForm>
 // with SingleTickerProviderStateMixin
 {
-  // bool rotateImage = false;
+  bool rotateImage = true;
   // late final AnimationController _controller =
   //     AnimationController(vsync: this, duration: Duration(seconds: 2))
   //       ..repeat();
@@ -303,11 +300,13 @@ class _BodyEmailFormState extends State<BodyEmailForm>
     print('Generated Email Content _handleOnSuccess(): $result');
     // Invoke the parent's callback with the result
     widget.onSuccessCallback(result);
+    rotateImage = false;
   }
 
   void _handleOnFailure() {
     // Handle failure
     print('Failed to generate email');
+    rotateImage = false;
   }
 
   @override
@@ -754,6 +753,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                 onTap: () async {
                   // createEmail();
                   // _generateEmail();
+
                   try {
                     emailProvider.startProcessing();
                     print("during api call= ${emailProvider.isProcessing}");
@@ -788,31 +788,31 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       // AnimatedBuilder(
-                      // animation: _controller,
-                      // builder: (_, child) {
-                      //   if (rotateImage) {
-                      //     // If email is not generated, continue rotation
-                      //     return Transform.rotate(
-                      //       angle: _controller.value * 2 * math.pi,
-                      //       child: child,
-                      //     );
-                      //   } else {
-                      //     // If email is generated, stop rotation
-                      //     return Image.asset(
-                      //       'assets/images/autorenew.png',
-                      //       color: Colors.white, // Icon color
-                      //       width: 24, // Set the width as needed
-                      //       height: 24, // Set the height as needed
-                      //     );
-                      //   }
-                      // },
+                      //   animation: _controller,
+                      //   builder: (_, child) {
+                      //     if (rotateImage) {
+                      //       // If email is not generated, continue rotation
+                      //       return Transform.rotate(
+                      //         angle: _controller.value * 2 * math.pi,
+                      //         child: child,
+                      //       );
+                      //     } else {
+                      //       // If email is generated, stop rotation
+                      //       return Image.asset(
+                      //         'assets/images/autorenew.png',
+                      //         color: Colors.white, // Icon color
+                      //         width: 24, // Set the width as needed
+                      //         height: 24, // Set the height as needed
+                      //       );
+                      //     }
+                      //   },
                       Image.asset(
                         'assets/images/autorenew.png',
                         color: Colors.white, // Icon color
                         width: 24, // Set the width as needed
                         height: 24, // Set the height as needed
                       ),
-                      // ),
+
                       SizedBox(
                         width: 15,
                       ),

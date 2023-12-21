@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -464,6 +465,11 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                                   print("copy text");
                                   Clipboard.setData(ClipboardData(
                                       text: _translatedTextController.text));
+                                  Fluttertoast.showToast(
+                                    msg: 'Text copied',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                  );
                                 },
                                 icon: Image.asset('assets/images/copy.png'),
                               ),
