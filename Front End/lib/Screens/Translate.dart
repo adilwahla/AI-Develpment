@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:docx_to_text/docx_to_text.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -15,6 +16,7 @@ import 'package:my_app/Widgets/Text/FormLabel.dart';
 import 'package:my_app/config_dev.dart';
 
 import 'package:my_app/services/auth_services.dart';
+import 'package:my_app/services/pdfService.dart';
 import 'package:pdf_text/pdf_text.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
@@ -46,10 +48,12 @@ class TranslateFormBody extends StatefulWidget {
 
 class _TranslateFormBodyState extends State<TranslateFormBody> {
   final AuthService authService = AuthService();
+  PdfService pdfService = PdfService();
   TextEditingController textarea = TextEditingController();
   String? language;
   // String? selectLanguage;
-  late String inputText;
+  String inputText = '';
+  late String Text_pdf;
 
   TextEditingController _documentTextController = TextEditingController();
   TextEditingController _typedTextController = TextEditingController();
@@ -93,7 +97,9 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
   Future<String> _readFile(PlatformFile file) async {
     try {
       Uint8List bytes = file.bytes!; // Use bytes property on the web
+      print('Bytes: $bytes');
       String content = utf8.decode(bytes);
+      print("i am called =$content");
       return content;
     } catch (e) {
       print('Error reading file: $e');
@@ -101,16 +107,55 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
     }
   }
 
-  Future<String> extractTextFromWord(PlatformFile file) async {
-    try {
-      final StringBuffer buffer = StringBuffer();
+  // Future<String> extractTextFromWord(PlatformFile file) async {
+  //   try {
+  //     final StringBuffer buffer = StringBuffer();
 
-      return buffer.toString();
-    } catch (e) {
-      print('Error extracting text from Word document: $e');
-      return '';
-    }
-  }
+  //     return buffer.toString();
+  //   } catch (e) {
+  //     print('Error extracting text from Word document: $e');
+  //     return '';
+  //   }
+  // }
+// Future<String> extractTextFromWord() async {
+//   try {
+//     // Create a file input element and trigger its click programmatically
+//     final input = uhtml.InputElement()..type = 'file';
+//     input.click();
+
+//     // Wait for the user to select a file
+//     await input.onChange.first;
+
+//     // Access the selected file
+//     final file = input.files!.first;
+
+//     if (file.type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
+//       throw Exception('Selected file is not a Word document.');
+//     }
+
+//     // Create a FileReader
+//     final reader = html.FileReader();
+
+//     // Set an onload event to get the text content once it's loaded
+//     reader.onLoad.first.then((e) {
+//       // Use the reader.result to get the content of the Word document
+//       final content = reader.result as String;
+
+//       // Here you can further process the content if needed
+//       print(content);
+//       return content;
+//     });
+
+//     // Read the content of the selected file as text
+//     reader.readAsText(file);
+
+//     // Return a placeholder for now
+//     return 'Processing...';
+//   } catch (e) {
+//     print('Error extracting text from Word document: $e');
+//     return '';
+//   }
+// }
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +204,9 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                       inputText = extractor.extractText();
                       print('here goes pdf @text ${inputText} ');
                     } else if (file.extension == 'docx') {
+                      Future<String> docxText = _readFile(file);
+                      String text = await docxText;
+                      print("this is word file text: $text");
                     } else if (file.extension == 'txt') {
                       Uint8List uint8List = result.files.first.bytes!;
                       // Convert bytes to string
@@ -510,8 +558,14 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  DownloadButtons(
-                    downloadIconName: 'pdf',
+                  InkWell(
+                    onTap: () {
+                      Text_pdf = _translatedTextController.text;
+                      PdfService.saveAndLaunchFile(Text_pdf, 'Translated.pdf');
+                    },
+                    child: DownloadButtons(
+                      downloadIconName: 'pdf',
+                    ),
                   ),
                   SizedBox(
                     width: 5,

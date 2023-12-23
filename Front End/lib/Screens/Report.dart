@@ -1,10 +1,19 @@
+import 'dart:convert';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/services/pdfService.dart';
+import 'package:my_app/services/reportService.dart';
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
@@ -33,13 +42,91 @@ class ReportFormBody extends StatefulWidget {
 }
 
 class _ReportFormBodyState extends State<ReportFormBody> {
-  TextEditingController textarea = TextEditingController();
+  ReportService _reportService = ReportService();
+  PdfService _pdfService = PdfService();
+  TextEditingController? textarea = TextEditingController();
+  // TextEditingController EnterLanguage = TextEditingController();
   String? object;
-  TextEditingController EnterLanguage = TextEditingController();
+  String ExtractedText = '';
   String? selectLength;
+  String? selectedLanguage;
+  String GeneratedReport = "";
+
+  void _initiateReportGeneration() {
+    // setState(() {
+    //   textarea.text = inputText;
+    // });
+    // print('this is document input $inputText');
+    _reportService.GenerateReport(
+      documentText: ExtractedText,
+      length: selectLength,
+      language: selectedLanguage,
+      onSuccess: _handleReportSuccess,
+      onError: _handleReportError,
+    );
+  }
+
+  _handleReportSuccess(String result) {
+    print("_handleReportSuccess $result");
+    setState(() {
+      print('set state is called');
+      GeneratedReport = result;
+      textarea?.text = GeneratedReport;
+    });
+  }
+
+  _handleReportError(String error) {
+    Fluttertoast.showToast(
+      msg: "You Exceed the token limit try shorter document",
+      toastLength: Toast.LENGTH_LONG,
+      gravity: ToastGravity.BOTTOM,
+    );
+  }
+
+  void _extractTextFromSelectedFile() async {
+    FilePickerResult? result = await FilePicker.platform
+        .pickFiles(type: FileType.any, allowMultiple: false);
+
+    if (result != null && result.files.isNotEmpty) {
+      // Extract text from the selected file
+      PlatformFile file = result.files.first;
+      // Access file information
+      List<int>? fileBytes = result.files.first.bytes;
+      // Log the file info
+
+      print('file name=${file.name}');
+      print('file size=${file.size}');
+      print('file extension=${file.extension}');
+      // print('file path=${file.path}');
+      if (file.extension == 'pdf') {
+        final PdfDocument document = PdfDocument(inputBytes: fileBytes);
+
+        //Create PDF text extractor to extract text
+        PdfTextExtractor extractor = PdfTextExtractor(document);
+
+        // ${String.fromCharCodes(fileBytes!)}
+        ExtractedText = extractor.extractText();
+        print('here goes pdf @text ${ExtractedText} ');
+      } else if (file.extension == 'docx') {
+        // Future<String> docxText = _readFile(file);
+        // String text = await docxText;
+        // print("this is word file text: $text");
+      } else if (file.extension == 'txt') {
+        Uint8List uint8List = result.files.first.bytes!;
+        // Convert bytes to string
+        ExtractedText = utf8.decode(uint8List);
+        print('this is Text file: $ExtractedText');
+      } else {
+        print("unsupported file format ${file.extension}");
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      textarea?.text = GeneratedReport;
+    });
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     return Column(
@@ -60,14 +147,19 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                       fontSize: 12,
                     ),
                   ),
-                  FormButton(
-                    buttonText: "   Generate Report",
-                    buttonColor: Color(0xff4C5AFE),
-                    buttonIconName: 'paste.png',
-                    buttonHeight: height * 0.047,
-                    buttonWidth: width * 0.366,
-                    // iconHeight: 27,
-                    // iconWidth: 22,
+                  InkWell(
+                    onTap: () {
+                      _extractTextFromSelectedFile();
+                    },
+                    child: FormButton(
+                      buttonText: "   Generate Report",
+                      buttonColor: Color(0xff4C5AFE),
+                      buttonIconName: 'paste.png',
+                      buttonHeight: height * 0.047,
+                      buttonWidth: width * 0.366,
+                      // iconHeight: 27,
+                      // iconWidth: 22,
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
@@ -103,17 +195,19 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                   dropdownColor: Colors.white,
                                   value: selectLength,
                                   style: TextStyle(
-                                    color: Color(0xff8598AD),
-                                    fontSize: 12.0,
+                                    // color: Color(0xff8598AD),
+                                    color: Colors.black,
+                                    fontSize: 16.0,
                                     fontFamily: 'Poppins',
                                     fontWeight: FontWeight
                                         .w200, // FontWeight.w200 represents the "extra-light" weight
                                     fontStyle: FontStyle.italic,
                                   ),
                                   items: <String>[
-                                    'Short',
-                                    'Medium',
-                                    'Long',
+                                    '200 words',
+                                    'Half page',
+                                    'One page',
+                                    'Two page',
                                   ].map<DropdownMenuItem<String>>(
                                       (String value) {
                                     return DropdownMenuItem<String>(
@@ -131,6 +225,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                       "Select Length",
                                       style: TextStyle(
                                         color: Color(0xff8598AD),
+                                        //  color: Colors.black,
                                         fontSize: 12.0,
                                         fontFamily: 'Poppins',
                                         fontWeight: FontWeight
@@ -142,7 +237,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                   onChanged: (String? value) {
                                     setState(() {
                                       selectLength = value;
-                                      print("ttttt${selectLength}");
+                                      print("Length=${selectLength}");
                                     });
                                   },
                                 ),
@@ -171,7 +266,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                 borderRadius: BorderRadius.circular(25),
                               ),
                               child: TextField(
-                                controller: EnterLanguage,
+                                // controller: EnterLanguage,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16.0,
@@ -203,8 +298,12 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                       borderSide:
                                           BorderSide(color: Color(0xff4C5AFE)),
                                     )),
-                                onChanged: (value) {
-                                  // do something
+                                onChanged: (String value) {
+                                  setState(() {
+                                    selectedLanguage = value;
+                                    print(
+                                        "selectedLanguage=${selectedLanguage}");
+                                  });
                                 },
                               ),
                             ),
@@ -233,14 +332,20 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                   SizedBox(
                     height: 10,
                   ),
-                  FormButton(
-                    buttonText: "   Generate",
-                    buttonColor: Color(0xffFF8203),
-                    buttonIconName: 'autorenew.png',
-                    buttonHeight: height * 0.047,
-                    buttonWidth: width * 0.366,
-                    // iconHeight: 27,
-                    // iconWidth: 22,
+                  InkWell(
+                    onTap: () {
+                      _initiateReportGeneration();
+                      print('Generate Button pressed');
+                    },
+                    child: FormButton(
+                      buttonText: "   Generate",
+                      buttonColor: Color(0xffFF8203),
+                      buttonIconName: 'autorenew.png',
+                      buttonHeight: height * 0.047,
+                      buttonWidth: width * 0.366,
+                      // iconHeight: 27,
+                      // iconWidth: 22,
+                    ),
                   ),
                 ],
               ),
@@ -326,10 +431,11 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                           minHeight: double.infinity,
                         ),
                         child: TextField(
+                          controller: textarea,
                           enabled: true,
                           maxLines: null,
                           style: TextStyle(
-                            fontSize: 10.0,
+                            fontSize: 14.0,
                             fontFamily: 'Poppins',
                             // fontStyle: FontStyle.italic,
                             color: Color(0xff8598AD),
@@ -342,6 +448,13 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                 IconButton(
                                   onPressed: () {
                                     print("copy text");
+                                    Clipboard.setData(
+                                        ClipboardData(text: textarea!.text));
+                                    Fluttertoast.showToast(
+                                      msg: 'Text copied',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                    );
                                   },
                                   icon: Image.asset('assets/images/copy.png'),
                                 ),
@@ -381,8 +494,16 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      DownloadButtons(
-                        downloadIconName: 'pdf',
+                      InkWell(
+                        onTap: () {
+                          print('download pdf');
+                          GeneratedReport = textarea!.text;
+                          PdfService.saveAndLaunchFile(
+                              GeneratedReport, 'Report.pdf');
+                        },
+                        child: DownloadButtons(
+                          downloadIconName: 'pdf',
+                        ),
                       ),
                       SizedBox(
                         width: 5,

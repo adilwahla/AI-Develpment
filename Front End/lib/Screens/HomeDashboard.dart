@@ -391,37 +391,37 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
     );
 
     m_x1 = Tween(begin: 310.8, end: 310.56).animate(_controller2);
-    m_y1 = Tween(begin: 310.8, end: 0.97).animate(_controller2);
+    m_y1 = Tween(begin: 0.0, end: 0.97).animate(_controller2);
     q1_x1 = Tween(begin: 310.8, end: 307.39).animate(_controller2);
-    q1_y1 = Tween(begin: 310.8, end: 26.30).animate(_controller2);
+    q1_y1 = Tween(begin: 100.0, end: 26.30).animate(_controller2);
     q1_x2 = Tween(begin: 310.8, end: 275.39).animate(_controller2);
-    q1_y2 = Tween(begin: 310.8, end: 26.42).animate(_controller2);
+    q1_y2 = Tween(begin: 100.0, end: 26.42).animate(_controller2);
 
     q2_x1 = Tween(begin: 310.8, end: 306.9).animate(_controller2);
-    q2_y1 = Tween(begin: 310.8, end: 76.5).animate(_controller2);
+    q2_y1 = Tween(begin: 100.0, end: 76.5).animate(_controller2);
     q2_x2 = Tween(begin: 310.8, end: 310.5).animate(_controller2);
-    q2_y2 = Tween(begin: 310.8, end: 100.0).animate(_controller2);
+    q2_y2 = Tween(begin: 0.0, end: 100.0).animate(_controller2);
 
     c1_x1 = Tween(begin: 310.8, end: 230.4).animate(_controller2);
-    c1_y1 = Tween(begin: 310.8, end: 26.4).animate(_controller2);
+    c1_y1 = Tween(begin: 100.0, end: 26.4).animate(_controller2);
     c1_x2 = Tween(begin: 310.8, end: 135.9).animate(_controller2);
-    c1_y2 = Tween(begin: 310.8, end: 27.0).animate(_controller2);
+    c1_y2 = Tween(begin: 100.0, end: 27.0).animate(_controller2);
     c1_x3 = Tween(begin: 310.8, end: 89.9).animate(_controller2);
-    c1_y3 = Tween(begin: 310.8, end: 27.31).animate(_controller2);
+    c1_y3 = Tween(begin: 100.0, end: 27.31).animate(_controller2);
 
     c2_x1 = Tween(begin: 310.8, end: 48.8).animate(_controller2);
-    c2_y1 = Tween(begin: 310.8, end: 27.1).animate(_controller2);
+    c2_y1 = Tween(begin: 100.0, end: 27.1).animate(_controller2);
     c2_x2 = Tween(begin: 310.8, end: 48.7).animate(_controller2);
-    c2_y2 = Tween(begin: 310.8, end: 77.94).animate(_controller2);
+    c2_y2 = Tween(begin: 100.0, end: 77.94).animate(_controller2);
     c2_x3 = Tween(begin: 310.8, end: 88.23).animate(_controller2);
-    c2_y3 = Tween(begin: 310.8, end: 77.28).animate(_controller2);
+    c2_y3 = Tween(begin: 100.0, end: 77.28).animate(_controller2);
 
     c3_x1 = Tween(begin: 310.8, end: 134.5).animate(_controller2);
-    c3_y1 = Tween(begin: 310.8, end: 77.5).animate(_controller2);
+    c3_y1 = Tween(begin: 100.0, end: 77.5).animate(_controller2);
     c3_x2 = Tween(begin: 310.8, end: 232.6).animate(_controller2);
-    c3_y2 = Tween(begin: 310.8, end: 78.95).animate(_controller2);
+    c3_y2 = Tween(begin: 100.0, end: 78.95).animate(_controller2);
     c3_x3 = Tween(begin: 310.8, end: 275.39).animate(_controller2);
-    c3_y3 = Tween(begin: 310.8, end: 79.17).animate(_controller2);
+    c3_y3 = Tween(begin: 100.0, end: 79.17).animate(_controller2);
 
     // Assign the animation with the cast
     _color = ColorTween(end: Color(0xff332a7c), begin: Color(0xffEBF2FC))
@@ -495,83 +495,86 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
               // ),
 
               Positioned(
-                child: CustomPaint(
-                  // painter: CurvePainter(      value1: 0,
-                  //       animValue1: _anim3.value,
-                  //       animValue2: _anim2.value,
-                  //       animValue3: _anim1.value,),
-                  // size: Size(
-                  //     width,
-                  //     (width * 0.5630630630630631)
-                  //         .toDouble()), //You can Replace
-                  painter: NewCustomPainter(
-                    m_x1: m_x1.value,
-                    m_y1: m_y1.value,
-                    q1_x1: q1_x1.value,
-                    q1_y1: q1_y1.value,
-                    q1_x2: q1_x2.value,
-                    q1_y2: q1_y2.value,
-                    q2_x1: q2_x1.value,
-                    q2_y1: q2_y1.value,
-                    q2_x2: q2_x2.value,
-                    q2_y2: q2_y2.value,
-                    c1_x1: c1_x1.value,
-                    c1_y1: c1_y1.value,
-                    c1_x2: c1_x2.value,
-                    c1_y2: c1_y2.value,
-                    c1_x3: c1_x3.value,
-                    c1_y3: c1_y3.value,
-                    c2_x1: c2_x1.value,
-                    c2_y1: c2_y1.value,
-                    c2_x2: c2_x2.value,
-                    c2_y2: c2_y2.value,
-                    c2_x3: c2_x3.value,
-                    c2_y3: c2_y3.value,
-                    c3_x1: c3_x1.value,
-                    c3_y1: c3_y1.value,
-                    c3_x2: c3_x2.value,
-                    c3_y2: c3_y2.value,
-                    c3_x3: c3_x3.value,
-                    c3_y3: c3_y3.value,
-                    // value1: 26,
-                    // animValue1: _anim2.value,
-                    // animValue2: _anim3.value,
-                    // animValue3: _anim1.value,
-                  ),
-                  child: Container(
-                    // color: _color.value,
-                    height: 100,
-                    // height: height * 0.0648,
-                    width: width * 0.185,
-                    // width: 170.0,
-                    margin: EdgeInsets.only(left: 60.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          widget
-                              .imagePath, // Use the imagePath from your NavItem
-                          // color: widget.color,
-                          color: widget.color,
-                          width: 15.0, // Adjust the width as needed
-                          height: 15.0, // Adjust the height as needed
-                        ),
-                        // Icon(
-                        //   widget.icon,
-                        //   color: _color.value,
-                        //   size: 18.0,
-                        // ),
-                        SizedBox(
-                            width: 7), // Add some spacing between icon and name
-                        Text(
-                          widget.name, // Display the icon name
-                          style: TextStyle(
+                child: RepaintBoundary(
+                  child: CustomPaint(
+                    // painter: CurvePainter(      value1: 0,
+                    //       animValue1: _anim3.value,
+                    //       animValue2: _anim2.value,
+                    //       animValue3: _anim1.value,),
+                    // size: Size(
+                    //     width,
+                    //     (width * 0.5630630630630631)
+                    //         .toDouble()), //You can Replace
+                    painter: NewCustomPainter(
+                      m_x1: m_x1.value,
+                      m_y1: m_y1.value,
+                      q1_x1: q1_x1.value,
+                      q1_y1: q1_y1.value,
+                      q1_x2: q1_x2.value,
+                      q1_y2: q1_y2.value,
+                      q2_x1: q2_x1.value,
+                      q2_y1: q2_y1.value,
+                      q2_x2: q2_x2.value,
+                      q2_y2: q2_y2.value,
+                      c1_x1: c1_x1.value,
+                      c1_y1: c1_y1.value,
+                      c1_x2: c1_x2.value,
+                      c1_y2: c1_y2.value,
+                      c1_x3: c1_x3.value,
+                      c1_y3: c1_y3.value,
+                      c2_x1: c2_x1.value,
+                      c2_y1: c2_y1.value,
+                      c2_x2: c2_x2.value,
+                      c2_y2: c2_y2.value,
+                      c2_x3: c2_x3.value,
+                      c2_y3: c2_y3.value,
+                      c3_x1: c3_x1.value,
+                      c3_y1: c3_y1.value,
+                      c3_x2: c3_x2.value,
+                      c3_y2: c3_y2.value,
+                      c3_x3: c3_x3.value,
+                      c3_y3: c3_y3.value,
+                      // value1: 26,
+                      // animValue1: _anim2.value,
+                      // animValue2: _anim3.value,
+                      // animValue3: _anim1.value,
+                    ),
+                    child: Container(
+                      // color: _color.value,
+                      height: 100,
+                      // height: height * 0.0648,
+                      width: width * 0.185,
+                      // width: 170.0,
+                      margin: EdgeInsets.only(left: 80.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            widget
+                                .imagePath, // Use the imagePath from your NavItem
+                            // color: widget.color,
                             color: widget.color,
-                            fontSize: 15.0, // Adjust font size as needed
+                            width: 15.0, // Adjust the width as needed
+                            height: 15.0, // Adjust the height as needed
                           ),
-                        ),
-                      ],
+                          // Icon(
+                          //   widget.icon,
+                          //   color: _color.value,
+                          //   size: 18.0,
+                          // ),
+                          SizedBox(
+                              width:
+                                  7), // Add some spacing between icon and name
+                          Text(
+                            widget.name, // Display the icon name
+                            style: TextStyle(
+                              color: widget.color,
+                              fontSize: 15.0, // Adjust font size as needed
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

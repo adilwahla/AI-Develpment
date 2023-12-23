@@ -195,15 +195,79 @@ authRouter.post('/api/translate', async (req, res) => {
 authRouter.post('/api/report', async (req, res) => {
     try {
       const { inputText, length, language } = req.body;
-      const reportResponse = await generateReport(inputText, length, language);
-      res.status(200).json(reportResponse);
+      console.log(req.body);
+      const reportResponse = await generateReportWithChatGPT(inputText, length, language);
+      console.log("$reportResponse"+ reportResponse);
+      res.status(200).json({  message: 'Translated Text Generated',
+      reportResponse}
+      );
     } catch (error) {
       console.error('Error generating report:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
 
+  async function generateReportWithChatGPT(inputText, length, language) {
+    let maxTokens;
 
+    // Determine max tokens based on the selected length
+    switch (length) {
+        case '200 words':
+            maxTokens = 200;
+            break;
+        case 'half page':
+            maxTokens = 1000; // Approximate token count for half a page
+            break;
+        case 'one page':
+            maxTokens = 1500; // Approximate token count for a full page
+            break;
+        case 'two pages':
+            maxTokens = 2000; // Approximate token count for two pages
+            break;
+        default:
+          throw new Error('Exceeded token Limit');
+    }
+
+    const maxChunkSize = 10096; // Max token limit for GPT-3.5
+
+    // Step 1: Split the document into chunks
+    const chunks = [];
+    for (let i = 0; i < inputText.length; i += maxChunkSize) {
+        chunks.push(inputText.substring(i, i + maxChunkSize));
+    }
+
+    // Step 2: Generate summaries for each chunk
+    const summaries = [];
+    for (let chunk of chunks) {
+        const summary = await generateSummary(chunk, maxTokens, language);
+        summaries.push(summary);
+    }
+
+    // Step 3: Combine the summaries to create a final summary
+    const finalSummary = combineSummaries(summaries);
+
+    return finalSummary;
+}
+
+async function generateSummary(text, maxTokens, language) {
+   // const prompt = `Summarize: ${text} in ${language}`;
+   const prompt = `Provide a summary of the main points in: ${text} in ${language}. Additionally, highlight or reference these main points with a corresponding table of contents.`;
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {"role": "user", "content": prompt}
+    ],
+      model: "gpt-3.5-turbo",
+      max_tokens: maxTokens,
+  
+    });
+    // console.log(completion.choices[0].message.content);
+      return completion.choices[0].message.content;
+}
+
+function combineSummaries(summaries) {
+    // Join the summaries to create a combined summary.
+    return summaries.join('\n');
+}
 
 ////////////////////////////////
 
