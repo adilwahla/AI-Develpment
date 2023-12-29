@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/models/user.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -13,6 +16,13 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   bool _obscured = true;
+  String? _Name;
+  String? _CompanyName;
+  String? _email;
+  String? _tagLine;
+  String? _newPassword;
+  String? _wordLimit;
+  String? _currentWordCount;
 
   void _toggleObscured() {
     setState(() {
@@ -20,8 +30,13 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  _updateUserProfile() {}
   @override
   Widget build(BuildContext context) {
+    User user = Provider.of<UserProvider>(context).user;
+    print('user.name${user.name}');
+    print('user.email${user.email}');
+
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
     double Hpad = 20.0;
@@ -61,7 +76,8 @@ class _ProfileState extends State<Profile> {
                 child: RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                      text: "David King, Google Ltd.",
+                      text:
+                          "${user.name.isEmpty ? 'David king' : user.name}, Google Ltd.",
                       style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 28,
@@ -94,7 +110,7 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FormLabelText(
-                    labelText: "First Name",
+                    labelText: "Full Name",
                   ),
                   Container(
                     width: width * 0.18,
@@ -121,7 +137,8 @@ class _ProfileState extends State<Profile> {
                                 .w200, // FontWeight.w200 represents the "extra-light" weight
                             fontStyle: FontStyle.italic,
                           ),
-                          hintText: 'Enter Name',
+                          hintText:
+                              '${user.name.isEmpty ? 'Enter Name' : user.name}',
                           contentPadding: const EdgeInsets.all(15),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -134,8 +151,12 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(25),
                             borderSide: BorderSide(color: Color(0xff4C5AFE)),
                           )),
-                      onChanged: (value) {
+                      onChanged: (String value) {
                         // do something
+                        setState(() {
+                          _Name = value;
+                          print("_Name=${_Name}");
+                        });
                       },
                     ),
                   ),
@@ -145,7 +166,7 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FormLabelText(
-                    labelText: "Last Name",
+                    labelText: "Company Name",
                   ),
                   Container(
                     width: width * 0.18,
@@ -172,7 +193,7 @@ class _ProfileState extends State<Profile> {
                                 .w200, // FontWeight.w200 represents the "extra-light" weight
                             fontStyle: FontStyle.italic,
                           ),
-                          hintText: 'king',
+                          hintText: 'company',
                           contentPadding: const EdgeInsets.all(15),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -185,8 +206,12 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(25),
                             borderSide: BorderSide(color: Color(0xff4C5AFE)),
                           )),
-                      onChanged: (value) {
+                      onChanged: (String value) {
                         // do something
+                        setState(() {
+                          _CompanyName = value;
+                          print("_CompanyName=${_CompanyName}");
+                        });
                       },
                     ),
                   ),
@@ -223,7 +248,8 @@ class _ProfileState extends State<Profile> {
                                 .w200, // FontWeight.w200 represents the "extra-light" weight
                             fontStyle: FontStyle.italic,
                           ),
-                          hintText: 'David',
+                          hintText:
+                              '${user.email.isEmpty ? 'Enter Name' : user.email}',
                           contentPadding: const EdgeInsets.all(15),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -236,8 +262,12 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(25),
                             borderSide: BorderSide(color: Color(0xff4C5AFE)),
                           )),
-                      onChanged: (value) {
+                      onChanged: (String value) {
                         // do something
+                        setState(() {
+                          _email = value;
+                          print("_firstName=${_email}");
+                        });
                       },
                     ),
                   ),
@@ -287,8 +317,12 @@ class _ProfileState extends State<Profile> {
                             borderRadius: BorderRadius.circular(25),
                             borderSide: BorderSide(color: Color(0xff4C5AFE)),
                           )),
-                      onChanged: (value) {
+                      onChanged: (String value) {
                         // do something
+                        setState(() {
+                          _tagLine = value;
+                        });
+                        print("tag_line:$_tagLine");
                       },
                     ),
                   ),
@@ -367,8 +401,12 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
-                      onChanged: (value) {
+                      onChanged: (String value) {
                         // do something
+                        setState(() {
+                          _newPassword = value;
+                          print("_newPassword=${_newPassword}");
+                        });
                       },
                     ),
                   ),
@@ -472,6 +510,12 @@ class _ProfileState extends State<Profile> {
                           ),
                         ),
                       ),
+                      onChanged: (String value) {
+                        setState(() {
+                          _wordLimit = value;
+                          print("_wordLimit=${_wordLimit}");
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -523,6 +567,12 @@ class _ProfileState extends State<Profile> {
                           borderSide: BorderSide.none,
                         ),
                       ),
+                      onChanged: (String value) {
+                        setState(() {
+                          _currentWordCount = value;
+                          print("_currentWordCount=${_currentWordCount}");
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -535,36 +585,41 @@ class _ProfileState extends State<Profile> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Container(
-                width: width * 0.13,
-                height: height * 0.047,
-                padding: EdgeInsets.symmetric(horizontal: 8),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 1,
-                    color: Color(0xffE2E4FB),
+              InkWell(
+                onTap: () {
+                  _updateUserProfile();
+                },
+                child: Container(
+                  width: width * 0.13,
+                  height: height * 0.047,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1,
+                      color: Color(0xffE2E4FB),
+                    ),
+                    color: Color(0xffFF8203),
+                    borderRadius: BorderRadius.circular(25),
                   ),
-                  color: Color(0xffFF8203),
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Row(
-                  // crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/images/save_as.png',
-                      width: 20,
-                      height: 20,
-                    ),
-                    SizedBox(
-                      width: 3,
-                    ),
-                    Text(
-                      'Save',
-                      style: GoogleFonts.firaSans(
-                          fontSize: 14, color: Colors.white),
-                    )
-                  ],
+                  child: Row(
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/images/save_as.png',
+                        width: 20,
+                        height: 20,
+                      ),
+                      SizedBox(
+                        width: 3,
+                      ),
+                      Text(
+                        'Save',
+                        style: GoogleFonts.firaSans(
+                            fontSize: 14, color: Colors.white),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ],

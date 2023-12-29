@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/config_dev.dart';
 
@@ -55,6 +56,7 @@ class EmailService {
     } catch (error) {
       // Handle any exceptions that might occur during the HTTP request
       print('Error during email generation: $error');
+
       onFailure();
     }
   }

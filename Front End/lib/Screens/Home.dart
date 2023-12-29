@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Utils.dart';
+import 'package:my_app/models/user.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
+    User user1 = context.read<UserProvider>().user;
+    User user = Provider.of<UserProvider>(context).user;
+    print('user1.id${user1.id}');
     // Get the screen dimensions using MediaQuery
     double Width = MediaQuery.of(context).size.width;
     double Height = MediaQuery.of(context).size.height;
@@ -78,7 +84,7 @@ class Home extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                "Welcome David!",
+                                                "Welcome ${user.name.isEmpty ? 'David!' : user.name} ",
                                                 style: GoogleFonts.inter(
                                                   fontSize: scaledFontSize,
                                                   color: Color(0xffFFFFFF),

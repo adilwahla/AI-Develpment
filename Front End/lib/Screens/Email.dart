@@ -54,6 +54,7 @@ class _EmailState extends State<Email> {
     double height = MediaQuery.of(context).size.height;
     Color iconColor = Colors.black;
     final emailProvider = Provider.of<EmailProvider>(context, listen: false);
+
     print('Widget is being rebuilt');
     print("isProcessing in Email=${emailProvider.isProcessing}");
     return FormContainer(
@@ -220,80 +221,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
 // with SingleTickerProviderStateMixin
 {
   bool rotateImage = true;
-  // late final AnimationController _controller =
-  //     AnimationController(vsync: this, duration: Duration(seconds: 2))
-  //       ..repeat();
-  // void createEmail() async {
-  //   rotateImage = true;
 
-  //   try {
-  //     // Create an object with the extracted data
-  //     var emailData = {
-  //       'object': object,
-  //       'typeOfEmail': selectType,
-  //       'emailTo': emailTo,
-  //       'emailFrom': emailFrom,
-  //       'length': length,
-  //       'emailContent': content,
-  //       // Add other fields as needed
-  //     };
-
-  //     // Convert the map to an Email object
-  //     var email = EmailModel.fromJson(emailData);
-  //     String generateEmailTemplate(
-  //         String object, String typeOfEmail, String emailTo, String content) {
-  //       return '''
-  //   Email Object: $object
-  //   Type: $typeOfEmail
-  //   To: $emailTo
-
-  //   Hello,
-
-  //   $content
-  //   Thank you for using our service. We appreciate your business.
-
-  //   Best regards,
-  //   Your Company
-  // ''';
-  //     }
-
-  //     var emailTemplate = generateEmailTemplate(
-  //         email.object, email.typeOfEmail, email.emailTo, email.emailContent);
-  //     // Now, you can use the email object in a typed manner
-  //     GeneratedEmail.text = emailTemplate;
-
-  //     setState(() {
-  //       isEmailGenerated = true;
-  //       rotateImage = false;
-  //     });
-
-  //     print(
-  //         'Email Object: ${email.object}, Type: ${email.typeOfEmail}, To: ${email.emailTo}');
-
-  //     // Continue with your POST request and handling logic...
-  //   } catch (error) {
-  //     // Handle other errors
-  //     setState(() {
-  //       isEmailGenerated = false;
-  //       rotateImage = false;
-  //     });
-  //     print('Error creating email: $error');
-  //     rotateImage = false;
-  //   }
-  // }
-
-  // void _generateEmail() {
-  //   emailService.generateEmail(
-  //     object,
-  //     selectType,
-  //     emailTo,
-  //     emailFrom,
-  //     length,
-  //     content,
-  //     _handleOnSuccess,
-  //     _handleOnFailure,
-  //   );
-  // }
 
   void _handleOnSuccess(String result) {
     // Handle the generated email content on success
@@ -312,6 +240,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
   @override
   Widget build(BuildContext context) {
     final emailProvider = Provider.of<EmailProvider>(context, listen: false);
+
     print("isProcessing in BodyEmailForm=${emailProvider.isProcessing}");
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
@@ -756,7 +685,6 @@ class _BodyEmailFormState extends State<BodyEmailForm>
 
                   try {
                     emailProvider.startProcessing();
-                    print("during api call= ${emailProvider.isProcessing}");
                     await emailProvider.emailService.generateEmail(
                         object,
                         selectType,
@@ -766,7 +694,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                         content,
                         _handleOnSuccess,
                         _handleOnFailure);
-                    print("after api call= ${emailProvider.isProcessing}");
+
                     setState(() {
                       isEmailGenerated = true;
                     });
@@ -784,49 +712,56 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                       borderRadius: BorderRadius.all(
                         Radius.circular(20.0),
                       )),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // AnimatedBuilder(
-                      //   animation: _controller,
-                      //   builder: (_, child) {
-                      //     if (rotateImage) {
-                      //       // If email is not generated, continue rotation
-                      //       return Transform.rotate(
-                      //         angle: _controller.value * 2 * math.pi,
-                      //         child: child,
-                      //       );
-                      //     } else {
-                      //       // If email is generated, stop rotation
-                      //       return Image.asset(
-                      //         'assets/images/autorenew.png',
-                      //         color: Colors.white, // Icon color
-                      //         width: 24, // Set the width as needed
-                      //         height: 24, // Set the height as needed
-                      //       );
-                      //     }
-                      //   },
-                      Image.asset(
-                        'assets/images/autorenew.png',
-                        color: Colors.white, // Icon color
-                        width: 24, // Set the width as needed
-                        height: 24, // Set the height as needed
-                      ),
+                  child: Consumer<EmailProvider>(
+                    builder:
+                        (BuildContext context, emailProvider, Widget? child) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          // AnimatedBuilder(
+                          //   animation: _controller,
+                          //   builder: (_, child) {
+                          //     if (rotateImage) {
+                          //       // If email is not generated, continue rotation
+                          //       return Transform.rotate(
+                          //         angle: _controller.value * 2 * math.pi,
+                          //         child: child,
+                          //       );
+                          //     } else {
+                          //       // If email is generated, stop rotation
+                          //       return Image.asset(
+                          //         'assets/images/autorenew.png',
+                          //         color: Colors.white, // Icon color
+                          //         width: 24, // Set the width as needed
+                          //         height: 24, // Set the height as needed
+                          //       );
+                          //     }
+                          //   },
+                          emailProvider.isProcessing
+                              ? CircularProgressIndicator()
+                              : Image.asset(
+                                  'assets/images/autorenew.png',
+                                  color: Colors.white, // Icon color
+                                  width: 24, // Set the width as needed
+                                  height: 24, // Set the height as needed
+                                ),
 
-                      SizedBox(
-                        width: 15,
-                      ),
-                      Center(
-                        child: Text(
-                          "Generate",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Fira Sans',
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ),
-                    ],
+                          SizedBox(
+                            width: 15,
+                          ),
+                          Center(
+                            child: Text(
+                              "Generate",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Fira Sans',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

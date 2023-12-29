@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:my_app/Provider/SocialMediaProvider.dart';
 import 'package:my_app/Widgets/Buttons/SocialMediaButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Inputs/CustomRoundedInput.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/services/pdfService.dart';
+import 'package:my_app/services/socialMediaServices.dart';
+import 'package:provider/provider.dart';
 
 class SocialMediaPage extends StatelessWidget {
   const SocialMediaPage({super.key});
@@ -38,16 +44,37 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
   TextEditingController textController1 = TextEditingController();
   TextEditingController textController2 = TextEditingController();
   TextEditingController textController3 = TextEditingController();
-
+  TextEditingController GeneratedText = TextEditingController();
+  String pdf_text = "";
+  String result = "";
   String? timeframe;
   String? frequency;
   String? type;
   String? themes;
+  bool facebook = false;
+  String Platform = 'facebook';
+  // Function to handle success scenario
+  void _handleSuccess(String res) {
+    print('Generated Text: $res');
+    // Handle any UI updates or other logic on success
+    setState(() {
+      GeneratedText.text = res;
+    });
+  }
+
+  // Function to handle failure scenario
+  void _handleFailure(String error) {
+    print('Failed to generate content');
+    // Handle any UI updates or other logic on failure
+  }
 
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    final socialMediaProvider =
+        Provider.of<SocialMediaProvider>(context, listen: false);
+    PdfService pdfService = PdfService();
     return Row(
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,6 +160,11 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                             buttonText: 'Facebook',
                             onPressed: () {
                               // Add your onPressed function for Facebook here
+                              setState(() {
+                                // Toggle the boolean variable
+                                facebook = !facebook;
+                              });
+                              print('fb$facebook');
                             },
                           ),
                         ],
@@ -230,7 +262,7 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                         // SizedBox(
                         //     height: 5.0), // Add vertical space between rows
                         Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             // SizedBox(width: 8.0),
@@ -328,9 +360,10 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           fontStyle: FontStyle.italic,
                                         ),
                                         items: <String>[
-                                          'English',
-                                          'German',
-                                          'French',
+                                          'January-march',
+                                          'April-june',
+                                          'july-sep',
+                                          'oct-Dec',
                                         ].map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(
@@ -358,10 +391,12 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           ),
                                         ),
                                         onChanged: (String? value) {
-                                          setState(() {
-                                            timeframe = value;
-                                            print("ttttt${timeframe}");
-                                          });
+                                          if (value != null) {
+                                            setState(() {
+                                              timeframe = value;
+                                              print("ttttt${timeframe}");
+                                            });
+                                          }
                                         },
                                       ),
                                     ),
@@ -402,9 +437,9 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           fontStyle: FontStyle.italic,
                                         ),
                                         items: <String>[
-                                          'English',
-                                          'German',
-                                          'French',
+                                          'daily',
+                                          'weekly',
+                                          'monthly',
                                         ].map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(
@@ -432,10 +467,12 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           ),
                                         ),
                                         onChanged: (String? value) {
-                                          setState(() {
-                                            frequency = value;
-                                            print("ttttt${frequency}");
-                                          });
+                                          if (value != null) {
+                                            setState(() {
+                                              frequency = value;
+                                              print("ttttt${frequency}");
+                                            });
+                                          }
                                         },
                                       ),
                                     ),
@@ -476,9 +513,9 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           fontStyle: FontStyle.italic,
                                         ),
                                         items: <String>[
-                                          'English',
-                                          'German',
-                                          'French',
+                                          'blog articles',
+                                          'videos',
+                                          'infographics',
                                         ].map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(
@@ -506,10 +543,12 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           ),
                                         ),
                                         onChanged: (String? value) {
-                                          setState(() {
-                                            type = value;
-                                            print("ttttt${type}");
-                                          });
+                                          if (value != null) {
+                                            setState(() {
+                                              type = value;
+                                              print("ttttt${type}");
+                                            });
+                                          }
                                         },
                                       ),
                                     ),
@@ -550,9 +589,10 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           fontStyle: FontStyle.italic,
                                         ),
                                         items: <String>[
-                                          'English',
-                                          'German',
-                                          'French',
+                                          'brand',
+                                          'awareness',
+                                          'lead generation',
+                                          'sales',
                                         ].map<DropdownMenuItem<String>>(
                                             (String value) {
                                           return DropdownMenuItem<String>(
@@ -580,10 +620,12 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           ),
                                         ),
                                         onChanged: (String? value) {
-                                          setState(() {
-                                            themes = value;
-                                            print("ttttt${themes}");
-                                          });
+                                          if (value != null) {
+                                            setState(() {
+                                              themes = value;
+                                              print("ttttt${themes}");
+                                            });
+                                          }
                                         },
                                       ),
                                     ),
@@ -593,12 +635,143 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                             ),
                           ),
                         ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(right: 20.0),
+                              child: InkWell(
+                                onTap: () async {
+                                  try {
+                                    socialMediaProvider.startProcessing();
+                                    socialMediaProvider.generateSocialMediaText(
+                                      selectedPlatform: Platform,
+                                      contentIdeas: textController1.text,
+                                      captionsText: textController2.text,
+                                      responseGeneration: textController3.text,
+                                      timeframe: timeframe,
+                                      frequency: frequency,
+                                      type: type,
+                                      themes: themes,
+                                      onSuccess: _handleSuccess,
+                                      onFailure: _handleFailure,
+                                    );
+                                    socialMediaProvider.stopProcessing();
+                                  } catch (e) {
+                                    print('error $e');
+                                    socialMediaProvider.stopProcessing();
+                                  }
+                                },
+                                child: Consumer<SocialMediaProvider>(
+                                  builder:
+                                      (context, socialMediaProvider, child) {
+                                    return Container(
+                                      padding: EdgeInsets.all(5),
+                                      width: width * 0.1125,
+                                      height: height * 0.04722,
+                                      decoration: BoxDecoration(
+                                          color: Color(0xffFF8203),
+                                          borderRadius: BorderRadius.all(
+                                            Radius.circular(20.0),
+                                          )),
+                                      child: Row(children: [
+                                        socialMediaProvider.isProcessing
+                                            ? CircularProgressIndicator()
+                                            : Image.asset(
+                                                'assets/images/autorenew.png',
+                                                color:
+                                                    Colors.white, // Icon color
+                                                width:
+                                                    24, // Set the width as needed
+                                                height:
+                                                    24, // Set the height as needed
+                                              ),
+                                        SizedBox(
+                                          width: 15,
+                                        ),
+                                        Center(
+                                          child: Text(
+                                            "Generate",
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Fira Sans',
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                        ),
+                                      ]),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         Expanded(
                           flex: 4,
                           child: Container(
                             // color: Colors.cyan,
                             height: 300, // Set the height as needed
                             width: double.infinity, // Set the width as needed
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                height: 100,
+                                width: double.infinity,
+                                // color: Colors.blue,
+                                child: TextField(
+                                  controller: GeneratedText,
+                                  enabled: true,
+                                  maxLines: null,
+                                  style: TextStyle(
+                                    fontSize: 11.0,
+                                    fontFamily: 'Poppins',
+                                    // fontStyle: FontStyle.italic,
+                                    color: Color(0xff8598AD),
+                                  ),
+                                  decoration: InputDecoration(
+                                    suffixIcon: Column(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          // focusColor: Colors.amber,
+                                          onPressed: () {
+                                            Clipboard.setData(ClipboardData(
+                                                text: GeneratedText!.text));
+                                            print("Text copied to clipboard");
+                                            // setState(() {
+                                            //   iconColor = Colors.blue;
+                                            // });
+                                            //  to reset the color after a short delay
+
+                                            Fluttertoast.showToast(
+                                              msg: 'Text copied',
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                            );
+                                          },
+                                          icon: Image.asset(
+                                              'assets/images/copy.png'),
+                                          // color: iconColor,
+                                        ),
+                                      ],
+                                    ),
+                                    labelStyle: TextStyle(
+                                      fontSize: 12.0,
+                                      fontFamily: 'Poppins',
+                                      // fontStyle: FontStyle.italic,
+                                      color: Color(0xff8598AD),
+                                    ),
+                                    contentPadding: EdgeInsets.all(16),
+
+                                    border: InputBorder
+                                        .none, // Remove the underline
+                                  ),
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                         Container(
@@ -616,8 +789,16 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                 Spacer(
                                   flex: 2,
                                 ),
-                                DownloadButtons(
-                                  downloadIconName: 'pdf',
+                                InkWell(
+                                  onTap: () {
+                                    print('i got clicked');
+                                    pdf_text = GeneratedText.text;
+                                    PdfService.saveAndLaunchFile(
+                                        pdf_text, 'SocialMediaContent.pdf');
+                                  },
+                                  child: DownloadButtons(
+                                    downloadIconName: 'pdf',
+                                  ),
                                 ),
                                 SizedBox(
                                   width: 60,

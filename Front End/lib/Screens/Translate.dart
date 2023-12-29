@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/TranslationProvider.dart';
 
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
@@ -18,6 +19,7 @@ import 'package:my_app/config_dev.dart';
 import 'package:my_app/services/auth_services.dart';
 import 'package:my_app/services/pdfService.dart';
 import 'package:pdf_text/pdf_text.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class TranslatePage extends StatelessWidget {
@@ -47,7 +49,8 @@ class TranslateFormBody extends StatefulWidget {
 }
 
 class _TranslateFormBodyState extends State<TranslateFormBody> {
-  final AuthService authService = AuthService();
+  // final AuthService authService = AuthService();
+  //final TranslationProvider translationProvider = TranslationProvider();
   PdfService pdfService = PdfService();
   TextEditingController textarea = TextEditingController();
   String? language;
@@ -65,14 +68,22 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
     setState(() {
       _documentTextController.text = inputText;
     });
-    print('this is document input $inputText');
-    authService.translate(
-      documentText: inputText,
-      input: _typedTextController.text,
-      language: _selectLanguageController.text,
-      onTranslation: _handleTranslationSuccess,
-      onError: _handleTranslationError,
-    );
+    // print('this is document input $inputText');
+    // print(
+    //     'before ${Provider.of<TranslationProvider>(context, listen: false).isProcessing}');
+    // Provider.of<TranslationProvider>(context, listen: false).startProcessing();
+    // print(
+    //     'after ${Provider.of<TranslationProvider>(context, listen: false).isProcessing}');
+    Provider.of<TranslationProvider>(context, listen: false).startProcessing();
+    Provider.of<TranslationProvider>(context, listen: false)
+        .translationService
+        .translate(
+          documentText: inputText,
+          input: _typedTextController.text,
+          language: _selectLanguageController.text,
+          onTranslation: _handleTranslationSuccess,
+          onError: _handleTranslationError,
+        );
   }
 
   void _handleTranslationSuccess(String result) {
@@ -82,12 +93,14 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
       isTranslationSuccessful = true;
       _translatedTextController.text = result;
     });
+    Provider.of<TranslationProvider>(context, listen: false).stopProcessing();
   }
 
   void _handleTranslationError(String error) {
     setState(() {
       isTranslationSuccessful = false;
     });
+    Provider.of<TranslationProvider>(context, listen: false).stopProcessing();
     // Handle error, e.g., show a snackbar with the error message
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text('Translation error: $error'),
@@ -107,60 +120,13 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
     }
   }
 
-  // Future<String> extractTextFromWord(PlatformFile file) async {
-  //   try {
-  //     final StringBuffer buffer = StringBuffer();
-
-  //     return buffer.toString();
-  //   } catch (e) {
-  //     print('Error extracting text from Word document: $e');
-  //     return '';
-  //   }
-  // }
-// Future<String> extractTextFromWord() async {
-//   try {
-//     // Create a file input element and trigger its click programmatically
-//     final input = uhtml.InputElement()..type = 'file';
-//     input.click();
-
-//     // Wait for the user to select a file
-//     await input.onChange.first;
-
-//     // Access the selected file
-//     final file = input.files!.first;
-
-//     if (file.type != "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
-//       throw Exception('Selected file is not a Word document.');
-//     }
-
-//     // Create a FileReader
-//     final reader = html.FileReader();
-
-//     // Set an onload event to get the text content once it's loaded
-//     reader.onLoad.first.then((e) {
-//       // Use the reader.result to get the content of the Word document
-//       final content = reader.result as String;
-
-//       // Here you can further process the content if needed
-//       print(content);
-//       return content;
-//     });
-
-//     // Read the content of the selected file as text
-//     reader.readAsText(file);
-
-//     // Return a placeholder for now
-//     return 'Processing...';
-//   } catch (e) {
-//     print('Error extracting text from Word document: $e');
-//     return '';
-//   }
-// }
-
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    // final TranslationProvider translationProvider = TranslationProvider();
+    final translationProvider =
+        Provider.of<TranslationProvider>(context, listen: false);
     return Padding(
       padding: const EdgeInsets.only(left: 16.0, right: 20),
       child: Row(
@@ -390,15 +356,47 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                   _initiateTranslation();
                   print('tranlste button got pressed');
                 },
-                child: FormButton(
-                  buttonText: "   Translate",
-                  buttonColor: Color(0xffFF8203),
-                  buttonIconName: 'translate.png',
-                  buttonHeight: height * 0.047,
-                  buttonWidth: width * 0.366,
-                  // iconHeight: 27,
-                  // iconWidth: 22,
+                child: Consumer<TranslationProvider>(
+                  builder: (context, translationProvider, child) {
+                    return Container(
+                      width: width * 0.366,
+                      height: height * 0.047,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        // Make it circular
+                        color: Color(0xffFF8203), // Button background color
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/images/translate.png',
+                            color: Colors.white, // Icon color
+                            width: 15, // Set the width as needed
+                            height: 15, // Set the height as needed
+                          ),
+                          translationProvider.isProcessing
+                              ? CircularProgressIndicator()
+                              : Text(
+                                  'Translate', // Replace with your desired text
+                                  style: TextStyle(
+                                    color: Colors.white, // Text color
+                                  ),
+                                ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
+                // FormButton(
+                //   buttonText: "   Translate",
+                //   buttonColor: Color(0xffFF8203),
+                //   buttonIconName: 'translate.png',
+                //   buttonHeight: height * 0.047,
+                //   buttonWidth: width * 0.366,
+                //   // iconHeight: 27,
+                //   // iconWidth: 22,
+                // ),
               ),
             ],
           ),

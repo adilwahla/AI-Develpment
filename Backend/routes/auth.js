@@ -9,11 +9,12 @@ const { translateText } = require('../models/translate'); // Adjust the path as 
 const { generateReport } = require('../models/report'); // Adjust the path as needed
 const { SocialMedia }=require('../models/socialMedia');
 const { Profile }=require('../models/profile');
+const mongoose = require('mongoose');
 
 
 const OpenAI = require("openai");
 
-const openai = new OpenAI({apiKey:'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'});
+const openai = new OpenAI({apiKey:process.env.OPENAI_API_KEY});
 // Sign Up
 authRouter.post("/api/signup", async (req, res) => {
 
@@ -97,6 +98,54 @@ authRouter.post("/api/signin", async (req, res) => {
     const user = await User.findById(req.user);
     res.json({ ...user._doc, token: req.token });
   });
+// Route to update user profile
+authRouter.put('/updateProfile', async (req, res) => {
+  try {
+    const { id, fullName, newEmail, companyName, tagLine } = req.body;
+    const userId = new  mongoose.Types.ObjectId(id); // Replace with the actual ObjectId of the user
+
+
+    // Ensure 'id' is provided
+    if (!id) {
+      return res.status(400).json({ error: 'User ID is required.' });
+    }
+
+    // Update user's email and name if provided
+    if (newEmail || fullName) {
+      const updateFields = {};
+      console.log("New Email:", newEmail); // Debugging line
+      if (newEmail) updateFields.email = newEmail;
+      if (fullName) updateFields.name = fullName;
+      await User.findByIdAndUpdate(id, updateFields);
+    }
+
+    // Find the profile by user ID
+    let profile = await Profile.findOne({ user: id });
+
+   // If profile doesn't exist, create a new one
+   if (!profile) {
+    profile = await Profile.createProfileForUser(userId); // Use the static method to create a profile
+  }
+
+    // Update the profile fields if provided
+    if (companyName) {
+      profile.companyName = companyName;
+    }
+    if (tagLine) {
+      profile.tagLine = tagLine;
+    }
+
+    // Save the profile (either the existing one or the new one)
+    await profile.save();
+
+    // Send a success response
+    res.status(200).json({ message: 'Profile updated successfully.' });
+
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ error: 'Internal Server Error.' });
+  }
+});
 
 ////////////////
 authRouter.post('/api/email', async (req, res) => {
@@ -228,7 +277,7 @@ authRouter.post('/api/report', async (req, res) => {
           throw new Error('Exceeded token Limit');
     }
 
-    const maxChunkSize = 10096; // Max token limit for GPT-3.5
+    const maxChunkSize = 6096; // Max token limit for GPT-3.5
 
     // Step 1: Split the document into chunks
     const chunks = [];
@@ -270,6 +319,44 @@ function combineSummaries(summaries) {
 }
 
 ////////////////////////////////
+authRouter.post('/api/socialMedia', async (req, res) => {
+  const {
+    selectedPlatform,
+    contentIdeas,
+    captionsText,
+    responseGeneration,
+    timeframe,
+    frequency,
+    type,  // Changed from 'types' to 'type' to match the prompt.
+    themes
+  } = req.body;
+console.log(req.body);
+  try {
+    const prompt = `Create content (without emojis or special characters) for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes}.`;
+
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { "role": "user", "content": prompt }
+      ],
+      model: "gpt-3.5-turbo"
+    });
+
+    const result = completion.choices[0].message.content;
+    console.log(result);
+    res.status(200).json({
+      message: 'Social Media text Generated',
+      result: result
+    });
+
+  } catch (error) {
+    console.error('Error generating Social Media text:', error);
+    res.status(500).json({
+      error: 'Internal server error'
+    });
+  }
+});
+
+
 
 // API Endpoint to Create Social Media Content Idea
 // API Endpoint to Create Social Media Content

@@ -12,6 +12,7 @@ import 'package:my_app/Screens/Report.dart';
 import 'package:my_app/Screens/SocialMediaPage.dart';
 import 'package:my_app/Screens/Translate.dart';
 import 'package:my_app/Widgets/Footer.dart';
+import 'package:my_app/models/UserPreference.dart';
 import 'package:my_app/services/auth_services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -36,12 +37,18 @@ class _HomeDashboardState extends State<HomeDashboard> {
     NavItem(imagePath: 'assets/images/social.png', name: 'Social Media'),
   ];
   String screenName = 'Home';
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
   void select(int n) {
     for (int i = 0; i < 6; i++) {
-      if (i != 0) {
-        screenName = "";
-      } else {
+      if (i == 0) {
         screenName = 'Home';
+      } else {
+        screenName = "";
       }
       if (i == n) {
         selected[i] = true;
@@ -63,8 +70,9 @@ class _HomeDashboardState extends State<HomeDashboard> {
 
   void signOut(BuildContext context) async {
     final navigator = Navigator.of(context);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('x-auth-token', '');
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // prefs.setString('x-auth-token', '');
+    UserPreferences().removeUser();
     navigator.pushAndRemoveUntil(
       MaterialPageRoute(
         builder: (context) => LoginScreen(),
@@ -381,6 +389,7 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
     _controller1 = AnimationController(
       vsync: this,
       duration: Duration(milliseconds: 250),
@@ -729,82 +738,3 @@ class NewCustomPainter extends CustomPainter {
     return true;
   }
 }
-
-
-
-
-
-
-
-
-// class NewCustomPainter extends CustomPainter {
-//   final double value1; // 200
-//   final double animValue1; // static value1 = 50.0
-//   final double animValue2; //static value1 = 75.0
-//   final double animValue3; //static value1 = 75.0
-
-//   NewCustomPainter({
-//     required this.value1,
-//     required this.animValue1,
-//     required this.animValue2,
-//     required this.animValue3,
-//   });
-
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     // Layer 1
-
-//     Paint paint_fill_0 = Paint()
-//       ..color = const Color.fromARGB(255, 255, 255, 255)
-//       ..style = PaintingStyle.fill
-//       ..strokeWidth = size.width * 0.00
-//       ..strokeCap = StrokeCap.butt
-//       ..strokeJoin = StrokeJoin.miter;
-
-//     Path path_0 = Path();
-//     path_0.moveTo(size.width * 0.9992399, size.height * 0.0097000); //x,y
-//     path_0.quadraticBezierTo(size.width * 0.9875563, size.height * 0.2630000,
-//         size.width * 0.8875282, size.height * 0.2642000); //x1,y1 ,x2,y2
-//     path_0.cubicTo(
-//         size.width * 0.7374155, //x1
-//         size.height * 0.2665000, //y1
-//         size.width * 0.4372185, //x2
-//         size.height * 0.2709000, //y2
-//         size.width * 0.2871059, //x3
-//         size.height * 0.2731000); //y3
-//     path_0.cubicTo(
-//         size.width * 0.1567005, //x1
-//         size.height * 0.2710000, //y1
-//         size.width * 0.1592342, //x2
-//         size.height * 0.7694000, //y2
-//         size.width * 0.2843187, //x3
-//         size.height * 0.7728000); //y3
-//     path_0.cubicTo(
-//         size.width * 0.4351070, //x1
-//         size.height * 0.7750000, //y1
-//         size.width * 0.7367117, //x2
-//         size.height * 0.7795000, //y2
-//         size.width * 0.8875282, //x3
-//         size.height * 0.7817000); //y3
-//     path_0.quadraticBezierTo(size.width * 0.9840935, size.height * 0.7652000,
-//         size.width * 0.9992399, size.height); //x1,y1 ,x2,y2
-
-//     canvas.drawPath(path_0, paint_fill_0);
-
-//     // Layer 1
-
-//     Paint paint_stroke_0 = Paint()
-//       ..color = const Color.fromARGB(255, 33, 150, 243)
-//       ..style = PaintingStyle.stroke
-//       ..strokeWidth = size.width * 0.00
-//       ..strokeCap = StrokeCap.butt
-//       ..strokeJoin = StrokeJoin.miter;
-
-//     canvas.drawPath(path_0, paint_stroke_0);
-//   }
-
-//   @override
-//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-//     return true;
-//   }
-// }

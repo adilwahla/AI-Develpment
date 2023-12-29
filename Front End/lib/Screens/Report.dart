@@ -337,15 +337,40 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                       _initiateReportGeneration();
                       print('Generate Button pressed');
                     },
-                    child: FormButton(
-                      buttonText: "   Generate",
-                      buttonColor: Color(0xffFF8203),
-                      buttonIconName: 'autorenew.png',
-                      buttonHeight: height * 0.047,
-                      buttonWidth: width * 0.366,
-                      // iconHeight: 27,
-                      // iconWidth: 22,
+                    child: Container(
+                      width: width * 0.366,
+                      height: height * 0.047,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        // Make it circular
+                        color: Color(0xffFF8203), // Button background color
+                      ),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/images/autorenew.png',
+                              color: Colors.white, // Icon color
+                              width: 15, // Set the width as needed
+                              height: 15, // Set the height as needed
+                            ),
+                            Text(
+                              'Generate', // Replace with your desired text
+                              style: TextStyle(
+                                color: Colors.white, // Text color
+                              ),
+                            ),
+                          ]),
                     ),
+                    //  FormButton(
+                    //   buttonText: "   Generate",
+                    //   buttonColor: Color(0xffFF8203),
+                    //   buttonIconName: 'autorenew.png',
+                    //   buttonHeight: height * 0.047,
+                    //   buttonWidth: width * 0.366,
+                    //   // iconHeight: 27,
+                    //   // iconWidth: 22,
+                    // ),
                   ),
                 ],
               ),

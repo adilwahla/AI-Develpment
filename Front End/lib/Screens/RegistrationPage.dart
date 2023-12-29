@@ -1,11 +1,12 @@
 // ignore_for_file: unused_local_variable
 
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/Auth_Provider.dart';
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Utils.dart';
+import 'package:my_app/models/user.dart';
 import 'package:my_app/services/auth_services.dart';
 import 'package:provider/provider.dart';
 
@@ -26,12 +27,17 @@ class _LoginScreenState extends State<LoginScreen> {
 
 // Named function for login
   Future<void> handleLogin() async {
-    bool loginSuccess = await context.read<Auth_provider>().loginUser(
-          emailController.text,
-          passwordController.text,
-        );
+    Map<String, dynamic> response =
+        await context.read<Auth_provider>().loginUser(
+              emailController.text,
+              passwordController.text,
+            );
 
-    if (loginSuccess) {
+    if (response['status']) {
+      User user = response['user'];
+
+      Provider.of<UserProvider>(context, listen: false).setUser(user);
+
       // Navigate to HomeDashboard
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(
@@ -62,8 +68,9 @@ class _LoginScreenState extends State<LoginScreen> {
   handleOnCheck() {}
   @override
   Widget build(BuildContext context) {
-    // final authProvider = Provider.of<Auth_provider>(context);
+    final authProvider = Provider.of<Auth_provider>(context);
 
+    // print('isLoading $isLoading');
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     double yFactor = height * 0.1444;
@@ -330,24 +337,27 @@ class _LoginScreenState extends State<LoginScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 8.0),
                               child: Center(
-                                child: InkWell(
-                                  onTap: () async {
-                                    // signinUser(emailController.text,
-                                    //     passwordController.text);
-                                    // Call the signInUser function from AuthProvider
-                                    await handleLogin();
-                                  },
-                                  child: Text(
-                                    'Signin?',
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 16,
-                                        color: Colors.white,
-                                        height:
-                                            1.2, // Equivalent to a line height of 20 (1.4286 * 14)
-                                        letterSpacing: 0.02,
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ),
+                                child: InkWell(onTap: () async {
+                                  // signinUser(emailController.text,
+                                  //     passwordController.text);
+                                  // Call the signInUser function from AuthProvider
+                                  await handleLogin();
+                                }, child: Consumer<Auth_provider>(
+                                  builder: ((context, authProvider, child) {
+                                    return authProvider.loading
+                                        ? CircularProgressIndicator()
+                                        : Text(
+                                            'Signin?',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 16,
+                                                color: Colors.white,
+                                                height:
+                                                    1.2, // Equivalent to a line height of 20 (1.4286 * 14)
+                                                letterSpacing: 0.02,
+                                                fontWeight: FontWeight.w600),
+                                          );
+                                  }),
+                                )),
                               ),
                             ),
                           ),

@@ -1,34 +1,48 @@
 // profileModel.js
-
+const {User} = require("../models/user");
 const mongoose = require('mongoose');
 
 const profileSchema = new mongoose.Schema({
-  firstName: {
-    type: String,
-    required: true,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User', // This should match the name of the User model
+    required: true
   },
-  lastName: {
+  companyName:{
     type: String,
-    required: true,
+    default: "Google ",
   },
-  email: {
+  tagLine:{
     type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
+    default:"Add Bio here",
   },
   wordLimit: {
     type: Number,
-    default: 500, // Example default word limit
+    default: 6000, // Example default word limit
   },
   currentWordCount: {
     type: Number,
-    default: 0,
+    default: 1500,
   },
 });
+
+// Static method to create a profile for a user
+profileSchema.statics.createProfileForUser = async function(userId, companyName, tagLine, wordLimit, currentWordCount) {
+  try {
+    const newProfile = new this({
+      user: userId,
+      companyName: companyName || "Google",
+      tagLine: tagLine || "Add Bio here",
+      wordLimit: wordLimit || 6000,
+      currentWordCount: currentWordCount || 1500,
+    });
+    
+    const savedProfile = await newProfile.save();
+    return savedProfile;
+  } catch (error) {
+    throw new Error(`Error creating profile: ${error.message}`);
+  }
+};
 
 const Profile = mongoose.model('Profile', profileSchema);
 

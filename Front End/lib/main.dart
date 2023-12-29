@@ -3,9 +3,12 @@ import 'package:my_app/Provider/Auth_Provider.dart';
 import 'package:my_app/Provider/EmailProcessProvider.dart';
 
 import 'package:my_app/Provider/SnackBarProvider.dart';
+import 'package:my_app/Provider/SocialMediaProvider.dart';
+import 'package:my_app/Provider/TranslationProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Screens/RegistrationPage.dart';
+import 'package:my_app/services/auth_services.dart';
 import 'package:my_app/services/emailService.dart';
 
 import 'package:provider/provider.dart';
@@ -25,6 +28,8 @@ void main() async {
     ChangeNotifierProvider(create: (_) => Auth_provider()),
     ChangeNotifierProvider(create: (_) => SnackBarProvider()),
     ChangeNotifierProvider(create: (_) => EmailProvider()),
+    ChangeNotifierProvider(create: (_) => TranslationProvider()),
+    ChangeNotifierProvider(create: (_) => SocialMediaProvider()),
   ], child: MyApp()));
 }
 
@@ -36,6 +41,14 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final UserProvider userProvider = UserProvider();
+
+  @override
+  void initState() {
+    super.initState();
+    // userProvider.getUserData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
