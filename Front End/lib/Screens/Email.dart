@@ -6,14 +6,17 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/EmailProcessProvider.dart';
+import 'package:my_app/Provider/user_provider.dart';
 
 import 'package:my_app/Widgets/FormContainer.dart';
 
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
 import 'package:http/http.dart' as http;
+import 'package:my_app/models/user.dart';
 import 'package:my_app/services/auth_services.dart';
 import 'package:my_app/services/emailService.dart';
+import 'package:my_app/services/updatedUser.dart';
 import 'package:provider/provider.dart';
 
 TextEditingController GeneratedEmail = TextEditingController();
@@ -223,12 +226,23 @@ class _BodyEmailFormState extends State<BodyEmailForm>
   bool rotateImage = true;
 
 
-  void _handleOnSuccess(String result) {
+  void _handleOnSuccess(String result) async{
     // Handle the generated email content on success
     print('Generated Email Content _handleOnSuccess(): $result');
     // Invoke the parent's callback with the result
     widget.onSuccessCallback(result);
     rotateImage = false;
+     final UpdatedUser updatedUser = UpdatedUser();
+    
+    // Fetch updated user data after successful email generation
+
+    User? fetchedUser = await updatedUser.fetchUpdatedUserData();
+    print('this is fetched user $fetchedUser');
+    if (fetchedUser != null) {
+      // Update the user in your UserProvider
+    
+      Provider.of<UserProvider>(context, listen: false).updateUser(fetchedUser);
+    }
   }
 
   void _handleOnFailure() {

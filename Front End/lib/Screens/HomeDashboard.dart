@@ -3,7 +3,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:my_app/Provider/EmailProcessProvider.dart';
 import 'package:my_app/Screens/Email.dart';
 import 'package:my_app/Screens/Home.dart';
 import 'package:my_app/Screens/ProfileScreen/Profile.dart';
@@ -14,8 +13,6 @@ import 'package:my_app/Screens/Translate.dart';
 import 'package:my_app/Widgets/Footer.dart';
 import 'package:my_app/models/UserPreference.dart';
 import 'package:my_app/services/auth_services.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeDashboard extends StatefulWidget {
   @override

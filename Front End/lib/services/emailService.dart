@@ -1,11 +1,12 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:my_app/config_dev.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 typedef void EmailGenerationCallback(String generatedEmailContent);
 typedef void EmailGenerationFailureCallback();
+//  final SharedPreferences prefs = await SharedPreferences.getInstance();
 
 class EmailService {
   Future<void> generateEmail(
@@ -23,11 +24,15 @@ class EmailService {
       // print('Before starting processing: ${EmailProcessProvider.isProcessing}');
 
       // print('After starting processing: ${EmailProcessProvider.isProcessing}');
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
 
+      String? token = prefs.getString('x-auth-token') ?? '';
+      print('this is token $token');
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/email'),
         headers: {
           'Content-Type': 'application/json',
+          'x-auth-token': token,
         },
         body: jsonEncode({
           'object': object,

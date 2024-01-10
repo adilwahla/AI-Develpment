@@ -32,10 +32,10 @@ class _LoginScreenState extends State<LoginScreen> {
               emailController.text,
               passwordController.text,
             );
-
+    print('this is response ${response['user']}');
     if (response['status']) {
       User user = response['user'];
-
+      print('adil $user');
       Provider.of<UserProvider>(context, listen: false).setUser(user);
 
       // Navigate to HomeDashboard

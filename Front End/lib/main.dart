@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:my_app/Provider/Auth_Provider.dart';
 import 'package:my_app/Provider/EmailProcessProvider.dart';
+import 'package:my_app/Provider/ProcessProvider.dart';
 
 import 'package:my_app/Provider/SnackBarProvider.dart';
 import 'package:my_app/Provider/SocialMediaProvider.dart';
@@ -8,8 +9,6 @@ import 'package:my_app/Provider/TranslationProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/HomeDashboard.dart';
 import 'package:my_app/Screens/RegistrationPage.dart';
-import 'package:my_app/services/auth_services.dart';
-import 'package:my_app/services/emailService.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +29,7 @@ void main() async {
     ChangeNotifierProvider(create: (_) => EmailProvider()),
     ChangeNotifierProvider(create: (_) => TranslationProvider()),
     ChangeNotifierProvider(create: (_) => SocialMediaProvider()),
+    ChangeNotifierProvider(create: (_) => ProcessProvider()),
   ], child: MyApp()));
 }
 
@@ -47,8 +47,20 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     // userProvider.getUserData();
+     // Initialize user data from shared preferences
+    initializeUserData();
   }
-
+ // Initialize user data from shared preferences
+  void initializeUserData() async {
+    // Get the UserProvider instance
+    UserProvider userProvider = Provider.of<UserProvider>(context, listen: false);
+    
+    // Initialize user data from shared preferences
+    await userProvider.initializeUser();
+    
+    // After initializing user data, you can perform other actions if needed
+    // For example, navigate to another screen, show a message, etc.
+  }
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

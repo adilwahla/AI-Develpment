@@ -1,6 +1,7 @@
 import 'package:my_app/models/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+//password: '',countEmail:'',countTranslate:'',countReport:'',countHours:''
 class UserPreferences {
   // Save user data to SharedPreferences
   Future<bool> saveUser(User user) async {
@@ -11,8 +12,12 @@ class UserPreferences {
         '_id', user.id); // Adjust based on your User model structure
     prefs.setString('name', user.name);
     prefs.setString('email', user.email);
-    prefs.setString('password',
-        user.password); // Consider if you need this, and store securely if necessary
+    prefs.setString('password', user.password);
+    prefs.setInt('countEmail', user.countEmail); // Use setInt for integer values
+    prefs.setInt('countTranslate', user.countTranslate); // Use setInt for integer values
+    prefs.setInt('countReport', user.countReport); // Use setInt for integer values
+    prefs.setInt('countHours', user.countHours); // Use setInt for integer values
+
 
     // ignore: deprecated_member_use
     return prefs.commit();
@@ -28,13 +33,23 @@ class UserPreferences {
     String? name = prefs.getString('name') ?? ''; // Same here
     String? email = prefs.getString('email') ?? ''; // Same here
     String? password = prefs.getString('password') ?? ''; // Same here
-    return User(
-      token: token,
-      id: id,
-      name: name,
-      email: email,
-      password: password,
-    );
+    int? countEmail = prefs.getInt('countEmail')?? 0; // Use getInt for integer values
+    int? countTranslate = prefs.getInt('countTranslate')??0; // Use getInt for integer values
+    int? countReport = prefs.getInt('countReport')??0; // Use getInt for integer values
+    int? countHours = prefs.getInt('countHours')??0; // Use getInt for integer values
+    
+      return User(
+        token: token,
+        id: id,
+        name: name,
+        email: email,
+        password: password,
+        countEmail: countEmail,
+        countTranslate: countTranslate,
+        countReport: countReport,
+        countHours: countHours,
+      );
+    
   }
 
   // Remove user data from SharedPreferences
@@ -46,6 +61,10 @@ class UserPreferences {
     await prefs.remove('name');
     await prefs.remove('email');
     await prefs.remove('password'); // Consider if you need this
+    await prefs.remove('countEmail'); // Consider if you need this
+    await prefs.remove('countTranslate'); // Consider if you need this
+    await prefs.remove('countReport'); // Consider if you need this
+    await prefs.remove('countHours'); // Consider if you need this
 
     // Clear all data (if you want to clear all preferences, not just user-specific)
     // await prefs.clear();

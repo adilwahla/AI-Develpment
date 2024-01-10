@@ -30,7 +30,7 @@ class Auth_provider extends ChangeNotifier {
       print('after setloading $loading ');
       final http.Response res =
           await _authService.signInUser(email: email, password: password);
-
+      print('this is aut_provider res from signInUser $res ');
       if (res.statusCode == 200) {
         // Successful login
         final Map<String, dynamic> responseData = json.decode(res.body);
@@ -38,15 +38,23 @@ class Auth_provider extends ChangeNotifier {
         _error = null;
         print('this is signInUser res $responseData');
         // Save token to SharedPreferences
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('x-auth-token', _token!);
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
+        // await prefs.setString('x-auth-token', _token!);
 
         //TODO: set user data here and also user
 
-        User authUser = User.fromJson(responseData);
-        print('this is  User.fromJson(responseData) ${authUser.name} ');
+        User authUser;
+        try {
+          authUser = User.fromJson(responseData);
+             print('this is authUser User.fromJson(responseData) ${authUser.countEmail} ');
         // now we will create shared preferences and save data
         UserPreferences().saveUser(authUser);
+        } catch (e) {
+ print('Error creating authUser: $e'); // Debugging line
+  rethrow; // Rethrow the exception to see the full stack trace
+
+        }
+     
         // Return true indicating successful login
 
         notifyListeners();

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/ProcessProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
 import 'package:my_app/models/user.dart';
+import 'package:my_app/services/updateProfile.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -30,10 +33,67 @@ class _ProfileState extends State<Profile> {
     });
   }
 
-  _updateUserProfile() {}
+  _updateUserProfile() async {
+    final profileProvider =
+        Provider.of<ProcessProvider>(context, listen: false);
+    try {
+      profileProvider.startProcessing();
+      bool isSuccess = await profileProvider.updateProfile.updateProfile(
+          fullName: _Name,
+          newEmail: _email,
+          companyName: _CompanyName,
+          tagLine: _tagLine,
+          profilePicture: '');
+
+      if (isSuccess) {
+        Fluttertoast.showToast(
+          msg: "Profile Successfully Updated",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: "Error Updating Profile!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+    } finally {
+      profileProvider.stopProcessing();
+    }
+  }
+
+  _updatePassword() async {
+    final passwordProvider =
+        Provider.of<ProcessProvider>(context, listen: false);
+    try {
+      passwordProvider.startProcessing();
+      bool isSuccess = await passwordProvider.updateProfile
+          .updatePassword(newPassword: _newPassword);
+      passwordProvider.stopProcessing();
+      if (isSuccess) {
+        Fluttertoast.showToast(
+          msg: "Password Successfully Updated",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+      } else {
+        Fluttertoast.showToast(
+          msg: "Password should be greater than 5!",
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+        );
+      }
+    } finally {
+      passwordProvider.stopProcessing();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     User user = Provider.of<UserProvider>(context).user;
+
+    Provider.of<ProcessProvider>(context, listen: false);
     print('user.name${user.name}');
     print('user.email${user.email}');
 
@@ -277,7 +337,7 @@ class _ProfileState extends State<Profile> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FormLabelText(
-                    labelText: "Last Name",
+                    labelText: "Bio",
                   ),
                   Container(
                     width: width * 0.18,
@@ -304,7 +364,7 @@ class _ProfileState extends State<Profile> {
                                 .w200, // FontWeight.w200 represents the "extra-light" weight
                             fontStyle: FontStyle.italic,
                           ),
-                          hintText: 'king',
+                          hintText: 'enter bio',
                           contentPadding: const EdgeInsets.all(15),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -373,7 +433,7 @@ class _ProfileState extends State<Profile> {
                               .w200, // FontWeight.w200 represents the "extra-light" weight
                           fontStyle: FontStyle.italic,
                         ),
-                        hintText: 'Enter Password',
+                        hintText: 'Enter New Password',
                         contentPadding: const EdgeInsets.all(15),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(25),
@@ -417,36 +477,50 @@ class _ProfileState extends State<Profile> {
               ),
               Column(
                 children: [
-                  Container(
-                    width: width * 0.13,
-                    height: height * 0.047,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        width: 1,
-                        color: Color(0xffE2E4FB),
-                      ),
-                      color: Color(0xff9296C3),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
-                    child: Row(
-                      // crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/save_as.png',
-                          width: 20,
-                          height: 20,
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Text(
-                          'Change Password',
-                          style: GoogleFonts.firaSans(
-                              fontSize: 14, color: Colors.white),
-                        )
-                      ],
+                  InkWell(
+                    onTap: () async {
+                      // change password here
+                      print('change pwd here ');
+
+                      _updatePassword();
+                    },
+                    child: Consumer<ProcessProvider>(
+                      builder: (context, ProcessProvider, child) {
+                        return Container(
+                          width: width * 0.13,
+                          height: height * 0.047,
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              width: 1,
+                              color: Color(0xffE2E4FB),
+                            ),
+                            color: Color(0xff9296C3),
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: Row(
+                            // crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ProcessProvider.isProcessing
+                                  ? CircularProgressIndicator()
+                                  : Image.asset(
+                                      'assets/images/save_as.png',
+                                      width: 20,
+                                      height: 20,
+                                    ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                'Change Password',
+                                style: GoogleFonts.firaSans(
+                                    fontSize: 14, color: Colors.white),
+                              )
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -586,7 +660,7 @@ class _ProfileState extends State<Profile> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               InkWell(
-                onTap: () {
+                onTap: () async {
                   _updateUserProfile();
                 },
                 child: Container(
@@ -601,24 +675,30 @@ class _ProfileState extends State<Profile> {
                     color: Color(0xffFF8203),
                     borderRadius: BorderRadius.circular(25),
                   ),
-                  child: Row(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/images/save_as.png',
-                        width: 20,
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: 3,
-                      ),
-                      Text(
-                        'Save',
-                        style: GoogleFonts.firaSans(
-                            fontSize: 14, color: Colors.white),
-                      )
-                    ],
+                  child: Consumer<ProcessProvider>(
+                    builder: (context, ProcessProvider, child) {
+                      return Row(
+                        // crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ProcessProvider.isProcessing
+                              ? CircularProgressIndicator()
+                              : Image.asset(
+                                  'assets/images/save_as.png',
+                                  width: 20,
+                                  height: 20,
+                                ),
+                          SizedBox(
+                            width: 3,
+                          ),
+                          Text(
+                            'Save',
+                            style: GoogleFonts.firaSans(
+                                fontSize: 14, color: Colors.white),
+                          )
+                        ],
+                      );
+                    },
                   ),
                 ),
               ),

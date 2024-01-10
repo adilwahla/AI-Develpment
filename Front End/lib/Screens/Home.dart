@@ -3,16 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Utils.dart';
 import 'package:my_app/models/user.dart';
+import 'package:my_app/services/ChartData.dart';
 import 'package:provider/provider.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:xen_popup_card/xen_popup_card.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    User user1 = context.read<UserProvider>().user;
+    // User user1 = context.read<UserProvider>().user;
     User user = Provider.of<UserProvider>(context).user;
-    print('user1.id${user1.id}');
+    print('ye user data ha :${user.countReport}');
     // Get the screen dimensions using MediaQuery
     double Width = MediaQuery.of(context).size.width;
     double Height = MediaQuery.of(context).size.height;
@@ -29,7 +32,13 @@ class Home extends StatelessWidget {
     // double cardWidth = screenWidth * 0.85;
 
     // Calculate the adaptive width of the card based on the height
-
+    List<ChartData> chartData = [
+      ChartData(2010, 35),
+      ChartData(2011, 13),
+      ChartData(2012, 34),
+      ChartData(2013, 27),
+      ChartData(2014, 40)
+    ];
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -61,6 +70,9 @@ class Home extends StatelessWidget {
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                              ),
                               clipBehavior: Clip.antiAlias,
                               child: Container(
                                 height: Height * 0.276,
@@ -149,7 +161,7 @@ class Home extends StatelessWidget {
                 Expanded(
                   flex: 3,
                   child: Container(
-                      // color: Colors.white,
+                      // color: Colors.black,
                       // height: 300,
                       width: Width * 0.444,
                       height: Height * 0.34,
@@ -164,12 +176,17 @@ class Home extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(10.0),
                           child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25.0),
+                            ),
+                            // color: Colors.amber,
                             clipBehavior: Clip.antiAlias,
                             child: Container(
                               width: Width * 0.42,
                               height: Height * 0.274,
                               decoration: kHomeCardsdecoration.copyWith(
                                 // color: Color(0xff6874FF),
+                                //  color: Colors.black,
                                 gradient: kCardsLinearGradient,
                               ),
                               child: Stack(
@@ -205,9 +222,41 @@ class Home extends StatelessWidget {
                                         children: [
                                           MiniCard(
                                             cardText: 'Text Generated',
+                                            cardDigit: user.countEmail.toString(),
+                                            onClickFunction: () => {
+                                              showDialog(
+                                                context: context,
+                                                builder: (builder) =>
+                                                    XenPopupCard(
+                                                  // gutter: padd,
+                                                  body: Container(
+                                                    child: SfCartesianChart(
+                                                        series: <CartesianSeries>[
+                                                          // Renders spline chart
+                                                          SplineSeries<
+                                                                  ChartData,
+                                                                  int>(
+                                                              dataSource:
+                                                                  chartData,
+                                                              xValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.x,
+                                                              yValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.y)
+                                                        ]),
+                                                  ),
+                                                ),
+                                              ),
+                                            },
                                           ),
                                           MiniCard(
                                             cardText: 'Report Generated',
+                                            cardDigit: user.countReport.toString(),
+                                            onClickFunction: () =>
+                                                {print('i got clicked')},
                                           ),
                                         ],
                                       ),
@@ -217,9 +266,15 @@ class Home extends StatelessWidget {
                                         children: [
                                           MiniCard(
                                             cardText: 'Content Generated',
+                                            cardDigit: user.countTranslate.toString(),
+                                            onClickFunction: () =>
+                                                {print('i got clicked')},
                                           ),
                                           MiniCard(
                                             cardText: 'Hours Saved ',
+                                            cardDigit: user.countHours.toString(),
+                                            onClickFunction: () =>
+                                                {print('i got clicked')},
                                           ),
                                         ],
                                       ),
@@ -253,7 +308,13 @@ class Home extends StatelessWidget {
 
 class MiniCard extends StatefulWidget {
   final String cardText;
-  const MiniCard({super.key, required this.cardText});
+  final String cardDigit;
+  final Function onClickFunction;
+  const MiniCard(
+      {super.key,
+      required this.cardText,
+      required this.cardDigit,
+      required this.onClickFunction});
 
   @override
   State<MiniCard> createState() => _MiniCardState();
@@ -302,7 +363,8 @@ class _MiniCardState extends State<MiniCard> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
-                    "325",
+                    // "325",
+                    widget.cardDigit,
                     style: kMiniCardsStyle.copyWith(
                         fontSize: scaledFontSize, fontWeight: FontWeight.w600),
                   ),
@@ -320,29 +382,33 @@ class _MiniCardState extends State<MiniCard> {
                     ),
                   ),
                   child: Center(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            'View',
-                            style: kMiniCardsStyle.copyWith(fontSize: 9),
+                    child: InkWell(
+                      onTap: () => {widget.onClickFunction()},
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'View',
+                              style: kMiniCardsStyle.copyWith(fontSize: 9),
+                            ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Icon(
-                            Icons.open_in_new, // Replace with your desired icon
-                            color: Colors.white, // Icon color
-                            size: 14,
+                          SizedBox(
+                            width: 10,
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons
+                                  .open_in_new, // Replace with your desired icon
+                              color: Colors.white, // Icon color
+                              size: 14,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 )

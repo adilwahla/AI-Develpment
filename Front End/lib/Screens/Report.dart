@@ -6,13 +6,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/models/user.dart';
 import 'package:my_app/services/pdfService.dart';
 import 'package:my_app/services/reportService.dart';
+import 'package:my_app/services/updatedUser.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class ReportPage extends StatelessWidget {
@@ -53,10 +57,6 @@ class _ReportFormBodyState extends State<ReportFormBody> {
   String GeneratedReport = "";
 
   void _initiateReportGeneration() {
-    // setState(() {
-    //   textarea.text = inputText;
-    // });
-    // print('this is document input $inputText');
     _reportService.GenerateReport(
       documentText: ExtractedText,
       length: selectLength,
@@ -66,8 +66,20 @@ class _ReportFormBodyState extends State<ReportFormBody> {
     );
   }
 
-  _handleReportSuccess(String result) {
+  _handleReportSuccess(String result) async {
+    final UpdatedUser updatedUser = UpdatedUser();
+    // UserProvider userProvider = UserProvider();
     print("_handleReportSuccess $result");
+    // Assuming your report generation is successful
+    // Fetch updated user data after successful report generation
+
+    User? fetchedUser = await updatedUser.fetchUpdatedUserData();
+    print('this is fetched user $fetchedUser');
+    if (fetchedUser != null) {
+      // Update the user in your UserProvider
+    
+      Provider.of<UserProvider>(context, listen: false).updateUser(fetchedUser);
+    }
     setState(() {
       print('set state is called');
       GeneratedReport = result;

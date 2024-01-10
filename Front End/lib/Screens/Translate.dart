@@ -1,24 +1,22 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:docx_to_text/docx_to_text.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/TranslationProvider.dart';
+import 'package:my_app/Provider/user_provider.dart';
 
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
 import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
-import 'package:my_app/config_dev.dart';
+import 'package:my_app/models/user.dart';
 
-import 'package:my_app/services/auth_services.dart';
 import 'package:my_app/services/pdfService.dart';
-import 'package:pdf_text/pdf_text.dart';
+import 'package:my_app/services/updatedUser.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
@@ -68,12 +66,7 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
     setState(() {
       _documentTextController.text = inputText;
     });
-    // print('this is document input $inputText');
-    // print(
-    //     'before ${Provider.of<TranslationProvider>(context, listen: false).isProcessing}');
-    // Provider.of<TranslationProvider>(context, listen: false).startProcessing();
-    // print(
-    //     'after ${Provider.of<TranslationProvider>(context, listen: false).isProcessing}');
+
     Provider.of<TranslationProvider>(context, listen: false).startProcessing();
     Provider.of<TranslationProvider>(context, listen: false)
         .translationService
@@ -86,13 +79,24 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
         );
   }
 
-  void _handleTranslationSuccess(String result) {
+  void _handleTranslationSuccess(String result) async {
     // Handle success, e.g.,
     // Update the state with the translated text
     setState(() {
       isTranslationSuccessful = true;
       _translatedTextController.text = result;
     });
+    final UpdatedUser updatedUser = UpdatedUser();
+
+    // Fetch updated user data after successful email generation
+
+    User? fetchedUser = await updatedUser.fetchUpdatedUserData();
+    print('this is fetched user $fetchedUser');
+    if (fetchedUser != null) {
+      // Update the user in your UserProvider
+
+      Provider.of<UserProvider>(context, listen: false).updateUser(fetchedUser);
+    }
     Provider.of<TranslationProvider>(context, listen: false).stopProcessing();
   }
 

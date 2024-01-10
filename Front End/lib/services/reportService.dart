@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/config_dev.dart';
 import 'package:my_app/models/Report.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 typedef ReportCallback = void Function(String result);
 
@@ -14,6 +17,10 @@ class ReportService {
     required ReportCallback onError,
   }) async {
     try {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+      String? token = prefs.getString('x-auth-token') ?? '';
+      print('this is token $token');
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/report'),
         body: jsonEncode({
@@ -23,6 +30,7 @@ class ReportService {
         }),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
         },
       );
 
@@ -38,4 +46,6 @@ class ReportService {
       onError('Error during translation: $e');
     }
   }
+
+
 }
