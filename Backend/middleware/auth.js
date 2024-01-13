@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
 
 const auth = async (req, res, next) => {
   try {
@@ -20,7 +22,7 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
+
 
 
 
@@ -37,4 +39,56 @@ const generateTokenAndSetCookie =(userId, res)=>{
    return token;
   }
   
-  module.exports= generateTokenAndSetCookie;
+
+
+   const TranslateWordCount = async (userId, translatedText)=>{
+    const words = translatedText.split(/\s+/).filter(word => word !== '');
+    const wordCount = words.length;
+  
+    try {
+      // Find user by ID and update countTranslate field
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { countTranslate: wordCount } }, // Increment countTranslate by the wordCount
+        { new: true } // Return the updated user document
+      );
+  
+      if (!updatedUser) {
+        console.log("User not found");
+        return;
+      }
+  
+      console.log("Updated user:", updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  }
+  
+  const ReportsCount = async (userId)=>{
+  
+  
+    try {
+      // Find user by ID and update countTranslate field
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $inc: { countReport: 1 } }, // Increment 1 by the wordCount
+        { new: true } // Return the updated user document
+      );
+  
+      if (!updatedUser) {
+        console.log("User not found");
+        return;
+      }
+  
+      console.log("Updated user:", updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  }
+  
+  module.exports = {
+    auth,
+    generateTokenAndSetCookie,
+    TranslateWordCount,
+    ReportsCount
+  };

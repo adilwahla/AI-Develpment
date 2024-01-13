@@ -3,18 +3,19 @@ const bcryptjs = require("bcryptjs");
 const User = require("../models/user");
 const authRouter = express.Router();
 const jwt = require("jsonwebtoken");
-const auth = require("../middleware/auth");
-const { Email, createEmail } = require('../models/email'); // Adjust the path as needed
+const {auth ,generateTokenAndSetCookie,TranslateWordCount,ReportsCount} = require("../middleware/auth");
+
 const { translateText } = require('../models/translate'); // Adjust the path as needed
 const { generateReport } = require('../models/report'); // Adjust the path as needed
 const { SocialMedia }=require('../models/socialMedia');
 const { Profile }=require('../models/profile');
 const mongoose = require('mongoose');
-
-
+require('dotenv').config();
+const apiKey = process.env.OPENAI_API;
 const OpenAI = require("openai");
 
-const openai = new OpenAI({apiKey:process.env.OPENAI_API_KEY});
+const openai = new OpenAI({apiKey});
+
 // Sign Up
 authRouter.post("/api/signup", async (req, res) => {
 
@@ -94,73 +95,146 @@ authRouter.post("/api/signin", async (req, res) => {
   });
   
   // get user data
-  authRouter.get("/", auth, async (req, res) => {
+  authRouter.get("/api/user", auth, async (req, res) => {
     const user = await User.findById(req.user);
     res.json({ ...user._doc, token: req.token });
   });
 // Route to update user profile
-authRouter.put('/updateProfile', async (req, res) => {
+authRouter.put('/api/updateProfile', auth, async (req, res) => {
   try {
-    const { id, fullName, newEmail, companyName, tagLine } = req.body;
-    const userId = new  mongoose.Types.ObjectId(id); // Replace with the actual ObjectId of the user
+    const { fullName, newEmail, companyName, tagLine, profilePicture } = req.body;
+    const userId = req.user; // Assuming req.user contains the ObjectId of the user
 
+    // Prepare the update object based on the provided fields
+    const updateFields = {};
+    if (fullName) updateFields.name = fullName;
+    if (newEmail) updateFields.email = newEmail;
+    if (companyName) updateFields.company = companyName;
+    if (tagLine) updateFields.bio = tagLine;
+    if (profilePicture) updateFields.profilePicture = profilePicture;
 
-    // Ensure 'id' is provided
-    if (!id) {
-      return res.status(400).json({ error: 'User ID is required.' });
+    // Find the user by userId and update the fields
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { $set: updateFields }, // Use $set to update the specific fields
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
     }
 
-    // Update user's email and name if provided
-    if (newEmail || fullName) {
-      const updateFields = {};
-      console.log("New Email:", newEmail); // Debugging line
-      if (newEmail) updateFields.email = newEmail;
-      if (fullName) updateFields.name = fullName;
-      await User.findByIdAndUpdate(id, updateFields);
-    }
-
-    // Find the profile by user ID
-    let profile = await Profile.findOne({ user: id });
-
-   // If profile doesn't exist, create a new one
-   if (!profile) {
-    profile = await Profile.createProfileForUser(userId); // Use the static method to create a profile
-  }
-
-    // Update the profile fields if provided
-    if (companyName) {
-      profile.companyName = companyName;
-    }
-    if (tagLine) {
-      profile.tagLine = tagLine;
-    }
-
-    // Save the profile (either the existing one or the new one)
-    await profile.save();
-
-    // Send a success response
-    res.status(200).json({ message: 'Profile updated successfully.' });
-
+    res.status(200).json({ message: 'Profile updated successfully', user: updatedUser });
   } catch (error) {
     console.error('Error updating profile:', error);
-    res.status(500).json({ error: 'Internal Server Error.' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
-////////////////
-authRouter.post('/api/email', async (req, res) => {
+///////
+authRouter.put('/api/updatePassword', auth, async (req, res) => {
   try {
+    const {  newPassword } = req.body;
+    const userId = req.user; // Assuming req.user contains the ObjectId of the user
+
+    // Check if the current password matches the stored hashed password (you need to have the hashed password in your user document)
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+ 
+    // Hash the new password before updating
+    const hashedPassword = await bcryptjs.hash(newPassword, 8);
+
+    // Update the user's password
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({ message: 'Password updated successfully' });
+  } catch (error) {
+    console.error('Error updating password:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+//////
+
+
+const auth1 = async (req, res, next) => {
+  console.log("before 1 ");
+  try {
+    console.log("before ");
+    const token = req.header("x-auth-token");
+    console.log("After ",JSON.stringify(req.header) );
+    console.log("After ",req.headers );
+
+    if (!token)
+      return res.status(401).json({ msg: "No auth token, access denied" });
+
+    const verified = jwt.verify(token, "passwordKey");
+    if (!verified)
+      return res
+        .status(401)
+        .json({ msg: "Token verification failed, authorization denied." });
+
+    req.user = verified.id;
+    req.token = token;
+    next();
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+////////////////
+// Initialize a counter to keep track of the total words generated by the GPT API
+
+
+// Function to increment the counter by the number of words generated
+// Modified incrementWordCount function
+async function incrementWordCount(userId, content) {
+  let totalWordsGenerated = 0;
+  const words = content.split(/\s+/).filter(word => word !== '');
+  totalWordsGenerated += words.length;
+
+  
+    try {
+      // Find user by ID and update countEmail field
+      const updatedUser = await User.findByIdAndUpdate(
+        userId, // User ID
+        { $inc: { countEmail: totalWordsGenerated } }, // Increment countEmail by 1
+        { new: true } // Return the updated user document
+      );
+  
+      if (!updatedUser) {
+        console.log("User not found");
+        return;
+      }
+  
+      console.log("Updated user:", updatedUser);
+    } catch (error) {
+      console.error("Error updating user:", error);
+    }
+  }
+  
+
+
+
+authRouter.post('/api/email' ,auth1, async (req, res) => {
+  try {
+   //TODO: get current user id here without getting it from user req.body 
     const emailData = req.body;
     console.log(req.body);
-   
-    
-    console.log('Received email data:', JSON.stringify(emailData, null, 2));
+    console.log('this is req.user',req.user);
+  
+    // console.log('Received email data:', JSON.stringify(emailData, null, 2));
     const generatedEmail = await generateEmailContentWithRetry(emailData);
     console.log('Generated email content:', generatedEmail);
-    
+    await incrementWordCount(req.user, generatedEmail); 
+  
+
     res.status(200).json({
       message: 'Email created successfully',
       generatedEmail: generatedEmail, 
+
     });
 
   } catch (error) {
@@ -210,11 +284,14 @@ async function generateEmailContent(emailData) {
 }
 
 // API Endpoint to Translate Text
-authRouter.post('/api/translate', async (req, res) => {
+authRouter.post('/api/translate',auth1, async (req, res) => {
     try {
       console.log(req.body);
+       console.log('this is req.user',req.user);
       const { documentText,inputText, targetLanguage } = req.body;
       const translatedText = await translateTextFromChatGPT(documentText,inputText, targetLanguage);
+      console.log('this is translated text',typeof  translatedText);
+      await TranslateWordCount(req.user, translatedText);
       res.status(200).json({
         message: 'Translated Text Generated',
         translatedText,
@@ -235,18 +312,21 @@ authRouter.post('/api/translate', async (req, res) => {
       });
   
       console.log(completion.choices[0].message.content);
+
+     
       return completion.choices[0].message.content;
     } catch (error) {
       throw error;
     }
   }
 // API Endpoint to Generate Report
-authRouter.post('/api/report', async (req, res) => {
+authRouter.post('/api/report',auth1, async (req, res) => {
     try {
       const { inputText, length, language } = req.body;
       console.log(req.body);
-      const reportResponse = await generateReportWithChatGPT(inputText, length, language);
+      const reportResponse = await generateReportWithChatGPT1(inputText, length, language);
       console.log("$reportResponse"+ reportResponse);
+     await ReportsCount(req.user);
       res.status(200).json({  message: 'Translated Text Generated',
       reportResponse}
       );
@@ -255,7 +335,20 @@ authRouter.post('/api/report', async (req, res) => {
       res.status(500).json({ error: 'Internal server error' });
     }
   });
-
+async function generateReportWithChatGPT1(inputText, length, language){
+   // const prompt = `Summarize: ${text} in ${language}`;
+   const prompt = `Provide a Report/summary of the main points in: ${inputText} with length of ${length} in ${language}. Additionally, highlight or reference these main points with a corresponding table of contents.`;
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {"role": "user", "content": prompt}
+    ],
+      model: "gpt-3.5-turbo",
+     
+  
+    });
+    // console.log(completion.choices[0].message.content);
+      return completion.choices[0].message.content;
+}
   async function generateReportWithChatGPT(inputText, length, language) {
     let maxTokens;
 

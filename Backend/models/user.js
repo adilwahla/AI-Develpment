@@ -15,6 +15,34 @@ const userSchema = mongoose.Schema({
     // required: true,
     type: String,
   },
+  countEmail:{
+    type: Number,
+    default: 0, 
+  },
+  countReport:{
+    type: Number,
+    default: 0, 
+  },
+  countTranslate:{
+    type: Number,
+    default: 0, 
+  },
+  countHours:{
+    type: Number,
+    default: 0, 
+  },
+  company:{
+    type: String,
+    default:'Company'
+  },
+  bio:{
+    type: String,
+    default:'Your bio'
+  },
+  profilePicture:{
+    type: String,
+    default:'',
+  }
 });
 
 const User = mongoose.model("User", userSchema);

@@ -28,6 +28,10 @@ const emailSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+ emailsGeneratedCount: {
+      type: Number,
+      default: 0,  // Default value is set to 0
+    },
   createdAt: {
     type: Date,
     default: Date.now,
