@@ -3,17 +3,17 @@ import 'package:my_app/services/updateProfile.dart';
 
 class ProcessProvider extends ChangeNotifier {
   UpdateProfile updateProfile = UpdateProfile();
-  bool _isProcessing = false;
+  bool _isUpdating = false;
 
-  bool get isProcessing => _isProcessing;
+  bool get isUpdating => _isUpdating;
 
   void startProcessing() {
-    _isProcessing = true;
+    _isUpdating = true;
     notifyListeners();
   }
 
   void stopProcessing() {
-    _isProcessing = false;
+    _isUpdating = false;
     notifyListeners();
   }
 }

@@ -4,6 +4,7 @@ import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Utils.dart';
 import 'package:my_app/models/user.dart';
 import 'package:my_app/services/ChartData.dart';
+import 'package:my_app/services/updatedUser.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:xen_popup_card/xen_popup_card.dart';
@@ -15,7 +16,8 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     // User user1 = context.read<UserProvider>().user;
     User user = Provider.of<UserProvider>(context).user;
-    print('ye user data ha :${user.countReport}');
+    Provider.of<UserProvider>(context).updateUser(user);
+    print('ye user data ha :${user.countHours}');
     // Get the screen dimensions using MediaQuery
     double Width = MediaQuery.of(context).size.width;
     double Height = MediaQuery.of(context).size.height;
@@ -30,15 +32,27 @@ class Home extends StatelessWidget {
     // Define the desired dimensions for the card
     // double cardHeight = screenHeight * 1 / 3;
     // double cardWidth = screenWidth * 0.85;
-
+    // int humanTime = user.countEmail * 1.5 as int;
+    // int OperifyTime = user.countEmail * 0.08 as int;
+    // print('h: $humanTime and o: $OperifyTime');
     // Calculate the adaptive width of the card based on the height
-    List<ChartData> chartData = [
-      ChartData(2010, 35),
-      ChartData(2011, 13),
-      ChartData(2012, 34),
-      ChartData(2013, 27),
-      ChartData(2014, 40)
+    final List<ChartData> chartData = [
+      ChartData(1, 55),
+      ChartData(2, 32),
     ];
+    final List<ChartData> ReportData = [
+      ChartData(1, 180),
+      ChartData(2, 25),
+    ];
+    final List<ChartData> TranslationchartData = [
+      ChartData(1, 60),
+      ChartData(2, 30),
+    ];
+    final List<ChartData> TotalchartData = [
+      ChartData(1, 240),
+      ChartData(2, 98),
+    ];
+
     return Container(
       width: double.infinity,
       height: double.infinity,
@@ -96,22 +110,58 @@ class Home extends StatelessWidget {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                "Welcome ${user.name.isEmpty ? 'David!' : user.name} ",
+                                                "Welcome ${user.name.isEmpty ? 'David!' : user.name.toTitleCase() + '!'} ",
                                                 style: GoogleFonts.inter(
-                                                  fontSize: scaledFontSize,
+                                                  fontSize: 16,
                                                   color: Color(0xffFFFFFF),
+                                                  fontWeight: FontWeight.w900,
+                                                  height: 39 / 20,
+                                                  // shadows: [
+                                                  //   Shadow(
+                                                  //     offset: Offset(0, 0),
+                                                  //     blurRadius: 0.0001,
+                                                  //     color: Colors
+                                                  //         .black, // Stroke color (black)
+                                                  //   ),
+                                                  // ],
                                                 ),
                                               ),
                                               Text(
-                                                "Your AI Assistant ",
-                                                style:
-                                                    line1Style, // Style for the first line
+                                                "Operify",
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 15,
+                                                  color: const Color(
+                                                      0xFFFFFFFF), // White text color
+
+                                                  fontWeight: FontWeight.w700,
+                                                  height: 39 /
+                                                      20, // Line height is set to 39
+                                                  letterSpacing: 0.0,
+                                                  // shadows: [
+                                                  //   Shadow(
+                                                  //     offset: Offset(0, 0),
+                                                  //     blurRadius: 0.01,
+                                                  //     color: Colors
+                                                  //         .black, // Stroke color (black)
+                                                  //   ),
+                                                  // ],
+                                                ),
+                                                // Style for the first line
                                               ),
                                               Text(
-                                                "Simplifying Life,  \nOne Task at a Time.",
-                                                style: line1Style.copyWith(
-                                                  fontSize: 16,
+                                                "Simplifying Work,  \nOne Task at a Time.",
+                                                // style: line1Style.copyWith(
+                                                //   fontSize: 16,
+                                                //   fontWeight: FontWeight.w500,
+                                                // ),
+                                                style: GoogleFonts.inter(
+                                                  fontSize: 14,
                                                   fontWeight: FontWeight.w500,
+                                                  height: 39 /
+                                                      20, // Line height is set to 39
+                                                  letterSpacing: 0.0,
+                                                  color:
+                                                      const Color(0xFFFFFFFF),
                                                 ),
                                               ),
                                             ],
@@ -130,7 +180,7 @@ class Home extends StatelessWidget {
                                           padding: const EdgeInsets.only(
                                               // this line got error
                                               right: 40.0,
-                                              top: 50),
+                                              top: 50.0),
                                           child: Transform.scale(
                                             scaleX: 2,
                                             scaleY: 2,
@@ -193,7 +243,7 @@ class Home extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        bottom: 0, left: 40.0, top: 120),
+                                        bottom: 0.0, left: 40.0, top: 120.0),
                                     child: Align(
                                       alignment: Alignment.bottomRight,
                                       child: Transform.scale(
@@ -222,18 +272,23 @@ class Home extends StatelessWidget {
                                         children: [
                                           MiniCard(
                                             cardText: 'Text Generated',
-                                            cardDigit: user.countEmail.toString(),
+                                            cardDigit:
+                                                user.countEmail.toString(),
                                             onClickFunction: () => {
                                               showDialog(
                                                 context: context,
                                                 builder: (builder) =>
                                                     XenPopupCard(
                                                   // gutter: padd,
+                                                  cardBgColor: Colors.black12,
                                                   body: Container(
                                                     child: SfCartesianChart(
-                                                        series: <CartesianSeries>[
-                                                          // Renders spline chart
-                                                          SplineSeries<
+                                                        title: ChartTitle(
+                                                            text:
+                                                                "Email Comparison Human vs Operify"),
+                                                        series: <CartesianSeries<
+                                                            ChartData, int>>[
+                                                          ColumnSeries<
                                                                   ChartData,
                                                                   int>(
                                                               dataSource:
@@ -245,7 +300,15 @@ class Home extends StatelessWidget {
                                                               yValueMapper:
                                                                   (ChartData data,
                                                                           _) =>
-                                                                      data.y)
+                                                                      data.y,
+                                                              // Width of the columns
+                                                              width: 0.8,
+                                                              // Spacing between the columns
+                                                              spacing: 0.2,
+                                                              xAxisName:
+                                                                  "Email Comparison Human vs Operify",
+                                                              yAxisName:
+                                                                  "Time spent on task (minutes)")
                                                         ]),
                                                   ),
                                                 ),
@@ -254,9 +317,44 @@ class Home extends StatelessWidget {
                                           ),
                                           MiniCard(
                                             cardText: 'Report Generated',
-                                            cardDigit: user.countReport.toString(),
-                                            onClickFunction: () =>
-                                                {print('i got clicked')},
+                                            cardDigit:
+                                                user.countReport.toString(),
+                                            onClickFunction: () => {
+                                              showDialog(
+                                                context: context,
+                                                builder: (builder) =>
+                                                    XenPopupCard(
+                                                  // gutter: padd,
+                                                  cardBgColor: Colors.black26,
+                                                  body: Container(
+                                                    child: SfCartesianChart(
+                                                        title: ChartTitle(
+                                                            text:
+                                                                "Report Comparison Human vs Operify"),
+                                                        series: <CartesianSeries<
+                                                            ChartData, int>>[
+                                                          ColumnSeries<
+                                                                  ChartData,
+                                                                  int>(
+                                                              dataSource:
+                                                                  ReportData,
+                                                              xValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.x,
+                                                              yValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.y,
+                                                              // Width of the columns
+                                                              width: 0.8,
+                                                              // Spacing between the columns
+                                                              spacing: 0.2)
+                                                        ]),
+                                                  ),
+                                                ),
+                                              ),
+                                            },
                                           ),
                                         ],
                                       ),
@@ -266,15 +364,85 @@ class Home extends StatelessWidget {
                                         children: [
                                           MiniCard(
                                             cardText: 'Content Generated',
-                                            cardDigit: user.countTranslate.toString(),
-                                            onClickFunction: () =>
-                                                {print('i got clicked')},
+                                            cardDigit:
+                                                user.countTranslate.toString(),
+                                            onClickFunction: () => {
+                                              showDialog(
+                                                context: context,
+                                                builder: (builder) =>
+                                                    XenPopupCard(
+                                                  // gutter: padd,
+                                                  cardBgColor: Colors.black26,
+                                                  body: Container(
+                                                    child: SfCartesianChart(
+                                                        title: ChartTitle(
+                                                            text:
+                                                                "Translation Comparison Human vs Operify"),
+                                                        series: <CartesianSeries<
+                                                            ChartData, int>>[
+                                                          ColumnSeries<
+                                                                  ChartData,
+                                                                  int>(
+                                                              dataSource:
+                                                                  TranslationchartData,
+                                                              xValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.x,
+                                                              yValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.y,
+                                                              // Width of the columns
+                                                              width: 0.8,
+                                                              // Spacing between the columns
+                                                              spacing: 0.2)
+                                                        ]),
+                                                  ),
+                                                ),
+                                              ),
+                                            },
                                           ),
                                           MiniCard(
                                             cardText: 'Hours Saved ',
-                                            cardDigit: user.countHours.toString(),
-                                            onClickFunction: () =>
-                                                {print('i got clicked')},
+                                            cardDigit:
+                                                user.countHours.toString(),
+                                            onClickFunction: () => {
+                                              showDialog(
+                                                context: context,
+                                                builder: (builder) =>
+                                                    XenPopupCard(
+                                                  // gutter: padd,
+                                                  cardBgColor: Colors.black26,
+                                                  body: Container(
+                                                    child: SfCartesianChart(
+                                                        title: ChartTitle(
+                                                            text:
+                                                                "Total Comparison (Human vs Operify)"),
+                                                        series: <CartesianSeries<
+                                                            ChartData, int>>[
+                                                          ColumnSeries<
+                                                                  ChartData,
+                                                                  int>(
+                                                              dataSource:
+                                                                  TotalchartData,
+                                                              xValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.x,
+                                                              yValueMapper:
+                                                                  (ChartData data,
+                                                                          _) =>
+                                                                      data.y,
+                                                              // Width of the columns
+                                                              width: 0.8,
+                                                              // Spacing between the columns
+                                                              spacing: 0.2)
+                                                        ]),
+                                                  ),
+                                                ),
+                                              ),
+                                            },
                                           ),
                                         ],
                                       ),
@@ -349,70 +517,76 @@ class _MiniCardState extends State<MiniCard> {
           children: [
             Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                widget.cardText,
-                style: kMiniCardsStyle.copyWith(fontSize: scaledFontSize),
+              child: Expanded(
+                child: Text(
+                  widget.cardText,
+                  style: kMiniCardsStyle.copyWith(fontSize: scaledFontSize),
+                ),
               ),
             ),
             SizedBox(
               height: 6,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    // "325",
-                    widget.cardDigit,
-                    style: kMiniCardsStyle.copyWith(
-                        fontSize: scaledFontSize, fontWeight: FontWeight.w600),
-                  ),
-                ),
-                Container(
-                  width: width * 0.046,
-                  height: height * 0.029,
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20), // Make it circular
-                    // Button background color (white)
-                    border: Border.all(
-                      color: Colors.white, // Border color
-                      width: 2.0, // Border width
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      // "325",
+                      widget.cardDigit,
+                      style: kMiniCardsStyle.copyWith(
+                          fontSize: scaledFontSize,
+                          fontWeight: FontWeight.w600),
                     ),
                   ),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () => {widget.onClickFunction()},
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'View',
-                              style: kMiniCardsStyle.copyWith(fontSize: 9),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Icon(
-                              Icons
-                                  .open_in_new, // Replace with your desired icon
-                              color: Colors.white, // Icon color
-                              size: 14,
-                            ),
-                          ),
-                        ],
+                  Container(
+                    width: width * 0.046,
+                    height: height * 0.029,
+                    padding: EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      borderRadius:
+                          BorderRadius.circular(20), // Make it circular
+                      // Button background color (white)
+                      border: Border.all(
+                        color: Colors.white, // Border color
+                        width: 2.0, // Border width
                       ),
                     ),
-                  ),
-                )
-              ],
+                    child: Center(
+                      child: InkWell(
+                        onTap: () => {widget.onClickFunction()},
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'View',
+                                style: kMiniCardsStyle.copyWith(fontSize: 9),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 10,
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Icon(
+                                Icons
+                                    .open_in_new, // Replace with your desired icon
+                                color: Colors.white, // Icon color
+                                size: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ],
         ),

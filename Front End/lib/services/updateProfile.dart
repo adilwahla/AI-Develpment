@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/config_dev.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -35,7 +37,10 @@ class UpdateProfile {
       );
 
       if (response.statusCode == 200) {
-        print('Profile updated successfully');
+        //update user here
+
+        print('Profile updated successfully ${response.body}');
+        
         return true;
       } else {
         print('Failed to update profile. Status code: ${response.statusCode}');
@@ -48,7 +53,7 @@ class UpdateProfile {
     }
   }
 
- Future<bool> updatePassword({
+  Future<bool> updatePassword({
     required String? newPassword,
   }) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -81,5 +86,4 @@ class UpdateProfile {
       return false;
     }
   }
-
 }

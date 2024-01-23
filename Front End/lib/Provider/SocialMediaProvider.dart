@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:my_app/services/socialMediaServices.dart';
 
 class SocialMediaProvider with ChangeNotifier {
-  final SocialMediaService _service = SocialMediaService();
+  final SocialMediaService service = SocialMediaService();
   bool _isProcessing = false;
 
   bool get isProcessing => _isProcessing;
@@ -32,7 +32,7 @@ class SocialMediaProvider with ChangeNotifier {
     try {
  
 
-      await _service.generateSocialMediaText(
+      await service.generateSocialMediaText(
         selectedPlatform: selectedPlatform,
         contentIdeas: contentIdeas,
         captionsText: captionsText,

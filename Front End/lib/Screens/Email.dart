@@ -1,9 +1,7 @@
 // ignore_for_file: unused_local_variable
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'dart:math' as math;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:my_app/Provider/EmailProcessProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
@@ -12,11 +10,9 @@ import 'package:my_app/Widgets/FormContainer.dart';
 
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
-import 'package:http/http.dart' as http;
 import 'package:my_app/models/user.dart';
-import 'package:my_app/services/auth_services.dart';
-import 'package:my_app/services/emailService.dart';
 import 'package:my_app/services/updatedUser.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 
 TextEditingController GeneratedEmail = TextEditingController();
@@ -87,45 +83,51 @@ class _EmailState extends State<Email> {
           ),
           Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 20),
-            child: Container(
-              width: double.infinity,
-              height: height * 0.0491,
-              decoration: BoxDecoration(
-                  color: Color(0xff39D1B8),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20.0),
-                    topRight: Radius.circular(20.0),
-                  )),
-              child: isEmailGenerated
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.asset(
-                          'assets/images/published_with_changes.png',
-                          color: Colors.white, // Icon color
-                          width: 24, // Set the width as needed
-                          height: 24, // Set the height as needed
-                        ),
-                        Text(
-                          "Ready",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: 'Fira Sans',
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    )
-                  : Center(
-                      child: Text(
-                        "Waiting",
-                        style: GoogleFonts.firaSans(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),
-                    ),
+            child: Consumer<EmailProvider>(
+              builder: (context, value, child) {
+                return Container(
+                    width: double.infinity,
+                    height: height * 0.0491,
+                    decoration: BoxDecoration(
+                        color: Color(0xff39D1B8),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20.0),
+                          topRight: Radius.circular(20.0),
+                        )),
+                    child: value.isProcessing
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Waiting",
+                                style: GoogleFonts.firaSans(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                'assets/images/published_with_changes.png',
+                                color: Colors.white, // Icon color
+                                width: 24, // Set the width as needed
+                                height: 24, // Set the height as needed
+                              ),
+                              Text(
+                                "Ready",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Fira Sans',
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ],
+                          ));
+              },
             ),
           ),
           Expanded(
@@ -225,22 +227,21 @@ class _BodyEmailFormState extends State<BodyEmailForm>
 {
   bool rotateImage = true;
 
-
-  void _handleOnSuccess(String result) async{
+  void _handleOnSuccess(String result) async {
     // Handle the generated email content on success
     print('Generated Email Content _handleOnSuccess(): $result');
     // Invoke the parent's callback with the result
     widget.onSuccessCallback(result);
     rotateImage = false;
-     final UpdatedUser updatedUser = UpdatedUser();
-    
+    final UpdatedUser updatedUser = UpdatedUser();
+
     // Fetch updated user data after successful email generation
 
     User? fetchedUser = await updatedUser.fetchUpdatedUserData();
-    print('this is fetched user $fetchedUser');
+    // print('this is fetched user $fetchedUser');
     if (fetchedUser != null) {
       // Update the user in your UserProvider
-    
+
       Provider.of<UserProvider>(context, listen: false).updateUser(fetchedUser);
     }
   }
@@ -266,7 +267,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
           Padding(
             padding: const EdgeInsets.only(top: 10.0, bottom: 4, left: 3),
             child: FormLabelText(
-              labelText: "Object",
+              labelText: "Subject",
             ),
           ),
           Container(
@@ -297,7 +298,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                         .w200, // FontWeight.w200 represents the "extra-light" weight
                     fontStyle: FontStyle.italic,
                   ),
-                  hintText: 'Enter Object',
+                  hintText: 'Enter Subject',
                   contentPadding: const EdgeInsets.all(15),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(25),
@@ -638,7 +639,7 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                     child: Container(
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: height * 0.1389,
+                          maxHeight: height * 0.1389,
                         ),
                         child: TextField(
                           maxLines: null,
@@ -714,69 +715,78 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                     });
                   } finally {
                     emailProvider.stopProcessing();
-                    print(" finally= ${emailProvider.isProcessing}");
+                    // print(" finally= ${emailProvider.isProcessing}");
                   }
                 },
-                child: Container(
-                  padding: EdgeInsets.all(5),
-                  width: width * 0.1125,
-                  height: height * 0.04722,
-                  decoration: BoxDecoration(
-                      color: Color(0xffFF8203),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(20.0),
-                      )),
-                  child: Consumer<EmailProvider>(
-                    builder:
-                        (BuildContext context, emailProvider, Widget? child) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // AnimatedBuilder(
-                          //   animation: _controller,
-                          //   builder: (_, child) {
-                          //     if (rotateImage) {
-                          //       // If email is not generated, continue rotation
-                          //       return Transform.rotate(
-                          //         angle: _controller.value * 2 * math.pi,
-                          //         child: child,
-                          //       );
-                          //     } else {
-                          //       // If email is generated, stop rotation
-                          //       return Image.asset(
-                          //         'assets/images/autorenew.png',
-                          //         color: Colors.white, // Icon color
-                          //         width: 24, // Set the width as needed
-                          //         height: 24, // Set the height as needed
-                          //       );
-                          //     }
-                          //   },
-                          emailProvider.isProcessing
-                              ? CircularProgressIndicator()
-                              : Image.asset(
+                child: Consumer<EmailProvider>(
+                  builder:
+                      (BuildContext context, emailProvider, Widget? child) {
+                    return emailProvider.isProcessing
+                        ? new LinearPercentIndicator(
+                            width: width * 0.366,
+                            animation: true,
+                            lineHeight: height * 0.04722,
+                            animationDuration: 2500,
+                            percent: 0.8,
+                            center: Text("80.0%"),
+                            barRadius: Radius.circular(20.0),
+                            progressColor: Color(0xff39D1B8),
+                          )
+                        : Container(
+                            padding: EdgeInsets.all(5),
+                            width: width * 0.1125,
+                            height: height * 0.04722,
+                            decoration: BoxDecoration(
+                                color: Color(0xffFF8203),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(20.0),
+                                )),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                // AnimatedBuilder(
+                                //   animation: _controller,
+                                //   builder: (_, child) {
+                                //     if (rotateImage) {
+                                //       // If email is not generated, continue rotation
+                                //       return Transform.rotate(
+                                //         angle: _controller.value * 2 * math.pi,
+                                //         child: child,
+                                //       );
+                                //     } else {
+                                //       // If email is generated, stop rotation
+                                //       return Image.asset(
+                                //         'assets/images/autorenew.png',
+                                //         color: Colors.white, // Icon color
+                                //         width: 24, // Set the width as needed
+                                //         height: 24, // Set the height as needed
+                                //       );
+                                //     }
+                                //   },
+                                Image.asset(
                                   'assets/images/autorenew.png',
                                   color: Colors.white, // Icon color
                                   width: 24, // Set the width as needed
                                   height: 24, // Set the height as needed
                                 ),
 
-                          SizedBox(
-                            width: 15,
-                          ),
-                          Center(
-                            child: Text(
-                              "Generate",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontFamily: 'Fira Sans',
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                                Center(
+                                  child: Text(
+                                    "Generate",
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Fira Sans',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
+                          );
+                  },
                 ),
               ),
             ),

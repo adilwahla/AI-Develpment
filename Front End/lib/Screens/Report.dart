@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/ReportProvider.dart';
 import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Widgets/Buttons/FormButton.dart';
 import 'package:my_app/Widgets/Buttons/downloadButtons.dart';
@@ -13,9 +13,11 @@ import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
 import 'package:my_app/models/user.dart';
+import 'package:my_app/services/TextFile.dart';
 import 'package:my_app/services/pdfService.dart';
 import 'package:my_app/services/reportService.dart';
 import 'package:my_app/services/updatedUser.dart';
+import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
@@ -46,8 +48,7 @@ class ReportFormBody extends StatefulWidget {
 }
 
 class _ReportFormBodyState extends State<ReportFormBody> {
-  ReportService _reportService = ReportService();
-  PdfService _pdfService = PdfService();
+  TextFileGeneration textFileGeneration = TextFileGeneration();
   TextEditingController? textarea = TextEditingController();
   // TextEditingController EnterLanguage = TextEditingController();
   String? object;
@@ -56,35 +57,43 @@ class _ReportFormBodyState extends State<ReportFormBody> {
   String? selectedLanguage;
   String GeneratedReport = "";
 
-  void _initiateReportGeneration() {
-    _reportService.GenerateReport(
+  void _initiateReportGeneration() async {
+    final reportProvider = Provider.of<ReportProvider>(context, listen: false);
+
+    print('before:${reportProvider.isReportProcessing}');
+    reportProvider.startProcessing();
+    print('after:${reportProvider.isReportProcessing}');
+    // _initiateReportGeneration();
+    reportProvider.reportService.GenerateReport(
       documentText: ExtractedText,
       length: selectLength,
       language: selectedLanguage,
       onSuccess: _handleReportSuccess,
       onError: _handleReportError,
     );
+    print('Generate Button pressed');
   }
 
   _handleReportSuccess(String result) async {
     final UpdatedUser updatedUser = UpdatedUser();
-    // UserProvider userProvider = UserProvider();
-    print("_handleReportSuccess $result");
-    // Assuming your report generation is successful
+
+    // print("_handleReportSuccess $result");
+
     // Fetch updated user data after successful report generation
 
     User? fetchedUser = await updatedUser.fetchUpdatedUserData();
-    print('this is fetched user $fetchedUser');
+    // print('this is fetched user $fetchedUser');
     if (fetchedUser != null) {
       // Update the user in your UserProvider
-    
+
       Provider.of<UserProvider>(context, listen: false).updateUser(fetchedUser);
     }
     setState(() {
-      print('set state is called');
+      // print('set state is called');
       GeneratedReport = result;
       textarea?.text = GeneratedReport;
     });
+    Provider.of<ReportProvider>(context, listen: false).stopProcessing();
   }
 
   _handleReportError(String error) {
@@ -93,6 +102,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM,
     );
+    Provider.of<ReportProvider>(context, listen: false).stopProcessing();
   }
 
   void _extractTextFromSelectedFile() async {
@@ -118,16 +128,31 @@ class _ReportFormBodyState extends State<ReportFormBody> {
 
         // ${String.fromCharCodes(fileBytes!)}
         ExtractedText = extractor.extractText();
-        print('here goes pdf @text ${ExtractedText} ');
+        // print('here goes pdf @text ${ExtractedText} ');
+        Fluttertoast.showToast(
+          msg: 'File Selected',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       } else if (file.extension == 'docx') {
         // Future<String> docxText = _readFile(file);
         // String text = await docxText;
         // print("this is word file text: $text");
+        Fluttertoast.showToast(
+          msg: 'docx is not supported',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       } else if (file.extension == 'txt') {
         Uint8List uint8List = result.files.first.bytes!;
         // Convert bytes to string
         ExtractedText = utf8.decode(uint8List);
         print('this is Text file: $ExtractedText');
+        Fluttertoast.showToast(
+          msg: 'File Selected',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+        );
       } else {
         print("unsupported file format ${file.extension}");
       }
@@ -141,6 +166,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
     });
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    final reportProvider = Provider.of<ReportProvider>(context, listen: false);
     return Column(
       children: [
         Padding(
@@ -345,34 +371,52 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                     height: 10,
                   ),
                   InkWell(
-                    onTap: () {
+                    onTap: () async {
                       _initiateReportGeneration();
-                      print('Generate Button pressed');
                     },
-                    child: Container(
-                      width: width * 0.366,
-                      height: height * 0.047,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        // Make it circular
-                        color: Color(0xffFF8203), // Button background color
-                      ),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              'assets/images/autorenew.png',
-                              color: Colors.white, // Icon color
-                              width: 15, // Set the width as needed
-                              height: 15, // Set the height as needed
-                            ),
-                            Text(
-                              'Generate', // Replace with your desired text
-                              style: TextStyle(
-                                color: Colors.white, // Text color
-                              ),
-                            ),
-                          ]),
+                    child: Consumer<ReportProvider>(
+                      builder: (context, reportProvider, child) {
+                        print(
+                            'Consumer rebuilt ${reportProvider.isReportProcessing}');
+
+                        return reportProvider.isReportProcessing
+                            ? new LinearPercentIndicator(
+                                width: width * 0.366,
+                                animation: true,
+                                lineHeight: height * 0.047,
+                                animationDuration: 2500,
+                                percent: 0.8,
+                                center: Text("80.0%"),
+                                barRadius: Radius.circular(20.0),
+                                progressColor: Color(0xff39D1B8),
+                              )
+                            : Container(
+                                width: width * 0.366,
+                                height: height * 0.047,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  // Make it circular
+                                  color: Color(
+                                      0xffFF8203), // Button background color
+                                ),
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset(
+                                        'assets/images/autorenew.png',
+                                        color: Colors.white, // Icon color
+                                        width: 20, // Set the width as needed
+                                        height: 20, // Set the height as needed
+                                      ),
+                                      Text(
+                                        'Generate', // Replace with your desired text
+                                        style: TextStyle(
+                                          color: Colors.white, // Text color
+                                        ),
+                                      ),
+                                    ]),
+                              );
+                      },
                     ),
                     //  FormButton(
                     //   buttonText: "   Generate",
@@ -406,34 +450,52 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                       fontSize: 12,
                     ),
                   ),
-                  Container(
-                    width: width * 0.366,
-                    height: height * 0.047,
-                    decoration: BoxDecoration(
-                        color: Color(0xff39D1B8),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0),
-                        )),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        // Image.asset(
-                        //   'assets/images/published_with_changes.png',
-                        //   color: Colors.white, // Icon color
-                        //   width: 15, // Set the width as needed
-                        //   height: 15, // Set the height as needed
-                        // ),
-                        Text(
-                          "Waiting",
-                          style: GoogleFonts.firaSans(
-                              color: Colors.white,
-                              // fontFamily: 'Fira Sans',
-                              fontSize: 15,
-                              fontWeight: FontWeight.normal),
-                        ),
-                      ],
-                    ),
+                  Consumer<ReportProvider>(
+                    builder: (context, check, child) {
+                      return Container(
+                        width: width * 0.366,
+                        height: height * 0.047,
+                        decoration: BoxDecoration(
+                            color: Color(0xff39D1B8),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10.0),
+                              topRight: Radius.circular(10.0),
+                            )),
+                        child: check.isReportProcessing
+                            ? Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Waiting",
+                                    style: GoogleFonts.firaSans(
+                                        color: Colors.white,
+                                        // fontFamily: 'Fira Sans',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              )
+                            : Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Image.asset(
+                                    'assets/images/published_with_changes.png',
+                                    color: Colors.white, // Icon color
+                                    width: 15, // Set the width as needed
+                                    height: 15, // Set the height as needed
+                                  ),
+                                  Text(
+                                    "Ready",
+                                    style: GoogleFonts.firaSans(
+                                        color: Colors.white,
+                                        // fontFamily: 'Fira Sans',
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.normal),
+                                  ),
+                                ],
+                              ),
+                      );
+                    },
                   ),
                   Container(
                     // alignment: Alignment.center,
@@ -545,8 +607,15 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                       SizedBox(
                         width: 5,
                       ),
-                      DownloadButtons(
-                        downloadIconName: 'word',
+                      InkWell(
+                        onTap: () {
+                          GeneratedReport = textarea!.text;
+                          textFileGeneration
+                              .generateAndDownloadFile(GeneratedReport);
+                        },
+                        child: DownloadButtons(
+                          downloadIconName: 'word',
+                        ),
                       ),
                     ],
                   ),

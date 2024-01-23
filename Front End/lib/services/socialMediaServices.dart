@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:my_app/config_dev.dart';
 import 'package:my_app/models/socialmedia.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 typedef void SocialMediaTextCallback(String generatedContent);
 typedef void SocialMediaTextFailureCallback(String message);
@@ -30,11 +31,15 @@ class SocialMediaService {
       type: type,
       themes: themes,
     );
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    String? token = prefs.getString('x-auth-token') ?? '';
     try {
       final response = await http.post(
         Uri.parse('${AppConfig.baseUrl}/api/socialMedia'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
+          'x-auth-token': token,
           // Add any other headers if required
         },
         body: request.toJsonString(),

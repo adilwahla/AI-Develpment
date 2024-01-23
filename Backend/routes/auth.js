@@ -7,8 +7,8 @@ const {auth ,generateTokenAndSetCookie,TranslateWordCount,ReportsCount} = requir
 
 const { translateText } = require('../models/translate'); // Adjust the path as needed
 const { generateReport } = require('../models/report'); // Adjust the path as needed
-const { SocialMedia }=require('../models/socialMedia');
-const { Profile }=require('../models/profile');
+const CompanyDetails = require('../models/company');
+const ContentCalendar =require('../models/contentCalender');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const apiKey = process.env.OPENAI_API;
@@ -59,6 +59,7 @@ authRouter.post("/api/signin", async (req, res) => {
       const { email, password } = req.body;
   
       const user = await User.findOne({ email });
+      console.log("user  ",user);
       if (!user) {
         return res
           .status(400)
@@ -215,21 +216,79 @@ async function incrementWordCount(userId, content) {
     }
   }
   
+async function incrementHoursCount(userId){
+  try{
+ 
+      // Find the user by ID to get the current values of countEmail, countReport, and countTranslate
+      const user = await User.findById(userId);
+  
+      if (!user) {
+        console.log("User not found");
+        return;
+      }
+  
+      // Get the current values
+      const { countEmail, countReport, countTranslate } = user;
+  
+      // Update the user with the new countHours value
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        {
+          $set: {
+            countHours: calculateTotalHours(countEmail, countReport, countTranslate),
+          },
+        },
+        { new: true }
+      );
+  
+      console.log("Updated user:", updatedUser);
+  }catch(e){
+    console.log("error in hours increment function",e.message);
+  }
 
+  function calculateTotalHours(countEmail, countReport, countTranslate) {
+    // Adjust the formula based on your requirements
+    const e = 1.5; // Average time for an email in seconds/word
+    const r = 3;   // Average time for a report/summary in seconds/word
+    const t = 12;  // Average time for translation in seconds/word
+  
+    const totalSecondsSaved  =
+      (countEmail * e - countEmail * 0.08) +
+      (countReport * r - countReport * 0.08) +
+      (countTranslate * t - countTranslate * 0.08);
+  
+      const totalHoursSaved = Math.round(totalSecondsSaved / 3600);// Convert to hours
+     console.log("totalHoursSaved",totalHoursSaved)
+      return totalHoursSaved;
+    }
+}
 
+// Helper function to calculate total hours based on your formula
 
 authRouter.post('/api/email' ,auth1, async (req, res) => {
+  let generatedEmail="";
   try {
    //TODO: get current user id here without getting it from user req.body 
     const emailData = req.body;
     console.log(req.body);
     console.log('this is req.user',req.user);
-  
+    let companyDetails =await  checkCompanyExists(req.user);
+    // Use the companyDetails variable for further actions if needed
+if (companyDetails) {
+  // Perform actions using companyDetails
+  // console.log('Do something with companyDetails:', companyDetails);
+  generatedEmail = await generateEmailContent(emailData ,companyDetails);
+} else {
+  // Perform actions if the company does not exist or if there's an error
+  console.log('Company not found or an error occurred.');
+  generatedEmail = await generateEmailContent(emailData ,companyDetails = null);
+}
+    
     // console.log('Received email data:', JSON.stringify(emailData, null, 2));
-    const generatedEmail = await generateEmailContentWithRetry(emailData);
+   
     console.log('Generated email content:', generatedEmail);
     await incrementWordCount(req.user, generatedEmail); 
-  
+    incrementHoursCount(req.user);
 
     res.status(200).json({
       message: 'Email created successfully',
@@ -242,31 +301,63 @@ authRouter.post('/api/email' ,auth1, async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-async function generateEmailContentWithRetry(emailData, retryCount = 3) {
+///////////////
+async function checkCompanyExists(userId) {
   try {
-    const generatedEmail = await generateEmailContent(emailData);
-    return generatedEmail;
-  } catch (error) {
-    if (error.response && error.response.status === 429 && retryCount > 0) {
-      const delay = Math.pow(2, 3 - retryCount) * 1000; // 2^maxRetries * 1000 milliseconds
-      console.log(`Retrying after ${delay} milliseconds...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-      return generateEmailContentWithRetry(emailData, retryCount - 1);
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // Check if the user exists and has the 'company' field
+    if (user && user.company) {
+      const companyName = user.company;
+
+      // Check if the company exists in the CompanyDetails collection
+      let companyDetails = await CompanyDetails.findOne({ companyName });
+
+      if (companyDetails) {
+        console.log(`Company with name '${companyName}' exists. Details:`, companyDetails);
+        return companyDetails;
+      } else {
+        console.log(`Company with name '${companyName}' does not exist.`);
+        return null;
+      }
     } else {
-      throw error;
+      console.log('User or company information not available.');
+      return null;
     }
+  } catch (error) {
+    console.error('Error:', error.message);
+    return null;
   }
 }
 
-async function generateEmailContent(emailData) {
-  const content = `Write an email with the following details:
+///////////////
+// async function generateEmailContentWithRetry(emailData, retryCount = 3) {
+//   try {
+//     const generatedEmail = await generateEmailContent(emailData);
+//     return generatedEmail;
+//   } catch (error) {
+//     if (error.response && error.response.status === 429 && retryCount > 0) {
+//       const delay = Math.pow(2, 3 - retryCount) * 1000; // 2^maxRetries * 1000 milliseconds
+//       console.log(`Retrying after ${delay} milliseconds...`);
+//       await new Promise(resolve => setTimeout(resolve, delay));
+//       return generateEmailContentWithRetry(emailData, retryCount - 1);
+//     } else {
+//       throw error;
+//     }
+//   }
+// }
+
+async function generateEmailContent(emailData ,companyDetails) {
+  let content = `Write an email with the following details:
     Object: ${emailData.object}
     Type of Email: ${emailData.typeOfEmail}
     Email To: ${emailData.emailTo}
     Email From: ${emailData.emailFrom}
     Length: ${emailData.length}
-    Email Content: ${emailData.emailContent}`;
+    Email Content: ${emailData.emailContent}
+    Company Details: ${companyDetails ? JSON.stringify(companyDetails) : 'N/A'}`;
+   
 // const content='You are a helpful assistant';
   try {
     const completion = await openai.chat.completions.create({
@@ -412,7 +503,8 @@ function combineSummaries(summaries) {
 }
 
 ////////////////////////////////
-authRouter.post('/api/socialMedia', async (req, res) => {
+authRouter.post('/api/socialMedia',auth1, async (req, res) => {
+  let prompt='';
   const {
     selectedPlatform,
     contentIdeas,
@@ -424,8 +516,17 @@ authRouter.post('/api/socialMedia', async (req, res) => {
     themes
   } = req.body;
 console.log(req.body);
-  try {
-    const prompt = `Create content (without emojis or special characters) for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes}.`;
+ /////===========>
+let CompanyCalenderdata= await checkCompanyCalenderExists(req.user);
+// console.log(foundData);
+
+try {
+  if(checkCompanyCalenderExists){
+    prompt = `Create Social media content calender  for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes} , Companydata:${CompanyCalenderdata}`;
+  }else{
+    prompt = `Create Social media content calender  for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes} `; 
+  }
+
 
     const completion = await openai.chat.completions.create({
       messages: [
@@ -449,112 +550,127 @@ console.log(req.body);
   }
 });
 
+/////////////// This is API to store data in DB to generate Email
+authRouter.post('/api/emailData', async (req, res) => {
+  try {
+    const companyData = req.body;
 
+    const newCompanyData = new CompanyDetails(companyData);
+
+    const savedCompanyData = await newCompanyData.save();
+    res.status(201).json({ message: 'Successfully saved data', savedData: savedCompanyData });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+///////// API END POINT FOR CONTENT CALENDER 
+// API endpoint to store content calendar data
+authRouter.post('/api/contentCalendar', async (req, res) => {
+  try {
+    const contentCalendarData = req.body;
+
+    const newContentCalendar = new ContentCalendar(contentCalendarData);
+
+    const savedContentCalendar = await newContentCalendar.save();
+    res.status(201).json({ message: 'Successfully saved content calendar data', savedData: savedContentCalendar });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+//////////////
+
+async function checkCompanyCalenderExists(userId) {
+  try {
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    // Check if the user exists and has the 'company' field
+    if (user && user.company) {
+      const companyName = user.company;
+
+      // Check if the company exists in the CompanyDetails collection
+      let contentCalendarData = await ContentCalendar.findOne({ 'companyOverview.companyName': companyName });
+
+      if (contentCalendarData) {
+        console.log(`Company with name '${companyName}' exists. Details:`, contentCalendarData);
+        return contentCalendarData;
+      } else {
+        console.log(`Company with name '${companyName}' does not exist.`);
+        return null;
+      }
+    } else {
+      console.log('User or company information not available.');
+      return null;
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    return null;
+  }
+}
 
 // API Endpoint to Create Social Media Content Idea
 // API Endpoint to Create Social Media Content
-authRouter.post('/api/social-media/content/:platform', async (req, res) => {
-    try {
-      const { platform } = req.params;
-      const { contentIdeas, captionsText, responseGeneration } = req.body;
-      const socialMedia = new SocialMedia({ platform, contentInput: { contentIdeas, captionsText, responseGeneration } });
-      await socialMedia.save();
-      res.status(201).json({
-        message: 'Social Media Content created successfully',
-        socialMediaId: socialMedia._id,
-      });
-    } catch (error) {
-      console.error('Error creating social media content:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  });
+// authRouter.post('/api/social-media/content/:platform', async (req, res) => {
+//     try {
+//       const { platform } = req.params;
+//       const { contentIdeas, captionsText, responseGeneration } = req.body;
+//       const socialMedia = new SocialMedia({ platform, contentInput: { contentIdeas, captionsText, responseGeneration } });
+//       await socialMedia.save();
+//       res.status(201).json({
+//         message: 'Social Media Content created successfully',
+//         socialMediaId: socialMedia._id,
+//       });
+//     } catch (error) {
+//       console.error('Error creating social media content:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//   });
   
-  // API Endpoint to Create Content Calendar
-  authRouter.post('/api/social-media/content-calendar/:platform', async (req, res) => {
-    try {
-      const { platform } = req.params;
-      const { timeframe, frequency, contentTypes, goals } = req.body;
-      const socialMedia = new SocialMedia({ platform, contentCalendar: { timeframe, frequency, contentTypes, goals } });
-      await socialMedia.save();
-      res.status(201).json({
-        message: 'Content Calendar created successfully',
-        socialMediaId: socialMedia._id,
-      });
-      }  catch (error) {
-      console.error('Error creating content calendar:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  });
+//   // API Endpoint to Create Content Calendar
+//   authRouter.post('/api/social-media/content-calendar/:platform', async (req, res) => {
+//     try {
+//       const { platform } = req.params;
+//       const { timeframe, frequency, contentTypes, goals } = req.body;
+//       const socialMedia = new SocialMedia({ platform, contentCalendar: { timeframe, frequency, contentTypes, goals } });
+//       await socialMedia.save();
+//       res.status(201).json({
+//         message: 'Content Calendar created successfully',
+//         socialMediaId: socialMedia._id,
+//       });
+//       }  catch (error) {
+//       console.error('Error creating content calendar:', error);
+//       res.status(500).json({ error: 'Internal server error' });
+//     }
+//   });
   
   // API Endpoint to Generate Content
-  authRouter.post('/api/social-media/generate-content/:id', async (req, res) => {
-    try {
-      const { id } = req.params;
-      const socialMedia = await SocialMedia.findById(id);
-      if (!socialMedia) {
-        return res.status(404).json({ error: 'Social Media Content not found' });
-      }
+  // authRouter.post('/api/social-media/generate-content/:id', async (req, res) => {
+  //   try {
+  //     const { id } = req.params;
+  //     const socialMedia = await SocialMedia.findById(id);
+  //     if (!socialMedia) {
+  //       return res.status(404).json({ error: 'Social Media Content not found' });
+  //     }
   
-      // Placeholder logic for generating content based on the provided inputs
-      const generatedContent = `Generated content for ${socialMedia.platform}:\n\nContent Ideas: ${socialMedia.contentInput.contentIdeas}\nCaptions & Text: ${socialMedia.contentInput.captionsText}\nResponse Generation: ${socialMedia.contentInput.responseGeneration}`;
+  //     // Placeholder logic for generating content based on the provided inputs
+  //     const generatedContent = `Generated content for ${socialMedia.platform}:\n\nContent Ideas: ${socialMedia.contentInput.contentIdeas}\nCaptions & Text: ${socialMedia.contentInput.captionsText}\nResponse Generation: ${socialMedia.contentInput.responseGeneration}`;
   
-      socialMedia.generatedContent = generatedContent;
-      await socialMedia.save();
+  //     socialMedia.generatedContent = generatedContent;
+  //     await socialMedia.save();
   
-      res.status(200).json({
-        message: 'Content generated successfully',
-        generatedContent: socialMedia.generatedContent,
-      });
-    } catch (error) {
-      console.error('Error generating content:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  });
+  //     res.status(200).json({
+  //       message: 'Content generated successfully',
+  //       generatedContent: socialMedia.generatedContent,
+  //     });
+  //   } catch (error) {
+  //     console.error('Error generating content:', error);
+  //     res.status(500).json({ error: 'Internal server error' });
+  //   }
+  // });
   
 ///////////////////////////////////////
 
-// API Endpoint to Get User Profile
-authRouter.get('/api/profile/:userId', async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const userProfile = await Profile.findById(userId);
-      if (!userProfile) {
-        return res.status(404).json({ error: 'User profile not found' });
-      }
-      res.status(200).json(userProfile);
-    } catch (error) {
-      console.error('Error fetching user profile:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  });
-  
-  // API Endpoint to Update User Profile
-  authRouter.put('/api/profile/:userId', async (req, res) => {
-    try {
-      const { userId } = req.params;
-      const { password, wordLimit } = req.body;
-  
-      // Simulate password hashing (replace this with proper password hashing in production)
-      const hashedPassword = password; // In a real application, use bcrypt or similar
-  
-      const updatedProfile = await Profile.findByIdAndUpdate(
-        userId,
-        { password: hashedPassword, wordLimit },
-        { new: true }
-      );
-  
-      if (!updatedProfile) {
-        return res.status(404).json({ error: 'User profile not found' });
-      }
-  
-      res.status(200).json({
-        message: 'User profile updated successfully',
-        updatedProfile,
-      });
-    } catch (error) {
-      console.error('Error updating user profile:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  });
 
 module.exports = authRouter;

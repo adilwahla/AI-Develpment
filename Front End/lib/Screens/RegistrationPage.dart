@@ -125,14 +125,14 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 35.0),
-                            child: Text(
-                              'Amet minim mollit non desert.',
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 14,
-                                color: Color(0xff626476),
-                              ),
-                            ),
+                            // child: Text(
+                            //   'Amet minim mollit non desert.',
+                            //   style: TextStyle(
+                            //     fontFamily: 'Inter',
+                            //     fontSize: 14,
+                            //     color: Color(0xff626476),
+                            //   ),
+                            // ),
                           ),
                           Container(
                             width: width * 0.25,
@@ -264,100 +264,105 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ),
                           ),
-                          Container(
-                            width: width * 0.25,
-                            child: Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Checkbox(
-                                      activeColor: Color(0xff4C5AFE),
-                                      value: _isChecked,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          _isChecked = value ?? false;
-                                        });
-                                      },
-                                    ),
-                                    Text(
-                                      "Remember Me",
-                                      style: TextStyle(
-                                        fontFamily: 'Inter',
-                                        fontSize: 12,
-                                        height:
-                                            1, // Equivalent to a line height of 20 (1.4286 * 14)
-                                        letterSpacing:
-                                            0.02, // 2% of the font size
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                // SizedBox(
-                                //   width: 185,
-                                // ),
-                                // SizedBox(width: 100),
-                                TextButton(
-                                  onPressed: () {
-                                    // setState(() {
-                                    //   register = !register;
-                                    // });
-                                  },
-                                  child: Text(
-                                    'Forgot Password',
-                                    style: GoogleFonts.inter(
-                                      decoration: TextDecoration.underline,
+                          // Container(
+                          //   width: width * 0.25,
+                          //   child: Row(
+                          //     mainAxisSize: MainAxisSize.max,
+                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //     children: [
+                          //       Row(
+                          //         children: [
+                          //           Checkbox(
+                          //             activeColor: Color(0xff4C5AFE),
+                          //             value: _isChecked,
+                          //             onChanged: (bool? value) {
+                          //               setState(() {
+                          //                 _isChecked = value ?? false;
+                          //               });
+                          //             },
+                          //           ),
+                          //           Text(
+                          //             "Remember Me",
+                          //             style: TextStyle(
+                          //               fontFamily: 'Inter',
+                          //               fontSize: 12,
+                          //               height:
+                          //                   1, // Equivalent to a line height of 20 (1.4286 * 14)
+                          //               letterSpacing:
+                          //                   0.02, // 2% of the font size
+                          //               color: Color(0xff000000),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //       // SizedBox(
+                          //       //   width: 185,
+                          //       // ),
+                          //       // SizedBox(width: 100),
+                          //       TextButton(
+                          //         onPressed: () {
+                          //           // setState(() {
+                          //           //   register = !register;
+                          //           // });
+                          //         },
+                          //         child: Text(
+                          //           'Forgot Password',
+                          //           style: GoogleFonts.inter(
+                          //             decoration: TextDecoration.underline,
 
-                                      fontSize: 12,
-                                      height:
-                                          1, // Equivalent to a line height of 20 (1.4286 * 14)
-                                      letterSpacing:
-                                          0.02, // 2% of the font size
-                                      color: Color(0xff4C5AFE),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          //             fontSize: 12,
+                          //             height:
+                          //                 1, // Equivalent to a line height of 20 (1.4286 * 14)
+                          //             letterSpacing:
+                          //                 0.02, // 2% of the font size
+                          //             color: Color(0xff4C5AFE),
+                          //             fontWeight: FontWeight.w600,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ],
+                          //   ),
+                          // ),
                           SizedBox(
                             height: 35,
                           ),
-                          Container(
-                            width: width * 0.25,
-                            height: height * 0.0519,
-                            decoration: BoxDecoration(
-                                color: Color(0xff4C69FF),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8.0),
-                              child: Center(
-                                child: InkWell(onTap: () async {
-                                  // signinUser(emailController.text,
-                                  //     passwordController.text);
-                                  // Call the signInUser function from AuthProvider
-                                  await handleLogin();
-                                }, child: Consumer<Auth_provider>(
-                                  builder: ((context, authProvider, child) {
-                                    return authProvider.loading
-                                        ? CircularProgressIndicator()
-                                        : Text(
-                                            'Signin?',
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 16,
-                                                color: Colors.white,
-                                                height:
-                                                    1.2, // Equivalent to a line height of 20 (1.4286 * 14)
-                                                letterSpacing: 0.02,
-                                                fontWeight: FontWeight.w600),
-                                          );
-                                  }),
-                                )),
+                          InkWell(
+                            onTap: () async {
+                              // signinUser(emailController.text,
+                              //     passwordController.text);
+                              // Call the signInUser function from AuthProvider
+                              await handleLogin();
+                            },
+                            child: Container(
+                              width: width * 0.25,
+                              height: height * 0.0519,
+                              decoration: BoxDecoration(
+                                  color: Color(0xff4C69FF),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20))),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Center(
+                                  child: Consumer<Auth_provider>(
+                                    builder: ((context, authProvider, child) {
+                                      return authProvider.loading
+                                          ? CircularProgressIndicator()
+                                          : Text(
+                                              'Sign in?',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                      height:
+                                                          1.2, // Equivalent to a line height of 20 (1.4286 * 14)
+                                                      letterSpacing: 0.02,
+                                                      fontWeight:
+                                                          FontWeight.w600),
+                                            );
+                                    }),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

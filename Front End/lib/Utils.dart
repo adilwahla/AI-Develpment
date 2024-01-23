@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
-import 'package:xen_popup_card/xen_popup_card.dart';
 
 const kFormLableStyle = TextStyle(
     fontSize: 14,
@@ -141,6 +140,15 @@ InputDecoration kEmailInputDecoration = InputDecoration(
     borderSide: BorderSide(color: Color(0xff4C5AFE)),
   ),
 );
+
+extension StringCasingExtension on String {
+  String toCapitalized() =>
+      length > 0 ? '${this[0].toUpperCase()}${substring(1).toLowerCase()}' : '';
+  String toTitleCase() => replaceAll(RegExp(' +'), ' ')
+      .split(' ')
+      .map((str) => str.toCapitalized())
+      .join(' ');
+}
 
 void showSnackBar(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(

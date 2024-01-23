@@ -1,8 +1,10 @@
 // ignore_for_file: unused_field, unused_local_variable
-
+import 'package:my_app/Provider/SelectedScreen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/Screens/Email.dart';
 import 'package:my_app/Screens/Home.dart';
 import 'package:my_app/Screens/ProfileScreen/Profile.dart';
@@ -12,7 +14,10 @@ import 'package:my_app/Screens/SocialMediaPage.dart';
 import 'package:my_app/Screens/Translate.dart';
 import 'package:my_app/Widgets/Footer.dart';
 import 'package:my_app/models/UserPreference.dart';
+import 'package:my_app/models/user.dart';
 import 'package:my_app/services/auth_services.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeDashboard extends StatefulWidget {
   @override
@@ -38,15 +43,12 @@ class _HomeDashboardState extends State<HomeDashboard> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // Initialize selected list with the first item selected
+    selected = List.generate(navItems.length, (index) => index == 0);
   }
 
   void select(int n) {
     for (int i = 0; i < 6; i++) {
-      if (i == 0) {
-        screenName = 'Home';
-      } else {
-        screenName = "";
-      }
       if (i == n) {
         selected[i] = true;
       } else {
@@ -78,10 +80,24 @@ class _HomeDashboardState extends State<HomeDashboard> {
     );
   }
 
+  void _launchEmail() async {
+    final Uri emailLaunchUri = Uri(
+      scheme: 'mailto',
+      path: 'info@aidevelopment.hu',
+    );
+
+    if (await canLaunchUrl(emailLaunchUri)) {
+      await launchUrl(emailLaunchUri);
+    } else {
+      throw 'Could not launch email';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+    User user = Provider.of<UserProvider>(context).user;
 
     return Scaffold(
       body: Container(
@@ -106,20 +122,32 @@ class _HomeDashboardState extends State<HomeDashboard> {
                     width: width * 0.131,
                     height: height * 0.0564,
                     margin: EdgeInsets.only(top: 25, left: 30),
-                    child: Image.asset(
-                      'assets/images/logo.png',
-                      // color: Colors.white, // Icon color
+                    child: InkWell(
+                      onTap: () {
+                        //   _launchURL('https://www.aidevelopment.hu');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => HomeDashboard(),
+                          ),
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/images/logo.png',
+                        // color: Colors.white, // Icon color
+                      ),
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.only(top: 80, left: 30, right: 35),
-                    child: Divider(
-                      color:
-                          Color(0xFFCED2D8), // Use the hexadecimal color code
-                      thickness: 1.0, // Adjust the thickness as needed
-                      // height: 4.0, // Adjust the height as needed
-                    ),
-                  ),
+                  // Container(
+                  //   margin: EdgeInsets.only(
+                  //       top: height * 0.06, left: 30, right: 35),
+                  //   child: Divider(
+                  //     color:
+                  //         Color(0xFFCED2D8), // Use the hexadecimal color code
+                  //     thickness: 1.0, // Adjust the thickness as needed
+                  //     // height: 4.0, // Adjust the height as needed
+                  //   ),
+                  // ),
                   Positioned(
                     top: height * 0.10, //105
                     // top: 110,
@@ -148,7 +176,14 @@ class _HomeDashboardState extends State<HomeDashboard> {
 
                   // ********************| Footer |*********************//
 
-                  Footer(width: width, height: height),
+                  Footer(
+                    width: width,
+                    height: height,
+                    onEmailTap: () {
+                      print('got clicked');
+                      _launchEmail();
+                    },
+                  ),
 
                   // ********************| Footer |*********************//
                 ],
@@ -182,28 +217,33 @@ class _HomeDashboardState extends State<HomeDashboard> {
                       children: [
                         Expanded(
                           flex: 2,
-                          child: Column(
-                            // mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
+                          child: Consumer<SelectedScreenProvider>(
+                            builder: (BuildContext context,
+                                SelectedScreenProvider value, Widget? child) {
+                              return Column(
+                                // mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Container(
 
-                                      // height: 40,
-                                      child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 14.0, left: 20),
-                                    child: Text(
-                                      screenName,
-                                      style: GoogleFonts.inter(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xffAEAEAE),
-                                      ),
-                                    ),
-                                  ))),
-                            ],
+                                          // height: 40,
+                                          child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 14.0, left: 20),
+                                        child: Text(
+                                          value.getScreenName(),
+                                          style: GoogleFonts.inter(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xffAEAEAE),
+                                          ),
+                                        ),
+                                      ))),
+                                ],
+                              );
+                            },
                           ),
                         ),
                         Column(
@@ -211,30 +251,30 @@ class _HomeDashboardState extends State<HomeDashboard> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                Container(
-                                  //  width: width * 0.165,
-                                  width: width * 0.165,
-                                  height: height * 0.05,
-                                  // padding: const EdgeInsets.symmetric(horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color(0xFFFFFFFF),
-                                  ),
-                                  child: const TextField(
-                                    decoration: InputDecoration(
-                                      //FFFFFF
-                                      fillColor: Colors.white,
-                                      hintText: "Search ",
-                                      icon: Padding(
-                                        padding: EdgeInsets.only(
-                                            left:
-                                                10), // Adjust the left margin as needed
-                                        child: Icon(CupertinoIcons.search),
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                  ),
-                                ),
+                                // Container(
+                                //   //  width: width * 0.165,
+                                //   width: width * 0.165,
+                                //   height: height * 0.05,
+                                //   // padding: const EdgeInsets.symmetric(horizontal: 15),
+                                //   decoration: BoxDecoration(
+                                //     borderRadius: BorderRadius.circular(20),
+                                //     color: Color(0xFFFFFFFF),
+                                //   ),
+                                //   child: const TextField(
+                                //     decoration: InputDecoration(
+                                //       //FFFFFF
+                                //       fillColor: Colors.white,
+                                //       hintText: "Search ",
+                                //       icon: Padding(
+                                //         padding: EdgeInsets.only(
+                                //             left:
+                                //                 10), // Adjust the left margin as needed
+                                //         child: Icon(CupertinoIcons.search),
+                                //       ),
+                                //       border: InputBorder.none,
+                                //     ),
+                                //   ),
+                                // ),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
@@ -273,7 +313,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                                             radius: 23,
                                             child: CircleAvatar(
                                               backgroundImage: NetworkImage(
-                                                  'assets/images/avatar.jpg'),
+                                                  user.profilePicture),
                                               radius: 20,
                                             ),
                                           ),
@@ -311,14 +351,20 @@ class _HomeDashboardState extends State<HomeDashboard> {
   Widget renderSelectedWidget() {
     switch (selectedIndex) {
       case 0:
+        Provider.of<SelectedScreenProvider>(context).setScreenName('Home');
         return Home(); // Replace with your HomeWidget implementation
       case 1:
+        Provider.of<SelectedScreenProvider>(context).setScreenName('Email');
         return Email(); // Replace with your EmailWidget implementation
       case 2:
+        Provider.of<SelectedScreenProvider>(context).setScreenName('Translate');
         return TranslatePage();
       case 3:
+        Provider.of<SelectedScreenProvider>(context).setScreenName('Report');
         return ReportPage();
       case 4:
+        Provider.of<SelectedScreenProvider>(context)
+            .setScreenName('SocialMedia');
         return SocialMediaPage();
       case 5:
         return Profile();
@@ -396,39 +442,6 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
       duration: Duration(milliseconds: 275),
     );
 
-    m_x1 = Tween(begin: 310.8, end: 310.56).animate(_controller2);
-    m_y1 = Tween(begin: 0.0, end: 0.97).animate(_controller2);
-    q1_x1 = Tween(begin: 310.8, end: 307.39).animate(_controller2);
-    q1_y1 = Tween(begin: 100.0, end: 26.30).animate(_controller2);
-    q1_x2 = Tween(begin: 310.8, end: 275.39).animate(_controller2);
-    q1_y2 = Tween(begin: 100.0, end: 26.42).animate(_controller2);
-
-    q2_x1 = Tween(begin: 310.8, end: 306.9).animate(_controller2);
-    q2_y1 = Tween(begin: 100.0, end: 76.5).animate(_controller2);
-    q2_x2 = Tween(begin: 310.8, end: 310.5).animate(_controller2);
-    q2_y2 = Tween(begin: 0.0, end: 100.0).animate(_controller2);
-
-    c1_x1 = Tween(begin: 310.8, end: 230.4).animate(_controller2);
-    c1_y1 = Tween(begin: 100.0, end: 26.4).animate(_controller2);
-    c1_x2 = Tween(begin: 310.8, end: 135.9).animate(_controller2);
-    c1_y2 = Tween(begin: 100.0, end: 27.0).animate(_controller2);
-    c1_x3 = Tween(begin: 310.8, end: 89.9).animate(_controller2);
-    c1_y3 = Tween(begin: 100.0, end: 27.31).animate(_controller2);
-
-    c2_x1 = Tween(begin: 310.8, end: 48.8).animate(_controller2);
-    c2_y1 = Tween(begin: 100.0, end: 27.1).animate(_controller2);
-    c2_x2 = Tween(begin: 310.8, end: 48.7).animate(_controller2);
-    c2_y2 = Tween(begin: 100.0, end: 77.94).animate(_controller2);
-    c2_x3 = Tween(begin: 310.8, end: 88.23).animate(_controller2);
-    c2_y3 = Tween(begin: 100.0, end: 77.28).animate(_controller2);
-
-    c3_x1 = Tween(begin: 310.8, end: 134.5).animate(_controller2);
-    c3_y1 = Tween(begin: 100.0, end: 77.5).animate(_controller2);
-    c3_x2 = Tween(begin: 310.8, end: 232.6).animate(_controller2);
-    c3_y2 = Tween(begin: 100.0, end: 78.95).animate(_controller2);
-    c3_x3 = Tween(begin: 310.8, end: 275.39).animate(_controller2);
-    c3_y3 = Tween(begin: 100.0, end: 79.17).animate(_controller2);
-
     // Assign the animation with the cast
     _color = ColorTween(end: Color(0xff332a7c), begin: Color(0xffEBF2FC))
         .animate(_controller2);
@@ -465,6 +478,66 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
+
+    m_x1 = Tween(begin: width * 0.161875, end: width * 0.16175)
+        .animate(_controller2);
+    m_y1 = Tween(begin: 0.0, end: height * 0.0008981481).animate(_controller2);
+    q1_x1 = Tween(begin: width * 0.161875, end: width * 0.1600989583)
+        .animate(_controller2);
+    q1_y1 = Tween(begin: height * 0.0925925926, end: height * 0.0243518519)
+        .animate(_controller2);
+    q1_x2 = Tween(begin: width * 0.161875, end: width * 0.1434322917)
+        .animate(_controller2);
+    q1_y2 = Tween(begin: height * 0.0925925926, end: height * 0.024462963)
+        .animate(_controller2);
+//width*  height *
+    q2_x1 = Tween(begin: width * 0.161875, end: width * 0.15984375)
+        .animate(_controller2);
+    q2_y1 = Tween(begin: height * 0.0925925926, end: height * 0.0708333333)
+        .animate(_controller2);
+    q2_x2 = Tween(begin: width * 0.161875, end: width * 0.16171875)
+        .animate(_controller2);
+    q2_y2 = Tween(begin: 0.0, end: height * 0.0925925926).animate(_controller2);
+
+    c1_x1 =
+        Tween(begin: width * 0.161875, end: width * 0.12).animate(_controller2);
+    c1_y1 = Tween(begin: height * 0.0925925926, end: height * 0.0244444444)
+        .animate(_controller2);
+    c1_x2 = Tween(begin: width * 0.161875, end: width * 0.07078125)
+        .animate(_controller2);
+    c1_y2 = Tween(begin: height * 0.0925925926, end: height * 0.025)
+        .animate(_controller2);
+    c1_x3 = Tween(begin: width * 0.161875, end: width * 0.0468229167)
+        .animate(_controller2);
+    c1_y3 = Tween(begin: height * 0.0925925926, end: height * 0.025287037)
+        .animate(_controller2);
+
+    c2_x1 = Tween(begin: width * 0.161875, end: width * 0.0254166667)
+        .animate(_controller2);
+    c2_y1 = Tween(begin: height * 0.0925925926, end: height * 0.0250925926)
+        .animate(_controller2);
+    c2_x2 = Tween(begin: width * 0.161875, end: width * 0.0253645833)
+        .animate(_controller2);
+    c2_y2 = Tween(begin: height * 0.0925925926, end: height * 0.0721666667)
+        .animate(_controller2);
+    c2_x3 = Tween(begin: width * 0.161875, end: width * 0.045953125)
+        .animate(_controller2);
+    c2_y3 = Tween(begin: height * 0.0925925926, end: height * 0.0715555556)
+        .animate(_controller2);
+
+    c3_x1 = Tween(begin: width * 0.161875, end: width * 0.0700520833)
+        .animate(_controller2);
+    c3_y1 = Tween(begin: height * 0.0925925926, end: height * 0.0717592593)
+        .animate(_controller2);
+    c3_x2 = Tween(begin: width * 0.161875, end: width * 0.1211458333)
+        .animate(_controller2);
+    c3_y2 = Tween(begin: height * 0.0925925926, end: height * 0.0731018519)
+        .animate(_controller2);
+    c3_x3 = Tween(begin: width * 0.161875, end: width * 0.1434322917)
+        .animate(_controller2);
+    c3_y3 = Tween(begin: height * 0.0925925926, end: height * 0.0733055556)
+        .animate(_controller2);
+
     return GestureDetector(
       onTap: () {
         widget.onTap();
@@ -481,9 +554,11 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
           });
         },
         child: Container(
+          margin: EdgeInsets.only(left: width * 0.0185),
           //  width: 170.0, // Adjust the width to 151.0
-          width: width * 0.185, // Adjust the width to 151.0
-          color: Color(0xff4C5AFE),
+          width: width * 0.185, // 355.2
+          //   color: Color(0xff4C5AFE),
+          // color: Colors.black,
           // hovered && !widget.selected ? Colors.white12 : Colors.transparent,
           child: Stack(
             children: [
@@ -503,14 +578,6 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
               Positioned(
                 child: RepaintBoundary(
                   child: CustomPaint(
-                    // painter: CurvePainter(      value1: 0,
-                    //       animValue1: _anim3.value,
-                    //       animValue2: _anim2.value,
-                    //       animValue3: _anim1.value,),
-                    // size: Size(
-                    //     width,
-                    //     (width * 0.5630630630630631)
-                    //         .toDouble()), //You can Replace
                     painter: NewCustomPainter(
                       m_x1: m_x1.value,
                       m_y1: m_y1.value,
@@ -546,12 +613,13 @@ class _NavBarItemState extends State<NavBarItem> with TickerProviderStateMixin {
                       // animValue3: _anim1.value,
                     ),
                     child: Container(
+                      // color: Colors.amber,
                       // color: _color.value,
-                      height: 100,
+                      height: height * 0.09259259, //100
                       // height: height * 0.0648,
-                      width: width * 0.185,
+                      width: width * 0.161875, //310.8
                       // width: 170.0,
-                      margin: EdgeInsets.only(left: 80.0),
+                      margin: EdgeInsets.only(left: width * 0.041666), //80
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,

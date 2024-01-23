@@ -3,17 +3,20 @@ import 'package:my_app/models/UserPreference.dart';
 import 'package:my_app/models/user.dart';
 
 class UserProvider extends ChangeNotifier {
-
   User _user = User(
-      token: '',
-      id: '',
-      name: '',
-      email: '',
-      password: '',
-      countEmail: 0,
-      countTranslate: 0,
-      countReport: 0,
-      countHours: 0);
+    token: '',
+    id: '',
+    name: '',
+    email: '',
+    password: '',
+    countEmail: 0,
+    countTranslate: 0,
+    countReport: 0,
+    countHours: 0,
+    company: '',
+    bio: '',
+    profilePicture: '',
+  );
 
   User get user => _user;
 
@@ -21,7 +24,9 @@ class UserProvider extends ChangeNotifier {
     _user = user;
     notifyListeners();
   }
+// User getUpdatedUser() async {
 
+// }
   void updateUser(User newUser) async {
     _user = newUser;
     print('User updated: $_user'); // Debugging line

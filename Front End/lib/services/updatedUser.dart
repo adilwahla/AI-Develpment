@@ -24,7 +24,7 @@ class UpdatedUser {
 
         // Convert the fetched user data to your User model
         User updatedUser = User.fromJson(userData);
-        print('updatedUser countReport${updatedUser.countReport}');
+        print('updatedUser countHour${updatedUser.countHours}');
         return updatedUser; // Return the updated user
       } else {
         print(

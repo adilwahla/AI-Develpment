@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:my_app/Provider/user_provider.dart';
 import 'package:my_app/config_dev.dart';
 import 'package:my_app/models/Report.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 typedef ReportCallback = void Function(String result);
@@ -33,7 +31,7 @@ class ReportService {
           'x-auth-token': token,
         },
       );
-
+      await Future.delayed(Duration(seconds: 2));
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
         final reportResponse = ReportResponse.fromJson(data);
@@ -46,6 +44,4 @@ class ReportService {
       onError('Error during translation: $e');
     }
   }
-
-
 }

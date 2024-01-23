@@ -8,8 +8,8 @@ import 'package:my_app/Widgets/FormContainer.dart';
 import 'package:my_app/Widgets/FormHeader.dart';
 import 'package:my_app/Widgets/Inputs/CustomRoundedInput.dart';
 import 'package:my_app/Widgets/Text/FormLabel.dart';
+import 'package:my_app/services/TextFile.dart';
 import 'package:my_app/services/pdfService.dart';
-import 'package:my_app/services/socialMediaServices.dart';
 import 'package:provider/provider.dart';
 
 class SocialMediaPage extends StatelessWidget {
@@ -45,6 +45,7 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
   TextEditingController textController2 = TextEditingController();
   TextEditingController textController3 = TextEditingController();
   TextEditingController GeneratedText = TextEditingController();
+  TextFileGeneration textFileGeneration = TextFileGeneration();
   String pdf_text = "";
   String result = "";
   String? timeframe;
@@ -60,12 +61,14 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
     setState(() {
       GeneratedText.text = res;
     });
+    Provider.of<SocialMediaProvider>(context, listen: false).stopProcessing();
   }
 
   // Function to handle failure scenario
   void _handleFailure(String error) {
     print('Failed to generate content');
     // Handle any UI updates or other logic on failure
+    Provider.of<SocialMediaProvider>(context, listen: false).stopProcessing();
   }
 
   @override
@@ -74,7 +77,6 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
     double height = MediaQuery.of(context).size.height;
     final socialMediaProvider =
         Provider.of<SocialMediaProvider>(context, listen: false);
-    PdfService pdfService = PdfService();
     return Row(
       mainAxisSize: MainAxisSize.max,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -644,7 +646,8 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                 onTap: () async {
                                   try {
                                     socialMediaProvider.startProcessing();
-                                    socialMediaProvider.generateSocialMediaText(
+                                    socialMediaProvider.service
+                                        .generateSocialMediaText(
                                       selectedPlatform: Platform,
                                       contentIdeas: textController1.text,
                                       captionsText: textController2.text,
@@ -656,10 +659,8 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                       onSuccess: _handleSuccess,
                                       onFailure: _handleFailure,
                                     );
-                                    socialMediaProvider.stopProcessing();
                                   } catch (e) {
                                     print('error $e');
-                                    socialMediaProvider.stopProcessing();
                                   }
                                 },
                                 child: Consumer<SocialMediaProvider>(
@@ -674,10 +675,15 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           borderRadius: BorderRadius.all(
                                             Radius.circular(20.0),
                                           )),
-                                      child: Row(children: [
-                                        socialMediaProvider.isProcessing
-                                            ? CircularProgressIndicator()
-                                            : Image.asset(
+                                      child: socialMediaProvider.isProcessing
+                                            ? Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                              CircularProgressIndicator()
+                                            ],)
+                                            : Row(
+                                        children: [
+                                        Image.asset(
                                                 'assets/images/autorenew.png',
                                                 color:
                                                     Colors.white, // Icon color
@@ -739,7 +745,7 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                           // focusColor: Colors.amber,
                                           onPressed: () {
                                             Clipboard.setData(ClipboardData(
-                                                text: GeneratedText!.text));
+                                                text: GeneratedText.text));
                                             print("Text copied to clipboard");
                                             // setState(() {
                                             //   iconColor = Colors.blue;
@@ -803,8 +809,15 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                 SizedBox(
                                   width: 60,
                                 ),
-                                DownloadButtons(
-                                  downloadIconName: 'word',
+                                InkWell(
+                                  onTap: () {
+                                    pdf_text = GeneratedText.text;
+                                    textFileGeneration
+                                        .generateAndDownloadFile(pdf_text);
+                                  },
+                                  child: DownloadButtons(
+                                    downloadIconName: 'word',
+                                  ),
                                 ),
                                 Spacer(
                                   flex: 1,

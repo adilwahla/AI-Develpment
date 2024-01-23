@@ -1,5 +1,5 @@
-   class ChartData {
-        ChartData(this.x, this.y);
-        final int x;
-        final double? y;
-    }
+class ChartData {
+  ChartData(this.x, this.y);
+  final int x;
+  final int y;
+}

@@ -7,7 +7,10 @@ class User {
   final int countEmail; // Consider not exposing this or storing it securely
   final int countTranslate; // Consider not exposing this or storing it securely
   final int countReport; // Consider not exposing this or storing it securely
-  final int countHours; 
+  final int countHours;
+  final String company;
+  final String bio;
+  final String profilePicture;
   // final int v;
 
   User({
@@ -20,24 +23,28 @@ class User {
     required this.countTranslate,
     required this.countReport,
     required this.countHours,
+    required this.company,
+    required this.bio,
+    required this.profilePicture,
     // required this.v,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
         token: json['token'],
-       countHours: json['countHours'] as int,
+        countHours: json['countHours'] as int,
         id: json['_id'],
         name: json['name'],
         email: json['email'],
         password: json[
             'password'], // Ensure you handle this securely, don't expose or store it unnecessarily
         // v: json['__v'],
-        countEmail: json['countEmail'] as int ,
+        countEmail: json['countEmail'] as int,
         countTranslate: json['countTranslate'] as int,
         countReport: json['countReport'] as int,
-   
-        );
+        company: json['company'],
+        bio: json['bio'],
+        profilePicture: json['profilePicture']);
   }
 }
 

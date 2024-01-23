@@ -7,18 +7,18 @@ class Footer extends StatelessWidget {
     super.key,
     required this.width,
     required this.height,
+    required this.onEmailTap,
   });
 
   final double width;
   final double height;
-
+  final VoidCallback onEmailTap;
   @override
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-            vertical: 4.0, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 4),
         child: Container(
           width: width * 0.142,
           height: height * 0.12,
@@ -37,8 +37,7 @@ class Footer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Column(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   // crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Image.asset(
@@ -54,12 +53,10 @@ class Footer extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(
-                      left: 4.0), //implement here
+                  padding: const EdgeInsets.only(left: 4.0), //implement here
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text.rich(
                         TextSpan(
@@ -74,18 +71,20 @@ class Footer extends StatelessWidget {
                           letterSpacing: 0.04,
                         ),
                       ),
-                      Text.rich(
-                        TextSpan(
-                          text:
-                              'EMAIL\n customerservice@aidevelop...',
-                        ),
-                        style: GoogleFonts.montserrat(
-                          // fontFamily: 'Montserrat',
-                          color: Color(0xffF2F2F2),
-                          fontSize: 10,
-                          height:
-                              1, // Line height is set as a multiplier of font size
-                          letterSpacing: 0.04,
+                      GestureDetector(
+                        onTap: onEmailTap,
+                        child: Text.rich(
+                          TextSpan(
+                            text: 'EMAIL\ninfo@aidevelopment.hu',
+                          ),
+                          style: GoogleFonts.montserrat(
+                            // fontFamily: 'Montserrat',
+                            color: Color(0xffF2F2F2),
+                            fontSize: 10,
+                            height:
+                                1, // Line height is set as a multiplier of font size
+                            letterSpacing: 0.04,
+                          ),
                         ),
                       ),
                     ],

@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http;
 import 'package:my_app/models/UserPreference.dart';
 import 'package:my_app/models/user.dart';
 import 'package:my_app/services/auth_services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Auth_provider extends ChangeNotifier {
   final AuthService _authService = AuthService();
@@ -41,7 +40,7 @@ class Auth_provider extends ChangeNotifier {
         // SharedPreferences prefs = await SharedPreferences.getInstance();
         // await prefs.setString('x-auth-token', _token!);
 
-        //TODO: set user data here and also user
+        // set user data here and also user
 
         User authUser;
         try {

@@ -32,7 +32,10 @@
 /build/
 
 # Web related
+# .gitignore
 
+backend/.env
+.env
 # Symbolication related
 app.*.symbols
 
