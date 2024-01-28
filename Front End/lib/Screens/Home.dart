@@ -515,74 +515,70 @@ class _MiniCardState extends State<MiniCard> {
         children: [
           Align(
             alignment: Alignment.centerLeft,
-            child: Expanded(
-              child: Text(
-                widget.cardText,
-                style: kMiniCardsStyle.copyWith(fontSize: scaledFontSize),
-              ),
+            child: Text(
+              widget.cardText,
+              style: kMiniCardsStyle.copyWith(fontSize: scaledFontSize),
             ),
           ),
           SizedBox(
-            height: 6,
+            height: 5,
           ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    // "325",
-                    widget.cardDigit,
-                    style: kMiniCardsStyle.copyWith(
-                        fontSize: scaledFontSize, fontWeight: FontWeight.w600),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  // "325",
+                  widget.cardDigit,
+                  style: kMiniCardsStyle.copyWith(
+                      fontSize: scaledFontSize, fontWeight: FontWeight.w600),
+                ),
+              ),
+              Container(
+                width: width * 0.046,
+                height: height * 0.029,
+                padding: EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20), // Make it circular
+                  // Button background color (white)
+                  border: Border.all(
+                    color: Colors.white, // Border color
+                    width: 2.0, // Border width
                   ),
                 ),
-                Container(
-                  width: width * 0.046,
-                  height: height * 0.029,
-                  padding: EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20), // Make it circular
-                    // Button background color (white)
-                    border: Border.all(
-                      color: Colors.white, // Border color
-                      width: 2.0, // Border width
+                child: Center(
+                  child: InkWell(
+                    onTap: () => {widget.onClickFunction()},
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 2,
+                          child: Text(
+                            'View',
+                            style: kMiniCardsStyle.copyWith(fontSize: 9),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: Icon(
+                            Icons
+                                .open_in_new, // Replace with your desired icon
+                            color: Colors.white, // Icon color
+                            size: 14,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () => {widget.onClickFunction()},
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'View',
-                              style: kMiniCardsStyle.copyWith(fontSize: 9),
-                            ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Icon(
-                              Icons
-                                  .open_in_new, // Replace with your desired icon
-                              color: Colors.white, // Icon color
-                              size: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ],
       ),
