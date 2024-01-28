@@ -98,7 +98,9 @@ class _HomeDashboardState extends State<HomeDashboard> {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
     User user = Provider.of<UserProvider>(context).user;
-
+    // SelectedScreenProvider selectedScreenProvider = Provider.of<SelectedScreenProvider>(context, listen: false);
+    SelectedScreenProvider selectedScreenProvider =
+        Provider.of<SelectedScreenProvider>(context, listen: false);
     return Scaffold(
       body: Container(
         color: Color(0xff4C5AFE),
@@ -337,7 +339,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
                     margin: EdgeInsets.only(top: 60),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
-                    child: renderSelectedWidget(),
+                    child: renderSelectedWidget(selectedScreenProvider),
                   )
                 ],
               ),
@@ -348,23 +350,24 @@ class _HomeDashboardState extends State<HomeDashboard> {
     );
   }
 
-  Widget renderSelectedWidget() {
+  Widget renderSelectedWidget(SelectedScreenProvider selectedScreenProvider) {
+    // SelectedScreenProvider selectedScreenProvider =
+    //     Provider.of<SelectedScreenProvider>(context, listen: false);
     switch (selectedIndex) {
       case 0:
-        Provider.of<SelectedScreenProvider>(context).setScreenName('Home');
+        selectedScreenProvider.setScreenName('Home');
         return Home(); // Replace with your HomeWidget implementation
       case 1:
-        Provider.of<SelectedScreenProvider>(context).setScreenName('Email');
+        selectedScreenProvider.setScreenName('Email');
         return Email(); // Replace with your EmailWidget implementation
       case 2:
-        Provider.of<SelectedScreenProvider>(context).setScreenName('Translate');
+        selectedScreenProvider.setScreenName('Translate');
         return TranslatePage();
       case 3:
-        Provider.of<SelectedScreenProvider>(context).setScreenName('Report');
+        selectedScreenProvider.setScreenName('Report');
         return ReportPage();
       case 4:
-        Provider.of<SelectedScreenProvider>(context)
-            .setScreenName('SocialMedia');
+        selectedScreenProvider.setScreenName('SocialMedia');
         return SocialMediaPage();
       case 5:
         return Profile();
