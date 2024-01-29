@@ -259,8 +259,8 @@ class _ProfileState extends State<Profile> {
 
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
-    double Hpad = 20.0;
-    double Vpad = 10.0;
+    double Hpad = width * 0.01041;
+    double Vpad = height * 0.00925;
     return FormContainer(
       //
       addFormElements: Column(children: [
@@ -829,7 +829,7 @@ class _ProfileState extends State<Profile> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: Hpad, left: Hpad, top: 15, bottom: 5),
+          padding: EdgeInsets.only(right: Hpad, left: Hpad, top: 5, bottom: 5),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
