@@ -367,7 +367,7 @@ class _HomeDashboardState extends State<HomeDashboard> {
         selectedScreenProvider.setScreenName('Report');
         return ReportPage();
       case 4:
-        selectedScreenProvider.setScreenName('SocialMedia');
+        selectedScreenProvider.setScreenName('Social Media');
         return SocialMediaPage();
       case 5:
         return Profile();

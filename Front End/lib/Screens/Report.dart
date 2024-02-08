@@ -128,6 +128,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
 
         // ${String.fromCharCodes(fileBytes!)}
         ExtractedText = extractor.extractText();
+
         // print('here goes pdf @text ${ExtractedText} ');
         Fluttertoast.showToast(
           msg: 'File Selected',
@@ -372,6 +373,7 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                   ),
                   InkWell(
                     onTap: () async {
+                      textarea?.clear();
                       _initiateReportGeneration();
                     },
                     child: Consumer<ReportProvider>(
@@ -384,9 +386,9 @@ class _ReportFormBodyState extends State<ReportFormBody> {
                                 width: width * 0.366,
                                 animation: true,
                                 lineHeight: height * 0.047,
-                                animationDuration: 2500,
-                                percent: 0.8,
-                                center: Text("80.0%"),
+                                animationDuration: 7000,
+                                percent: 0.99,
+                                center: Text("Generating..."),
                                 barRadius: Radius.circular(20.0),
                                 progressColor: Color(0xff39D1B8),
                               )

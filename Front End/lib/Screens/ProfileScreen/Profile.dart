@@ -178,12 +178,12 @@ class _ProfileState extends State<Profile> {
 
           Map<String, dynamic> jsonResponseMap = json.decode(response.body);
           // Accessing the URL field
-          String imageUrl = jsonResponseMap['url'];
+          String imageUrl = jsonResponseMap['secure_url'];
           setState(() {
             _imgURL = imageUrl;
           });
 
-          print('Image URL: $imageUrl');
+          print('Image URL: $imageUrl ${jsonResponseMap}');
           final profileProvider =
               Provider.of<ProcessProvider>(context, listen: false);
           try {
@@ -825,60 +825,111 @@ class _ProfileState extends State<Profile> {
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(right: Hpad, left: Hpad, top: 5, bottom: 5),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              InkWell(
-                onTap: () async {
-                  _updateUserProfile();
-                },
-                child: Container(
-                  width: width * 0.13,
-                  height: height * 0.047,
-                  padding: EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1,
-                      color: Color(0xffE2E4FB),
-                    ),
-                    color: Color(0xffFF8203),
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  child: Consumer<ProfileUpdateProvider>(
-                    builder: (context, profileUpdateProvider, child) {
-                      return Row(
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          profileUpdateProvider.isProcessing
-                              ? CircularProgressIndicator()
-                              : Image.asset(
-                                  'assets/images/save_as.png',
-                                  width: 20,
-                                  height: 20,
-                                ),
-                          SizedBox(
-                            width: 3,
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(top: 10.0, left: 8.0),
+                child: Column(
+                  children: [
+                    InkWell(
+                      onTap: () async {
+                        _updateUserProfile();
+                      },
+                      child: Container(
+                        width: width * 0.13,
+                        height: height * 0.047,
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            width: 1,
+                            color: Color(0xffE2E4FB),
                           ),
-                          Text(
-                            'Save',
-                            style: GoogleFonts.firaSans(
-                                fontSize: 14, color: Colors.white),
-                          )
-                        ],
-                      );
-                    },
-                  ),
+                          color: Color(0xffFF8203),
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        child: Consumer<ProfileUpdateProvider>(
+                          builder: (context, profileUpdateProvider, child) {
+                            return Row(
+                              // crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                profileUpdateProvider.isProcessing
+                                    ? CircularProgressIndicator()
+                                    : Image.asset(
+                                        'assets/images/save_as.png',
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                SizedBox(
+                                  width: 3,
+                                ),
+                                Text(
+                                  'Save',
+                                  style: GoogleFonts.firaSans(
+                                      fontSize: 14, color: Colors.white),
+                                )
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
         ),
+        // Padding(
+        //   padding: EdgeInsets.only(right: Hpad, left: Hpad, top: 5, bottom: 5),
+        //   child: Row(
+        //     mainAxisAlignment: MainAxisAlignment.end,
+        //     children: [
+        //       InkWell(
+        //         onTap: () async {
+        //           _updateUserProfile();
+        //         },
+        //         child: Container(
+        //           width: width * 0.13,
+        //           height: height * 0.047,
+        //           padding: EdgeInsets.symmetric(horizontal: 8),
+        //           decoration: BoxDecoration(
+        //             border: Border.all(
+        //               width: 1,
+        //               color: Color(0xffE2E4FB),
+        //             ),
+        //             color: Color(0xffFF8203),
+        //             borderRadius: BorderRadius.circular(25),
+        //           ),
+        //           child: Consumer<ProfileUpdateProvider>(
+        //             builder: (context, profileUpdateProvider, child) {
+        //               return Row(
+        //                 // crossAxisAlignment: CrossAxisAlignment.center,
+        //                 mainAxisAlignment: MainAxisAlignment.center,
+        //                 children: [
+        //                   profileUpdateProvider.isProcessing
+        //                       ? CircularProgressIndicator()
+        //                       : Image.asset(
+        //                           'assets/images/save_as.png',
+        //                           width: 20,
+        //                           height: 20,
+        //                         ),
+        //                   SizedBox(
+        //                     width: 3,
+        //                   ),
+        //                   Text(
+        //                     'Save',
+        //                     style: GoogleFonts.firaSans(
+        //                         fontSize: 14, color: Colors.white),
+        //                   )
+        //                 ],
+        //               );
+        //             },
+        //           ),
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ]),
     );
   }

@@ -176,10 +176,20 @@ class Home extends StatelessWidget {
                                     Expanded(
                                       flex: 1,
                                       child: Container(
+                                        // clipBehavior: Clip.hardEdge,
+                                        // decoration: BoxDecoration(
+                                        //   image: DecorationImage(
+                                        //     image: AssetImage(
+                                        //         'assets/images/bubble.png'),
+                                        //     fit: BoxFit
+                                        //         .contain, // You can adjust the BoxFit as needed
+                                        //   ),
+                                        //   // Your gradient or background color
+                                        // ),
                                         child: Padding(
                                           padding: const EdgeInsets.only(
                                               // this line got error
-                                              right: 40.0,
+                                              right: 35.0,
                                               top: 50.0),
                                           child: Transform.scale(
                                             scaleX: 2,
@@ -190,7 +200,7 @@ class Home extends StatelessWidget {
                                                 angle: 0,
                                                 child: Container(
                                                   child: Image.asset(
-                                                      'assets/images/circle.png',
+                                                      'assets/images/bubble.png',
                                                       fit: BoxFit.contain),
                                                 ),
                                               ),
@@ -243,17 +253,17 @@ class Home extends StatelessWidget {
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        bottom: 0.0, left: 40.0, top: 120.0),
+                                        bottom: 0.0, left: 20.0, top: 60.0),
                                     child: Align(
                                       alignment: Alignment.bottomRight,
                                       child: Transform.scale(
-                                        scaleX: 1.2,
-                                        scaleY: 1.2,
+                                        scaleX: 1,
+                                        scaleY: 1,
                                         child: Transform.rotate(
                                           angle: 0,
                                           child: Container(
                                             child: Image.asset(
-                                                'assets/images/circle.png',
+                                                'assets/images/bubble.png',
                                                 fit: BoxFit.contain),
                                           ),
                                         ),
@@ -284,8 +294,13 @@ class Home extends StatelessWidget {
                                                   body: Container(
                                                     child: SfCartesianChart(
                                                         title: ChartTitle(
-                                                            text:
-                                                                "Email Comparison Human vs Operify"),
+                                                          text:
+                                                              "Email Comparison Human vs Operify",
+                                                          textStyle: TextStyle(
+                                                            color: Colors
+                                                                .white, // Set the text color to white
+                                                          ),
+                                                        ),
                                                         series: <CartesianSeries<
                                                             ChartData, int>>[
                                                           ColumnSeries<
@@ -329,8 +344,13 @@ class Home extends StatelessWidget {
                                                   body: Container(
                                                     child: SfCartesianChart(
                                                         title: ChartTitle(
-                                                            text:
-                                                                "Report Comparison Human vs Operify"),
+                                                          text:
+                                                              "Report Comparison Human vs Operify",
+                                                          textStyle: TextStyle(
+                                                            color: Colors
+                                                                .white, // Set the text color to white
+                                                          ),
+                                                        ),
                                                         series: <CartesianSeries<
                                                             ChartData, int>>[
                                                           ColumnSeries<
@@ -376,8 +396,13 @@ class Home extends StatelessWidget {
                                                   body: Container(
                                                     child: SfCartesianChart(
                                                         title: ChartTitle(
-                                                            text:
-                                                                "Translation Comparison Human vs Operify"),
+                                                          text:
+                                                              "Translation Comparison Human vs Operify",
+                                                          textStyle: TextStyle(
+                                                            color: Colors
+                                                                .white, // Set the text color to white
+                                                          ),
+                                                        ),
                                                         series: <CartesianSeries<
                                                             ChartData, int>>[
                                                           ColumnSeries<
@@ -417,8 +442,13 @@ class Home extends StatelessWidget {
                                                   body: Container(
                                                     child: SfCartesianChart(
                                                         title: ChartTitle(
-                                                            text:
-                                                                "Total Comparison (Human vs Operify)"),
+                                                          text:
+                                                              "Total Comparison (Human vs Operify)",
+                                                          textStyle: TextStyle(
+                                                            color: Colors
+                                                                .white, // Set the text color to white
+                                                          ),
+                                                        ),
                                                         series: <CartesianSeries<
                                                             ChartData, int>>[
                                                           ColumnSeries<
@@ -533,8 +563,7 @@ class _MiniCardState extends State<MiniCard> {
                     // "325",
                     widget.cardDigit,
                     style: kMiniCardsStyle.copyWith(
-                        fontSize: scaledFontSize,
-                        fontWeight: FontWeight.w600),
+                        fontSize: scaledFontSize, fontWeight: FontWeight.w600),
                   ),
                 ),
                 Container(
@@ -542,8 +571,7 @@ class _MiniCardState extends State<MiniCard> {
                   height: height * 0.029,
                   padding: EdgeInsets.all(2),
                   decoration: BoxDecoration(
-                    borderRadius:
-                        BorderRadius.circular(20), // Make it circular
+                    borderRadius: BorderRadius.circular(20), // Make it circular
                     // Button background color (white)
                     border: Border.all(
                       color: Colors.white, // Border color

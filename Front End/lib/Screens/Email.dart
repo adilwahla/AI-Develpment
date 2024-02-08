@@ -727,8 +727,8 @@ class _BodyEmailFormState extends State<BodyEmailForm>
                             animation: true,
                             lineHeight: height * 0.04722,
                             animationDuration: 2500,
-                            percent: 0.8,
-                            center: Text("80.0%"),
+                            percent: 0.99,
+                            center: Text("99%"),
                             barRadius: Radius.circular(20.0),
                             progressColor: Color(0xff39D1B8),
                           )

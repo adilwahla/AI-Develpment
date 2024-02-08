@@ -393,7 +393,7 @@ authRouter.post('/api/translate',auth1, async (req, res) => {
     }
   });
   async function translateTextFromChatGPT(documentText,inputText, targetLanguage) {
-    const content = `Translate the following text:  :${documentText} ${inputText} to targetLanguage ${targetLanguage}` ;
+    const content = `Translate the following text (make sure no unicode emoji is generated) :${documentText} ${inputText} to targetLanguage ${targetLanguage}` ;
     try {
       const completion = await openai.chat.completions.create({
         messages: [
@@ -428,7 +428,7 @@ authRouter.post('/api/report',auth1, async (req, res) => {
   });
 async function generateReportWithChatGPT1(inputText, length, language){
    // const prompt = `Summarize: ${text} in ${language}`;
-   const prompt = `Provide a Report/summary of the main points in: ${inputText} with length of ${length} in ${language}. Additionally, highlight or reference these main points with a corresponding table of contents.`;
+   const prompt = `write a Report/summary (make sure no unicode emoji is generated)and a corresponding table of contents.The Report length must be of ${length} in ${language} language. Additionally highlight or reference these main points with a corresponding table of contents. Text :: ${inputText} `;
     const completion = await openai.chat.completions.create({
       messages: [
         {"role": "user", "content": prompt}
@@ -522,9 +522,9 @@ let CompanyCalenderdata= await checkCompanyCalenderExists(req.user);
 
 try {
   if(checkCompanyCalenderExists){
-    prompt = `Create Social media content calender  for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes} , Companydata:${CompanyCalenderdata}`;
+    prompt = `Create Social media content calender (make sure no unicode emoji is generated) for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes} , Companydata:${CompanyCalenderdata}`;
   }else{
-    prompt = `Create Social media content calender  for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes} `; 
+    prompt = `Create Social media content calender (make sure no unicode emoji is generated) for ${selectedPlatform} with ideas: ${contentIdeas}, captions: ${captionsText} and based on ${responseGeneration}, timeframe: ${timeframe}, frequency: ${frequency}, types: ${type}, themes: ${themes} `; 
   }
 
 

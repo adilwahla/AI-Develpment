@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class CustomRoundedIconButton extends StatefulWidget {
   final String iconLink;
   final String buttonText;
+  final Color buttonColor;
   final Function()? onPressed;
 
   CustomRoundedIconButton({
     required this.iconLink,
     required this.buttonText,
+    required this.buttonColor,
     this.onPressed,
   });
 
@@ -40,7 +42,8 @@ class _CustomRoundedIconButtonState extends State<CustomRoundedIconButton> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20.0),
-            color: isSelected ? Color(0xFF4C5AFE) : Color(0xFF9296C3),
+         //   color: isSelected ? Color(0xFF4C5AFE) : Color(0xFF9296C3),
+         color: widget.buttonColor,
           ),
           padding: EdgeInsets.zero,
           child: Row(

@@ -188,12 +188,14 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
 
                       // ${String.fromCharCodes(fileBytes!)}
                       inputText = extractor.extractText();
-                      // print('here goes pdf @text ${inputText} ');
+                      print('here goes pdf @text ${inputText} ');
                       Fluttertoast.showToast(
                         msg: 'File Selected',
                         toastLength: Toast.LENGTH_SHORT,
                         gravity: ToastGravity.BOTTOM,
                       );
+                      //Dispose the document
+                      document.dispose();
                     } else if (file.extension == 'docx') {
                       Future<String> docxText = _readFile(file);
                       String text = await docxText;
@@ -392,6 +394,7 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
               ),
               InkWell(
                 onTap: () {
+                  _translatedTextController.clear();
                   _initiateTranslation();
                   print('tranlste button got pressed');
                 },
@@ -403,9 +406,9 @@ class _TranslateFormBodyState extends State<TranslateFormBody> {
                             width: width * 0.366,
                             animation: true,
                             lineHeight: height * 0.047,
-                            animationDuration: 2500,
-                            percent: 0.8,
-                            center: Text("80.0%"),
+                            animationDuration: 7000,
+                            percent: 0.95,
+                            center: Text("Generating..."),
                             barRadius: Radius.circular(20.0),
                             progressColor: Color(0xff39D1B8),
                           )

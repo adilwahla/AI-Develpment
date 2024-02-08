@@ -2,9 +2,16 @@ import 'dart:convert';
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class PdfService {
+  static String removeUnicodeAndEmojis(String text) {
+    // Use regex to match Unicode characters and emojis
+    final regex = RegExp(r'[^\x00-\x7F]');
+    return text.replaceAll(regex, '');
+  }
+
   static Future<void> saveAndLaunchFile(String text, String fileName) async {
     print('i was called ');
     //Create a new PDF document
@@ -17,8 +24,9 @@ class PdfService {
     //     brush: PdfBrushes.black, bounds: Rect.fromLTWH(0, 0, 0, 0));
 
     //Load the paragraph text into PdfTextElement with standard font
+    String fineText = removeUnicodeAndEmojis(text);
     PdfTextElement textElement = PdfTextElement(
-        text: '$text', font: PdfStandardFont(PdfFontFamily.helvetica, 12));
+        text: '$fineText', font: PdfStandardFont(PdfFontFamily.helvetica, 12));
 
 //Draw the paragraph text on page and maintain the position in PdfLayoutResult
     PdfLayoutResult layoutResult = textElement.draw(
@@ -27,10 +35,10 @@ class PdfService {
             0, 150, page.getClientSize().width, page.getClientSize().height))!;
 
 //Assign header text to PdfTextElement
-    textElement.text = 'AI Generated Text';
-
+    textElement.text = '';
+//PdfFont pdfFont = new PdfTrueTypeFont(GoogleFonts.lato() as List<int>, 24);
 //Assign standard font to PdfTextElement
-    textElement.font = PdfStandardFont(PdfFontFamily.helvetica, 10,
+    textElement.font = PdfStandardFont(PdfFontFamily.timesRoman, 10,
         style: PdfFontStyle.regular);
 
 //Draw the header text on page, below the paragraph text with a height gap of 20 and maintain the position in PdfLayoutResult

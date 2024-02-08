@@ -54,6 +54,12 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
   String? themes;
   bool facebook = false;
   String Platform = 'facebook';
+  bool fb = false;
+  bool insta = false;
+  bool twitter = false;
+  bool linkedin = false;
+  List<bool> boolArray = [false, false, false, false];
+
   // Function to handle success scenario
   void _handleSuccess(String res) {
     print('Generated Text: $res');
@@ -75,6 +81,7 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+
     final socialMediaProvider =
         Provider.of<SocialMediaProvider>(context, listen: false);
     return Row(
@@ -158,13 +165,20 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomRoundedIconButton(
+                            buttonColor:
+                                (socialMediaProvider.buttonSelections[0])
+                                    ? Color(0xFF4C5AFE)
+                                    : Color(0xFF9296C3),
                             iconLink: 'assets/images/facebook.png',
                             buttonText: 'Facebook',
                             onPressed: () {
                               // Add your onPressed function for Facebook here
+                              socialMediaProvider.setPlatform("Facebook");
+                              socialMediaProvider.selectButton(0);
                               setState(() {
                                 // Toggle the boolean variable
-                                facebook = !facebook;
+                                // facebook = !facebook;
+                                // boolArray[0] = !boolArray[0];
                               });
                               print('fb$facebook');
                             },
@@ -180,10 +194,19 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomRoundedIconButton(
+                            buttonColor:
+                                (socialMediaProvider.buttonSelections[1])
+                                    ? Color(0xFF4C5AFE)
+                                    : Color(0xFF9296C3),
                             iconLink: 'assets/images/insta.png',
                             buttonText: 'Instagram',
                             onPressed: () {
                               // Add your onPressed function for Instagram here
+                              socialMediaProvider.setPlatform("Instagram");
+                              socialMediaProvider.selectButton(1);
+                              setState(() {
+                                // insta = !insta;
+                              });
                             },
                           ),
                         ],
@@ -195,10 +218,19 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomRoundedIconButton(
+                            buttonColor:
+                                (socialMediaProvider.buttonSelections[2])
+                                    ? Color(0xFF4C5AFE)
+                                    : Color(0xFF9296C3),
                             iconLink: 'assets/images/twitter.png',
                             buttonText: 'X(Twitter)',
                             onPressed: () {
                               // Add your onPressed function for Twitter here
+                              socialMediaProvider.setPlatform("Twitter");
+                              socialMediaProvider.selectButton(2);
+                              setState(() {
+                                twitter = !twitter;
+                              });
                             },
                           ),
                         ],
@@ -213,10 +245,19 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomRoundedIconButton(
+                            buttonColor:
+                                (socialMediaProvider.buttonSelections[3])
+                                    ? Color(0xFF4C5AFE)
+                                    : Color(0xFF9296C3),
                             iconLink: 'assets/images/linkedin.png',
                             buttonText: 'LinkedIn',
                             onPressed: () {
                               // Add your onPressed function for Instagram here
+                              socialMediaProvider.setPlatform("LinkedIn");
+                              socialMediaProvider.selectButton(3);
+                              setState(() {
+                                linkedin = !linkedin;
+                              });
                             },
                           ),
                         ],
@@ -644,11 +685,13 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                               padding: const EdgeInsets.only(right: 20.0),
                               child: InkWell(
                                 onTap: () async {
+                                  String selectedOne =
+                                      socialMediaProvider.platform;
                                   try {
                                     socialMediaProvider.startProcessing();
                                     socialMediaProvider.service
                                         .generateSocialMediaText(
-                                      selectedPlatform: Platform,
+                                      selectedPlatform: selectedOne,
                                       contentIdeas: textController1.text,
                                       captionsText: textController2.text,
                                       responseGeneration: textController3.text,
@@ -676,14 +719,15 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                             Radius.circular(20.0),
                                           )),
                                       child: socialMediaProvider.isProcessing
-                                            ? Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                              CircularProgressIndicator()
-                                            ],)
-                                            : Row(
-                                        children: [
-                                        Image.asset(
+                                                CircularProgressIndicator()
+                                              ],
+                                            )
+                                          : Row(children: [
+                                              Image.asset(
                                                 'assets/images/autorenew.png',
                                                 color:
                                                     Colors.white, // Icon color
@@ -692,20 +736,21 @@ class _SocialMediaFormBodyState extends State<SocialMediaFormBody> {
                                                 height:
                                                     24, // Set the height as needed
                                               ),
-                                        SizedBox(
-                                          width: 15,
-                                        ),
-                                        Center(
-                                          child: Text(
-                                            "Generate",
-                                            style: TextStyle(
-                                                color: Colors.white,
-                                                fontFamily: 'Fira Sans',
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      ]),
+                                              SizedBox(
+                                                width: 15,
+                                              ),
+                                              Center(
+                                                child: Text(
+                                                  "Generate",
+                                                  style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontFamily: 'Fira Sans',
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                              ),
+                                            ]),
                                     );
                                   },
                                 ),

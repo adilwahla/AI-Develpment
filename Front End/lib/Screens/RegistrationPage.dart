@@ -349,7 +349,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       return authProvider.loading
                                           ? CircularProgressIndicator()
                                           : Text(
-                                              'Sign in?',
+                                              'Sign \u00A0\u00A0 in?',
                                               style:
                                                   GoogleFonts.plusJakartaSans(
                                                       fontSize: 16,
